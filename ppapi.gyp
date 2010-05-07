@@ -6,6 +6,33 @@
 {
   'targets': [
     {
+      'target_name': 'ppapi_c',
+      'type': 'none',
+      'direct_dependent_settings': {
+        'include_dirs': [
+           '..',
+        ],
+      },
+      'sources': [
+        'c/pp_event.h',
+        'c/pp_instance.h',
+        'c/pp_module.h',
+        'c/pp_rect.h',
+        'c/pp_resource.h',
+        'c/pp_stdint.h',
+        'c/pp_var.h',
+        'c/ppb.h',
+        'c/ppb_core.h',
+        'c/ppb_device_context_2d.h',
+        'c/ppb_image_data.h',
+        'c/ppb_instance.h',
+        'c/ppb_var.h',
+        'c/ppp.h',
+        'c/ppp_class.h',
+        'c/ppp_instance.h',
+      ],
+    },
+    {
       'target_name': 'ppapi_example',
       'dependencies': [
       ],
