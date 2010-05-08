@@ -122,7 +122,10 @@ const void* Module::GetBrowserInterface(const char* interface_name) {
 }
 
 Instance* Module::InstanceForPPInstance(PP_Instance instance) const {
-  
+  InstanceMap::const_iterator found = current_instances_.find(instance);
+  if (found == current_instances_.end())
+    return NULL;
+   return found->second;
 }
 
 bool Module::InternalInit(PP_Module mod,
@@ -141,14 +144,8 @@ bool Module::InternalInit(PP_Module mod,
 
 // Global PPP functions --------------------------------------------------------
 
-#if __GNUC__ >= 4
-#define EXPORT __attribute__ ((visibility("default")))
-#elif defined(_MSC_VER)
-#define EXPORT __declspec(dllexport)
-#endif
-
-EXPORT int PPP_InitializeModule(PP_Module module_id,
-                                PPB_GetInterface get_browser_interface) {
+PP_EXPORT int PPP_InitializeModule(PP_Module module_id,
+                                   PPB_GetInterface get_browser_interface) {
   pp::Module* module = pp::CreateModule();
   if (!module)
     return 1;
@@ -161,11 +158,11 @@ EXPORT int PPP_InitializeModule(PP_Module module_id,
   return 0;
 }
 
-EXPORT void PPP_ShutdownModule() {
+PP_EXPORT void PPP_ShutdownModule() {
   delete pp::module_singleton;
 }
 
-EXPORT const void* PPP_GetInterface(const char* interface_name) {
+PP_EXPORT const void* PPP_GetInterface(const char* interface_name) {
   if (!pp::module_singleton)
     return NULL;
   return pp::module_singleton->GetInstanceInterface(interface_name);

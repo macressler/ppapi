@@ -27,7 +27,7 @@ class Instance {
   // |argv|.
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
 
-  virtual bool HandleEvent(const PP_Event& event) {}
+  virtual bool HandleEvent(const PP_Event& event) { return false; }
   virtual Var GetInstanceObject();
   virtual void ViewChanged(const Rect& position, const Rect& clip) {}
 

@@ -6,6 +6,7 @@
 #define PPAPI_C_PPP_CLASS_H_
 
 #include "ppapi/c/pp_stdint.h"
+#include "ppapi/c/pp_var.h"
 
 typedef struct _pp_Var PP_Var;
 
