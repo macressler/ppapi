@@ -48,7 +48,7 @@ class Module {
 
   // Returns the object associated with this PP_Instance, or NULL if one is
   // not found.
-  Instance* InstanceForPPInstance(PP_Instance instance) const;
+  Instance* InstanceForPPInstance(PP_Instance instance);
 
   // Sets the browser interface and calls the regular init function that
   // can be overridden by the base classes.

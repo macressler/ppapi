@@ -121,11 +121,11 @@ const void* Module::GetBrowserInterface(const char* interface_name) {
   return get_browser_interface_(interface_name);
 }
 
-Instance* Module::InstanceForPPInstance(PP_Instance instance) const {
-  InstanceMap::const_iterator found = current_instances_.find(instance);
+Instance* Module::InstanceForPPInstance(PP_Instance instance) {
+  InstanceMap::iterator found = current_instances_.find(instance);
   if (found == current_instances_.end())
     return NULL;
-   return found->second;
+  return found->second;
 }
 
 bool Module::InternalInit(PP_Module mod,
