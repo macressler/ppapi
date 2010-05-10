@@ -10,7 +10,6 @@
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/cpp/instance.h"
-#include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
@@ -83,7 +82,7 @@ void Instance_ViewChanged(PP_Instance pp_instance,
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
     return;
-  instance->ViewChanged(Rect(*position), Rect(*clip));
+  instance->ViewChanged(*position, *clip);
 }
 
 static PPP_Instance instance_interface = {

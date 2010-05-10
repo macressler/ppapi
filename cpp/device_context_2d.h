@@ -7,13 +7,13 @@
 
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/ppb_device_context_2d.h"
-#include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/resource.h"
+
+typedef struct _pp_Rect PP_Rect;
 
 namespace pp {
 
 class ImageData;
-class Rect;
 
 class DeviceContext2D : public Resource {
  public:
@@ -35,9 +35,15 @@ class DeviceContext2D : public Resource {
 
   void PaintImageData(const ImageData& image,
                       int32_t x, int32_t y,
-                      const Rect& dirty,
+                      const PP_Rect* dirty,
+                      uint32_t dirty_rect_count,
                       PPB_DeviceContext2D_PaintCallback callback,
                       void* callback_data);
+
+  // Simpler version of PaintImageData which is sufficient for most common
+  // uses. This paints the entire image to the given location and blocks until
+  // the painting is complete.
+  void PaintImageData(const ImageData& image, int32_t x, int32_t y);
 };
 
 }  // namespace pp

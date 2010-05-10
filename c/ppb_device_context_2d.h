@@ -24,11 +24,14 @@ typedef struct _ppb_DeviceContext2D {
   // plugin instance.
   PP_Resource (*Create)(PP_Module module, int32_t width, int32_t height);
 
-  // Paints the given image at the given position in the device.
+  // Paints the given image at the given position in the device. The given
+  // image will be placed at (x, y) from the top left of the plugin's internal
+  // backing store. Then the dirty rect(s) given in |dirty| (of which there are
+  // |dirty_rect_count| rects) will be copied into the backing store.
   //
-  // A 0-sized dirty rect means to paint the entire ImageData (do not use a
-  // NULL pointer). The dirty rect is in the coordinate space of the image, not
-  // of the plugin.
+  // The dirty rects are specified in the coordinate system of the image, not
+  // the backing store. For the common case of copying the entire image, you
+  // may specify a NULL |dirty| pointer and 0 |dirty_rect_count|.
   //
   // TODO(brettw) this needs error handling.
   void (*PaintImageData)(PP_Resource device_context,

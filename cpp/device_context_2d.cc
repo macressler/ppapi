@@ -6,7 +6,6 @@
 
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
-#include "ppapi/cpp/rect.h"
 
 namespace pp {
 
@@ -50,14 +49,20 @@ void DeviceContext2D::swap(DeviceContext2D& other) {
 
 void DeviceContext2D::PaintImageData(const ImageData& image,
                                      int32_t x, int32_t y,
-                                     const Rect& dirty,
+                                     const PP_Rect* dirty,
+                                     uint32_t dirty_rect_count,
                                      PPB_DeviceContext2D_PaintCallback callback,
                                      void* callback_data) {
   if (!EnsureFuncs() || is_null())
     return;
   device_context_2d_funcs->PaintImageData(pp_resource(), image.pp_resource(),
-                                          x, y, &dirty.pp_rect(), 1,
+                                          x, y, dirty, dirty_rect_count,
                                           callback, callback_data);
+}
+
+void DeviceContext2D::PaintImageData(const ImageData& image,
+                                     int32_t x, int32_t y) {
+  PaintImageData(image, x, y, NULL, 0, NULL, NULL);
 }
 
 }  // namespace pp

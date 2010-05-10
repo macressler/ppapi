@@ -8,11 +8,11 @@
 #include "ppapi/c/pp_instance.h"
 
 typedef struct _pp_Event PP_Event;
+typedef struct _pp_Rect PP_Rect;
 
 namespace pp {
 
 class DeviceContext2D;
-class Rect;
 class Var;
 
 class Instance {
@@ -29,7 +29,7 @@ class Instance {
 
   virtual bool HandleEvent(const PP_Event& event) { return false; }
   virtual Var GetInstanceObject();
-  virtual void ViewChanged(const Rect& position, const Rect& clip) {}
+  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {}
 
   bool BindGraphicsDeviceContext(const DeviceContext2D& context);
   //bool BindGraphicsDeviceContext(const DeviceContext3D& context);

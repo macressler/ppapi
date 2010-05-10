@@ -17,8 +17,10 @@
         'c/pp_event.h',
         'c/pp_instance.h',
         'c/pp_module.h',
+        'c/pp_point.h',
         'c/pp_rect.h',
         'c/pp_resource.h',
+        'c/pp_size.h',
         'c/pp_stdint.h',
         'c/pp_var.h',
         'c/ppb.h',
@@ -32,10 +34,6 @@
         'c/ppp_instance.h',
       ],
     },
-# TODO(brettw) this works in Linux but doesn't compile on Mac or Windows
-# yet. The "cpp" project should also be separated out into a separate
-#  project so that multiple plugins can just reference that.
- 
     {
       'target_name': 'ppapi_example',
       'dependencies': [

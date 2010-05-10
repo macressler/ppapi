@@ -5,11 +5,11 @@
 #include <stdio.h>  // FIXME(brettw) eraseme.
 
 #include "ppapi/c/pp_event.h"
+#include "ppapi/c/pp_rect.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
-#include "ppapi/cpp/rect.h"
 
 class MyInstance : public pp::Instance {
  public:
@@ -39,14 +39,14 @@ class MyInstance : public pp::Instance {
     }
   }
 
-  virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
-    printf("ViewChanged %d,%d,%d,%d\n", position.left(), position.top(),
-           position.right(), position.bottom());
-    if (position.width() == width_ || position.height() == height_)
+  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
+    printf("ViewChanged %d,%d,%d,%d\n", position.point.x, position.point.y,
+           position.size.width, position.size.height);
+    if (position.size.width == width_ || position.size.height == height_)
       return;  // We don't care about the position, only the size.
 
-    width_ = position.width();
-    height_ = position.height();
+    width_ = position.size.width;
+    height_ = position.size.height;
 
     device_context_ = pp::DeviceContext2D(width_, height_);
     if (!BindGraphicsDeviceContext(device_context_)) {
@@ -71,7 +71,7 @@ class MyInstance : public pp::Instance {
       }
     }
 
-    device_context_.PaintImageData(image, 0, 0, pp::Rect(), NULL, NULL);
+    device_context_.PaintImageData(image, 0, 0);
   }
 
  private:

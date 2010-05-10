@@ -6,7 +6,6 @@
 #define PPAPI_CPP_IMAGE_DATA_H_
 
 #include "ppapi/c/ppb_image_data.h"
-#include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/resource.h"
 
 namespace pp {
