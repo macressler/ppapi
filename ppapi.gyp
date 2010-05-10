@@ -42,7 +42,7 @@
         '..',
       ],
       'xcode_settings': {
-        'INFOPLIST_FILE': 'Info.plist',
+        'INFOPLIST_FILE': 'example/Info.plist',
       },
       'sources': [
         'example/example.cc',
@@ -102,7 +102,7 @@
           'type': 'loadable_module',
           'mac_bundle': 1,
           'product_name': 'PPAPIExample',
-          'product_extension': 'plucpgin',
+          'product_extension': 'plugin',
           'sources+': [
             'example/Info.plist'
           ],
