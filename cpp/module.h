@@ -73,7 +73,7 @@ class Module {
   // Instance tracking.
   class CompareInstance {
    public:
-    bool operator()(PP_Instance a, PP_Instance b) {
+    bool operator()(PP_Instance a, PP_Instance b) const {
       return a.id < b.id;
     }
   };
