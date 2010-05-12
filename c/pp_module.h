@@ -7,7 +7,9 @@
 
 #include "ppapi/c/pp_stdint.h"
 
-// A module uniquely identifies one plugin library.
+// A module uniquely identifies one plugin library. The identifier is an opaque
+// handle assigned by the browser to the plugin. It is guaranteed never to be
+// 0, so a plugin can initialize this ID to 0 to indicate a "NULL handle."
 typedef struct _pp_Module {
   int64_t id;
 } PP_Module;

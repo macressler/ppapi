@@ -10,6 +10,10 @@
 // A PP_Instance uniquely identifies one plugin instance, which is one time
 // that a page says <embed>. There can be multiple instances of the same plugin
 // type on a page that will all be in the same module.
+//
+// The identifier is an opaque handle assigned by the browser to the plugin. It
+// is guaranteed never to be 0, so a plugin can initialize this ID to 0 to
+// indicate a "NULL handle."
 typedef struct _pp_Instance {
   int64_t id;
 } PP_Instance;
