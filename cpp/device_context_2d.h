@@ -39,7 +39,7 @@ class DeviceContext2D : public Resource {
   // Please see PPB_DeviceContext2D.PaintImageData / .Scroll for more details.
   bool PaintImageData(const ImageData& image,
                       int32_t x, int32_t y,
-                      const PP_Rect* dirty);
+                      const PP_Rect* src_rect);
   bool Scroll(const PP_Rect* clip, int32_t dx, int32_t dy);
 
   // The browser will take ownership of the given image data. The object

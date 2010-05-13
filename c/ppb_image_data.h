@@ -36,14 +36,14 @@ typedef struct _ppb_ImageData {
   // return value will have a nonzero ID on success, or zero on failure.
   // Failure means the module handle, image size, or format was invalid.
   //
-  // Set the init_to_zero flah if you want the bitmap initialized to
+  // Set the init_to_zero flag if you want the bitmap initialized to
   // transparent during the creation process. If this flag is not set, the
   // current contents of the bitmap will be undefined, and the plugin should
   // be sure to set all the pixels.
   //
   // For security reasons, if uninitialized, the bitmap will not contain random
-  // memory, but may contain data from a previous image in the same plugin if
-  // the bitmap was cached and re-used.
+  // memory, but may contain data from a previous image produced by the same
+  // plugin if the bitmap was cached and re-used.
   PP_Resource (*Create)(PP_Module module,
                         PP_ImageDataFormat format,
                         int32_t width,

@@ -34,14 +34,14 @@ typedef struct _ppb_DeviceContext2D {
   // UNTIL YOU CALL Flush(). As a result, what counts is the contents of the
   // bitmap when you call Flush, not when you call this function.
   //
-  // The given image will be placed at (x, y) from the top left of the plugin's
-  // internal backing store. Then the dirty rect will be copied into the
+  // The given image will be placed at (x, y) from the top left of the device's
+  // internal backing store. Then the src_rect will be copied into the
   // backing store.
   //
-  // The dirty rect is specified in the coordinate system of the image, not
-  // the backing store. For the common case of copying the entire image, you
-  // may specify a NULL |dirty| pointer. If you are frequently updating the
-  // entire image, consider using SwapImageData which will give slightly
+  // The src_rect is specified in the coordinate system of the image being
+  // painted, not the device. For the common case of copying the entire image,
+  // you may specify a NULL |src_rect| pointer. If you are frequently updating
+  // the entire image, consider using SwapImageData which will give slightly
   // higher performance.
   //
   // Returns true on success, false on failure. Failure means one of the
@@ -49,7 +49,7 @@ typedef struct _ppb_DeviceContext2D {
   bool (*PaintImageData)(PP_Resource device_context,
                          PP_Resource image,
                          int32_t x, int32_t y,
-                         const PP_Rect* dirty);
+                         const PP_Rect* src_rect);
 
   // Enqueues a scroll of the device's backing store. THIS HAS NO EFFECT UNTIL
   // YOU CALL Flush(). The data within the given clip rect (you may specify

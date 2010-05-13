@@ -50,12 +50,12 @@ void DeviceContext2D::swap(DeviceContext2D& other) {
 
 bool DeviceContext2D::PaintImageData(const ImageData& image,
                                      int32_t x, int32_t y,
-                                     const PP_Rect* dirty) {
+                                     const PP_Rect* src_rect) {
   if (!EnsureFuncs() || is_null())
     return false;
   return device_context_2d_funcs->PaintImageData(pp_resource(),
                                                  image.pp_resource(),
-                                                 x, y, dirty);
+                                                 x, y, src_rect);
 }
 
 bool DeviceContext2D::Scroll(const PP_Rect* clip, int32_t dx, int32_t dy) {
