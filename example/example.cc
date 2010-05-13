@@ -48,30 +48,34 @@ class MyInstance : public pp::Instance {
     width_ = position.size.width;
     height_ = position.size.height;
 
-    device_context_ = pp::DeviceContext2D(width_, height_);
+    device_context_ = pp::DeviceContext2D(width_, height_, false);
     if (!BindGraphicsDeviceContext(device_context_)) {
       printf("Couldn't bind the device context\n");
       return;
     }
 
-    pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, width_, height_);
+    pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, width_, height_, false);
     if (image.is_null()) {
       printf("Couldn't allocate the image data\n");
       return;
     }
 
-    // Fill with semitransparent blue so we know it worked.
+    // Fill with semitransparent gradient.
     for (int y = 0; y < image.height(); y++) {
       char* row = &static_cast<char*>(image.data())[y * image.stride()];
       for (int x = 0; x < image.width(); x++) {
         row[x * 4 + 0] = y;
         row[x * 4 + 1] = y;
-        row[x * 4 + 2] = y;
+        row[x * 4 + 2] = 0;
         row[x * 4 + 3] = y;
       }
     }
 
-    device_context_.PaintImageData(image, 0, 0);
+    // Either of these calls is OK in this context, Swap is slightly more
+    // efficient since it avoids the copy.
+    device_context_.ReplaceContents(&image);
+    //device_context_.PaintImageData(image, 0, 0, NULL);
+    device_context_.Flush(NULL, NULL);
   }
 
  private:

@@ -22,7 +22,8 @@ class ImageData : public Resource {
   // Allocates a new ImageData in the browser with the given parameters. The
   // resulting object will be is_null() if the allocation failed.
   ImageData(PP_ImageDataFormat format,
-            int width, int height);
+            int width, int height,
+            bool init_to_zero);
 
   virtual ~ImageData();
 

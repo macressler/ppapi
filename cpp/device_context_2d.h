@@ -26,24 +26,36 @@ class DeviceContext2D : public Resource {
 
   // Allocates a new 2D device context with the given size in the browser,
   // resulting object will be is_null() if the allocation failed.
-  DeviceContext2D(int32_t width, int32_t height);
+  DeviceContext2D(int32_t width, int32_t height, bool is_always_opaque);
 
   virtual ~DeviceContext2D();
 
   DeviceContext2D& operator=(const DeviceContext2D& other);
   void swap(DeviceContext2D& other);
 
-  void PaintImageData(const ImageData& image,
+  // Enqueues paint or scroll commands. THIS COMMAND HAS NO EFFECT UNTIL YOU
+  // CALL Flush().
+  //
+  // Please see PPB_DeviceContext2D.PaintImageData / .Scroll for more details.
+  bool PaintImageData(const ImageData& image,
                       int32_t x, int32_t y,
-                      const PP_Rect* dirty,
-                      uint32_t dirty_rect_count,
-                      PPB_DeviceContext2D_PaintCallback callback,
-                      void* callback_data);
+                      const PP_Rect* dirty);
+  bool Scroll(const PP_Rect* clip, int32_t dx, int32_t dy);
 
-  // Simpler version of PaintImageData which is sufficient for most common
-  // uses. This paints the entire image to the given location and blocks until
-  // the painting is complete.
-  void PaintImageData(const ImageData& image, int32_t x, int32_t y);
+  // The browser will take ownership of the given image data. The object
+  // pointed to by the parameter will be cleared. Any other ImageData objects
+  // referring to the same resource will no longer be usable. THIS COMMAND HAS
+  // NO EFFECT UNTIL YOU CALL Flush().
+  //
+  // Please see PPB_DeviceContext2D.Swap for more details.
+  bool ReplaceContents(ImageData* image);
+
+  // Flushes all the currently enqueued Paint, Scroll, and Swap commands. Can
+  // be used in synchronous mode (NULL callback pointer) from background
+  // threads.
+  //
+  // Please see PPB_DeviceContext2D.Flush for more details.
+  bool Flush(PPB_DeviceContext2D_FlushCallback callback, void* callback_data);
 };
 
 }  // namespace pp

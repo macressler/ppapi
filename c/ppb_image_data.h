@@ -32,10 +32,23 @@ typedef struct _pp_ImageDataDesc {
 #define PPB_IMAGEDATA_INTERFACE "PPB_ImageData;1"
 
 typedef struct _ppb_ImageData {
+  // Allocates an image data resource with the given format and size. The
+  // return value will have a nonzero ID on success, or zero on failure.
+  // Failure means the module handle, image size, or format was invalid.
+  //
+  // Set the init_to_zero flah if you want the bitmap initialized to
+  // transparent during the creation process. If this flag is not set, the
+  // current contents of the bitmap will be undefined, and the plugin should
+  // be sure to set all the pixels.
+  //
+  // For security reasons, if uninitialized, the bitmap will not contain random
+  // memory, but may contain data from a previous image in the same plugin if
+  // the bitmap was cached and re-used.
   PP_Resource (*Create)(PP_Module module,
                         PP_ImageDataFormat format,
                         int32_t width,
-                        int32_t height);
+                        int32_t height,
+                        bool init_to_zero);
 
   // Returns true if the given resource is an image data. Returns false if the
   // resource is invalid or some type other than an image data.

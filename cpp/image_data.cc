@@ -34,14 +34,16 @@ ImageData::ImageData(const ImageData& other) : Resource(other) {
 }
 
 ImageData::ImageData(PP_ImageDataFormat format,
-                     int32_t width, int32_t height) {
+                     int32_t width, int32_t height,
+                     bool init_to_zero) {
   if (!EnsureFuncs()) {
     *this = ImageData();
     return;
   }
 
   PassRefFromConstructor(image_data_funcs->Create(Module::Get()->pp_module(),
-                                                  format, width, height));
+                                                  format, width, height,
+                                                  init_to_zero));
   if (is_null())
     return;
   if (!image_data_funcs->Describe(pp_resource(), &desc_) ||

@@ -28,11 +28,12 @@ DeviceContext2D::DeviceContext2D(const DeviceContext2D& other)
     : Resource(other) {
 }
 
-DeviceContext2D::DeviceContext2D(int32_t width, int32_t height) : Resource() {
+DeviceContext2D::DeviceContext2D(int32_t width, int32_t height,
+                                 bool is_always_opaque) : Resource() {
   if (!EnsureFuncs())
     return;
   PassRefFromConstructor(device_context_2d_funcs->Create(
-      Module::Get()->pp_module(), width, height));
+      Module::Get()->pp_module(), width, height, is_always_opaque));
 }
 
 DeviceContext2D::~DeviceContext2D() {
@@ -47,22 +48,34 @@ void DeviceContext2D::swap(DeviceContext2D& other) {
   Resource::swap(other);
 }
 
-void DeviceContext2D::PaintImageData(const ImageData& image,
+bool DeviceContext2D::PaintImageData(const ImageData& image,
                                      int32_t x, int32_t y,
-                                     const PP_Rect* dirty,
-                                     uint32_t dirty_rect_count,
-                                     PPB_DeviceContext2D_PaintCallback callback,
-                                     void* callback_data) {
+                                     const PP_Rect* dirty) {
   if (!EnsureFuncs() || is_null())
-    return;
-  device_context_2d_funcs->PaintImageData(pp_resource(), image.pp_resource(),
-                                          x, y, dirty, dirty_rect_count,
-                                          callback, callback_data);
+    return false;
+  return device_context_2d_funcs->PaintImageData(pp_resource(),
+                                                 image.pp_resource(),
+                                                 x, y, dirty);
 }
 
-void DeviceContext2D::PaintImageData(const ImageData& image,
-                                     int32_t x, int32_t y) {
-  PaintImageData(image, x, y, NULL, 0, NULL, NULL);
+bool DeviceContext2D::Scroll(const PP_Rect* clip, int32_t dx, int32_t dy) {
+  if (!EnsureFuncs() || is_null())
+    return false;
+  return device_context_2d_funcs->Scroll(pp_resource(), clip, dx, dx);
+}
+
+bool DeviceContext2D::ReplaceContents(ImageData* image) {
+  if (!EnsureFuncs() || is_null())
+    return false;
+  return device_context_2d_funcs->ReplaceContents(pp_resource(),
+                                                  image->pp_resource());
+}
+
+bool DeviceContext2D::Flush(PPB_DeviceContext2D_FlushCallback callback,
+                            void* callback_data) {
+  if (!EnsureFuncs() || is_null())
+    return false;
+  return device_context_2d_funcs->Flush(pp_resource(), callback, callback_data);
 }
 
 }  // namespace pp
