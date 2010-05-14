@@ -35,18 +35,17 @@
       ],
     },
     {
-      'target_name': 'ppapi_example',
-      'dependencies': [
-      ],
+      'target_name': 'ppapi_cpp',
+      'type': 'static_library',
       'include_dirs': [
         '..',
       ],
-      'xcode_settings': {
-        'INFOPLIST_FILE': 'example/Info.plist',
+      'direct_dependent_settings': {
+        'include_dirs': [
+           '..',
+        ],
       },
       'sources': [
-        'example/example.cc',
-
         'cpp/device_context_2d.cc',
         'cpp/device_context_2d.h',
         'cpp/image_data.cc',
@@ -65,6 +64,23 @@
       ],
       'conditions': [
         ['OS=="win"', {
+          'msvs_guid': 'AD371A1D-3459-4E2D-8E8A-881F4B83B908',
+        }],
+      ],
+    },
+    {
+      'target_name': 'ppapi_example',
+      'dependencies': [
+        'ppapi_cpp'
+      ],
+      'xcode_settings': {
+        'INFOPLIST_FILE': 'example/Info.plist',
+      },
+      'sources': [
+        'example/example.cc',
+      ],
+      'conditions': [
+        ['OS=="win"', {
           'product_name': 'ppapi_example',
           'type': 'shared_library',
           'msvs_guid': 'EE00E36E-9E8C-4DFB-925E-FBE32CEDB91B',
@@ -74,11 +90,8 @@
           'run_as': {
             'action': [
               '<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)chrome<(EXECUTABLE_SUFFIX)',
-              '--no-sandbox',
-              '--internal-pepper',
-              '--enable-gpu-plugin',
-              '--load-plugin=$(TargetPath)',
-              'file://$(ProjectDir)test_page.html',
+              '--register-pepper-plugins=$(TargetPath);application/x-ppapi-example',
+              'file://$(ProjectDir)/example/example.html',
             ],
           },
         }],
