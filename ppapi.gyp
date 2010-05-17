@@ -66,6 +66,9 @@
         ['OS=="win"', {
           'msvs_guid': 'AD371A1D-3459-4E2D-8E8A-881F4B83B908',
         }],
+        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
+          'cflags': ['-fPIC'],
+        }],
       ],
     },
     {
