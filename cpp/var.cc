@@ -232,4 +232,3 @@ Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
 }
 
 }  // namespace pp
-

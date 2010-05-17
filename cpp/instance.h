@@ -31,6 +31,8 @@ class Instance {
   virtual Var GetInstanceObject();
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {}
 
+  Var GetWindowObject();
+  Var GetOwnerElementObject();
   bool BindGraphicsDeviceContext(const DeviceContext2D& context);
   //bool BindGraphicsDeviceContext(const DeviceContext3D& context);
 

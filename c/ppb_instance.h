@@ -9,10 +9,17 @@
 
 typedef struct _pp_Instance PP_Instance;
 typedef struct _pp_Resource PP_Resource;
+typedef struct _pp_Var PP_Var;
 
 #define PPB_INSTANCE_INTERFACE "PPB_Instance;1"
 
 typedef struct _ppb_Instance {
+  // Returns a reference to the DOM window containing this instance.
+  PP_Var (*GetWindowObject)(PP_Instance instance);
+
+  // Returns a reference to the DOM element containing this instance.
+  PP_Var (*GetOwnerElementObject)(PP_Instance instance);
+
   // Binds the given graphics device as the current drawing surface. The
   // contents of this device is what will be displayed in the plugin's area
   // on the web page. The device must be a 2D or a 3D device.

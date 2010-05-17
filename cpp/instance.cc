@@ -41,6 +41,20 @@ Var Instance::GetInstanceObject() {
   return Var();
 }
 
+Var Instance::GetWindowObject() {
+  if (!EnsureFuncs())
+    return Var();
+  return Var(Var::PassRef(),
+             ppb_instance_funcs->GetWindowObject(pp_instance()));
+}
+
+Var Instance::GetOwnerElementObject() {
+  if (!EnsureFuncs())
+    return Var();
+  return Var(Var::PassRef(),
+             ppb_instance_funcs->GetOwnerElementObject(pp_instance()));
+}
+
 bool Instance::BindGraphicsDeviceContext(const DeviceContext2D& context) {
   if (!EnsureFuncs())
     return false;

@@ -10,6 +10,7 @@
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/var.h"
 
 class MyInstance : public pp::Instance {
  public:
@@ -27,6 +28,7 @@ class MyInstance : public pp::Instance {
     switch (event.type) {
       case PP_Event_Type_MouseDown:
         printf("Mouse down\n");
+        SayHello();
         return true;
       case PP_Event_Type_MouseMove:
         printf("Mouse move\n");
@@ -79,6 +81,14 @@ class MyInstance : public pp::Instance {
   }
 
  private:
+  void SayHello() {
+    // alert(navigator.userAgent)
+    pp::Var window = GetWindowObject();
+    pp::Var navigator = window.GetProperty(pp::Var("navigator"));
+    pp::Var user_agent = navigator.GetProperty(pp::Var("userAgent"));
+    window.Call(pp::Var("alert"), 1, &user_agent, NULL);
+  }
+ 
   pp::DeviceContext2D device_context_;
 
   int width_;
