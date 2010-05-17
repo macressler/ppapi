@@ -42,29 +42,29 @@ typedef struct _pp_Var {
 } PP_Var;
 
 inline PP_Var PP_MakeVoid() {
-  PP_Var result = { PP_VarType_Void, 0};
+  PP_Var result = { PP_VarType_Void, {0} };
   return result;
 }
 
 inline PP_Var PP_MakeNull() {
-  PP_Var result = { PP_VarType_Null, 0 };
+  PP_Var result = { PP_VarType_Null, {0} };
   return result;
 }
 
 inline PP_Var PP_MakeBool(bool value) {
-  PP_Var result = { PP_VarType_Bool, 0 };
+  PP_Var result = { PP_VarType_Bool, {0} };
   result.value.as_bool = value;
   return result;
 }
 
 inline PP_Var PP_MakeInt32(int32_t value) {
-  PP_Var result = { PP_VarType_Int32, 0 };
+  PP_Var result = { PP_VarType_Int32, {0} };
   result.value.as_int = value;
   return result;
 }
 
 inline PP_Var PP_MakeDouble(double value) {
-  PP_Var result = { PP_VarType_Double, 0 };
+  PP_Var result = { PP_VarType_Double, {0} };
   result.value.as_double = value;
   return result;
 }
