@@ -96,8 +96,7 @@ static PPP_Instance instance_interface = {
 
 // Module ----------------------------------------------------------------------
 
-Module::Module() : get_browser_interface_(NULL), core_(NULL) {
-  pp_module_.id = 0;
+Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
   module_singleton = this;
 }
 

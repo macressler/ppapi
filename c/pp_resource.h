@@ -15,12 +15,10 @@
 // manage your reference count of a resource. The data will be automatically
 // destroyed when the internal reference count reaches 0.
 //
-// The "id" is an opaque handle assigned by the browser to the resource. It is
+// Value is an opaque handle assigned by the browser to the resource. It is
 // guaranteed never to be 0 for a valid resource, so a plugin can initialize
-// this ID to 0 to indicate a "NULL handle." Some interfaces may return a
-// resource with a 0 ID to indicate failure.
-typedef struct _pp_Resource {
-  int64_t id;
-} PP_Resource;
+// it to 0 to indicate a "NULL handle." Some interfaces may return a NULL
+// resource to indicate failure.
+typedef int64_t PP_Resource;
 
 #endif  // PPAPI_C_PP_RESOURCE_H_

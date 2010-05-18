@@ -11,18 +11,15 @@
 
 namespace pp {
 
-Resource::Resource() {
-  pp_resource_.id = 0;
+Resource::Resource() : pp_resource_(NULL) {
 }
 
-Resource::Resource(const Resource& other) {
-  pp_resource_ = other.pp_resource_;
+Resource::Resource(const Resource& other) : pp_resource_(other.pp_resource_) {
   if (!is_null())
     Module::Get()->core().AddRefResource(pp_resource_);
 }
 
-Resource::Resource(PassRef, PP_Resource resource) {
-  pp_resource_ = resource;
+Resource::Resource(PassRef, PP_Resource resource) : pp_resource_(resource) {
 }
 
 Resource::~Resource() {
@@ -41,7 +38,7 @@ void Resource::swap(Resource& other) {
 }
 
 void Resource::PassRefFromConstructor(PP_Resource resource) {
-  PP_DCHECK(!pp_resource_.id);
+  PP_DCHECK(!pp_resource_);
   pp_resource_ = resource;
 }
 

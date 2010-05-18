@@ -20,7 +20,7 @@ class Resource {
   void swap(Resource& other);
 
   // Returns true if the given resource is invalid or uninitialized.
-  bool is_null() const { return !pp_resource_.id; }
+  bool is_null() const { return !pp_resource_; }
 
   PP_Resource pp_resource() const { return pp_resource_; }
 

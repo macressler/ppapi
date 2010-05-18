@@ -5,11 +5,11 @@
 #ifndef PPAPI_C_PPB_IMAGE_DATA_H_
 #define PPAPI_C_PPB_IMAGE_DATA_H_
 
+#include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
 typedef struct _pp_ImageDataDesc PP_ImageDataDesc;
-typedef struct _pp_Module PP_Module;
 typedef struct _pp_Rect PP_Rect;
 typedef struct _pp_Var PP_Var;
 
@@ -32,6 +32,12 @@ typedef struct _pp_ImageDataDesc {
 #define PPB_IMAGEDATA_INTERFACE "PPB_ImageData;1"
 
 typedef struct _ppb_ImageData {
+  // Returns the browser's preferred format for image data. This format will be
+  // the format is uses internally for painting. Other formats may require
+  // internal conversions to paint or may have additional restrictions depending
+  // on the function.
+  PP_ImageDataFormat (*GetNativeImageDataFormat)();
+
   // Allocates an image data resource with the given format and size. The
   // return value will have a nonzero ID on success, or zero on failure.
   // Failure means the module handle, image size, or format was invalid.

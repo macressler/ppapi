@@ -80,4 +80,18 @@ uint32_t* ImageData::GetAddr32(int x, int y) {
       &static_cast<char*>(data())[y * stride() + x * 4]);
 }
 
+// static
+PP_ImageDataFormat ImageData::GetNativeImageDataFormat() {
+  if (!EnsureFuncs())
+    return PP_IMAGEDATAFORMAT_BGRA_PREMUL;  // Default to something on failure.
+  return image_data_funcs->GetNativeImageDataFormat();
+}
+
+// static
+PP_ImageDataFormat ImageData::GetNativeImageDataFormat() {
+  if (!EnsureFuncs())
+    return PP_IMAGEDATAFORMAT_BGRA_PREMUL;  // Default to something on failure.
+  return image_data_funcs->GetNativeImageDataFormat();
+}
+
 }  // namespace pp

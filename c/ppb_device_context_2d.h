@@ -5,10 +5,10 @@
 #ifndef PPAPI_C_PPB_DEVICE_CONTEXT_2D_H_
 #define PPAPI_C_PPB_DEVICE_CONTEXT_2D_H_
 
+#include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-typedef struct _pp_Module PP_Module;
 typedef struct _pp_Rect PP_Rect;
 
 // Callback function type for PaintImageData.
@@ -75,7 +75,9 @@ typedef struct _ppb_DeviceContext2D {
   // store. This function replaces the device context's backing store with the
   // given image, avoiding the copy.
   //
-  // The new image must be the exact same size as this device context.
+  // The new image must be the exact same size as this device context and
+  // must be in the browser's native bitmap format (use
+  // PPB_ImageData.GetNativeImageDataFormat to retrieve this).
   //
   // THE NEW IMAGE WILL NOT BE PAINTED UNTIL YOU CALL FLUSH.
   //

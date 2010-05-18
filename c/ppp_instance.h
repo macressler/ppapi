@@ -5,10 +5,10 @@
 #ifndef PPAPI_C_PPP_INSTANCE_H_
 #define PPAPI_C_PPP_INSTANCE_H_
 
+#include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
 
 typedef struct _pp_Event PP_Event;
-typedef struct _pp_Instance PP_Instance;
 typedef struct _pp_Var PP_Var;
 
 #define PPP_INSTANCE_INTERFACE "PPP_Instance;1"

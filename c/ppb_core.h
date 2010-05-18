@@ -5,9 +5,9 @@
 #ifndef PPAPI_C_PPB_CORE_H_
 #define PPAPI_C_PPB_CORE_H_
 
+#include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
-#include "ppapi/c/pp_resource.h"
 
 #define PPB_CORE_INTERFACE "PPB_Core;1"
 

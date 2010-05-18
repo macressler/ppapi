@@ -5,6 +5,7 @@
 #ifndef PPAPI_C_PPP_H_
 #define PPAPI_C_PPP_H_
 
+#include "ppapi/c/pp_module.h"
 #include "ppapi/c/ppb.h"
 
 #if __GNUC__ >= 4
@@ -12,8 +13,6 @@
 #elif defined(_MSC_VER)
 #define PP_EXPORT __declspec(dllexport)
 #endif
-
-typedef struct _pp_Module PP_Module;
 
 // We don't want name mangling for these external functions.
 extern "C" {

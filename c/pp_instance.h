@@ -12,10 +12,8 @@
 // type on a page that will all be in the same module.
 //
 // The identifier is an opaque handle assigned by the browser to the plugin. It
-// is guaranteed never to be 0, so a plugin can initialize this ID to 0 to
+// is guaranteed never to be 0, so a plugin can initialize it to 0 to
 // indicate a "NULL handle."
-typedef struct _pp_Instance {
-  int64_t id;
-} PP_Instance;
+typedef int64_t PP_Instance;
 
 #endif  // PPAPI_C_PP_INSTANCE_H_

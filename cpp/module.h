@@ -71,13 +71,7 @@ class Module {
   Module& operator=(const Module&);
 
   // Instance tracking.
-  class CompareInstance {
-   public:
-    bool operator()(PP_Instance a, PP_Instance b) const {
-      return a.id < b.id;
-    }
-  };
-  typedef std::map<PP_Instance, Instance*, CompareInstance> InstanceMap;
+  typedef std::map<PP_Instance, Instance*> InstanceMap;
   InstanceMap current_instances_;
 
   PP_Module pp_module_;
