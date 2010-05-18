@@ -34,10 +34,6 @@ class ImageData : public Resource {
   // guarantees no extra conversions will occur when painting.
   static PP_ImageDataFormat GetNativeImageDataFormat();
 
-  // Returns the browser's preferred format for images. Using this format
-  // guarantees no extra conversions will occur when painting.
-  static PP_ImageDataFormat GetNativeImageDataFormat();
-
   PP_ImageDataFormat format() const { return desc_.format; }
 
   int32_t width() const { return desc_.width; }

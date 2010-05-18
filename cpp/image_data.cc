@@ -87,11 +87,4 @@ PP_ImageDataFormat ImageData::GetNativeImageDataFormat() {
   return image_data_funcs->GetNativeImageDataFormat();
 }
 
-// static
-PP_ImageDataFormat ImageData::GetNativeImageDataFormat() {
-  if (!EnsureFuncs())
-    return PP_IMAGEDATAFORMAT_BGRA_PREMUL;  // Default to something on failure.
-  return image_data_funcs->GetNativeImageDataFormat();
-}
-
 }  // namespace pp
