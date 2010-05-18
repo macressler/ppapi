@@ -7,8 +7,7 @@
 
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
-
-typedef struct _pp_Resource PP_Resource;
+#include "ppapi/c/pp_resource.h"
 
 #define PPB_CORE_INTERFACE "PPB_Core;1"
 

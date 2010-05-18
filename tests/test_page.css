@@ -1,0 +1,34 @@
+body {
+  font-family:Verdana,Arial,sans-serif;
+}
+
+#console {
+  border:1px solid black;
+  padding:4px;
+  background-color:#EEE;
+  margin-left:10%;
+  margin-right:10%;
+}
+
+.test_line {
+}
+
+.test_name {
+}
+
+.pass {
+  font-weight:bold;
+  color:#080;
+}
+
+.fail {
+  font-weight:bold;
+  color:#800;
+}
+
+.err_msg {
+}
+
+.load_msg {
+  font-style:italic;
+}

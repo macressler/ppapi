@@ -5,11 +5,10 @@
 #ifndef PPAPI_C_PPB_INSTANCE_H_
 #define PPAPI_C_PPB_INSTANCE_H_
 
+#include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
-
-typedef struct _pp_Instance PP_Instance;
-typedef struct _pp_Resource PP_Resource;
-typedef struct _pp_Var PP_Var;
+#include "ppapi/c/pp_resource.h"
+#include "ppapi/c/pp_var.h"
 
 #define PPB_INSTANCE_INTERFACE "PPB_Instance;1"
 

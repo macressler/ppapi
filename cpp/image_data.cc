@@ -25,21 +25,24 @@ static bool EnsureFuncs() {
   return true;
 }
 
-ImageData::ImageData() {
+ImageData::ImageData() : data_(NULL) {
   memset(&desc_, 0, sizeof(PP_ImageDataDesc));
 }
 
-ImageData::ImageData(const ImageData& other) : Resource(other) {
-  desc_ = other.desc_;
+ImageData::ImageData(const ImageData& other)
+    : Resource(other),
+      desc_(other.desc_),
+      data_(other.data_) {
 }
 
 ImageData::ImageData(PP_ImageDataFormat format,
                      int32_t width, int32_t height,
-                     bool init_to_zero) {
-  if (!EnsureFuncs()) {
-    *this = ImageData();
+                     bool init_to_zero)
+    : data_(NULL) {
+  memset(&desc_, 0, sizeof(PP_ImageDataDesc));
+
+  if (!EnsureFuncs())
     return;
-  }
 
   PassRefFromConstructor(image_data_funcs->Create(Module::Get()->pp_module(),
                                                   format, width, height,
@@ -63,6 +66,18 @@ ImageData& ImageData::operator=(const ImageData& other) {
 void ImageData::swap(ImageData& other) {
   Resource::swap(other);
   std::swap(desc_, other.desc_);
+}
+
+const uint32_t* ImageData::GetAddr32(int x, int y) const {
+  // Prefer evil const casts rather than evil code duplication.
+  return const_cast<ImageData*>(this)->GetAddr32(x, y);
+}
+
+uint32_t* ImageData::GetAddr32(int x, int y) {
+  // If we add more image format types that aren't 32-bit, we'd want to check
+  // here and fail.
+  return reinterpret_cast<uint32_t*>(
+      &static_cast<char*>(data())[y * stride() + x * 4]);
 }
 
 }  // namespace pp

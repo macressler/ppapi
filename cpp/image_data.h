@@ -39,6 +39,11 @@ class ImageData : public Resource {
 
   void* data() const { return data_; }
 
+  // Helper function to retrieve the address of the given pixel for 32-bit
+  // pixel formats.
+  const uint32_t* GetAddr32(int x, int y) const;
+  uint32_t* GetAddr32(int x, int y);
+
  private:
   PP_ImageDataDesc desc_;
   void* data_;

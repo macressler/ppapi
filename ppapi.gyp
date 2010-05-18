@@ -135,5 +135,39 @@
       #  }],
       #],
     },
+    { # Test file common for all tests.
+      'target_name': 'ppapi_test',
+      'type': 'static_library',
+      'dependencies': [
+        'ppapi_cpp'
+      ],
+      'sources': [
+        'tests/test_instance.cc',
+        'tests/test_instance.h',
+      ],
+    },
+    {
+      'target_name': 'test_image_data',
+      'sources': [
+        'tests/image_data/test_image_data.cc',
+      ],
+      'include_dirs': [
+        '..',
+      ],
+      'dependencies': [
+        'ppapi_test'
+      ],
+      'conditions': [
+        ['OS=="mac"', {
+          'type': 'loadable_module',
+          'mac_bundle': 1,
+          'product_name': 'test_image_data',
+          'product_extension': 'plugin',
+        }],
+        ['OS!="mac"', {
+          'type': 'shared_library',
+        }],
+      ],
+    },
   ],
 }
