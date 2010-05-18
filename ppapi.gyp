@@ -8,7 +8,7 @@
     {
       'target_name': 'ppapi_c',
       'type': 'none',
-      'direct_dependent_settings': {
+      'all_dependent_settings': {
         'include_dirs': [
            '..',
         ],
@@ -37,14 +37,12 @@
     {
       'target_name': 'ppapi_cpp',
       'type': 'static_library',
+      'dependencies': [
+        'ppapi_c'
+      ],
       'include_dirs': [
         '..',
       ],
-      'direct_dependent_settings': {
-        'include_dirs': [
-           '..',
-        ],
-      },
       'sources': [
         'cpp/device_context_2d.cc',
         'cpp/device_context_2d.h',
@@ -135,39 +133,41 @@
       #  }],
       #],
     },
-#    { # Test file common for all tests.
-#      'target_name': 'ppapi_test',
-#      'type': 'static_library',
-#      'dependencies': [
-#        'ppapi_cpp'
-#      ],
-#      'sources': [
-#        'tests/test_instance.cc',
-#        'tests/test_instance.h',
-#      ],
-#    },
-#    {
-#      'target_name': 'test_image_data',
-#      'sources': [
-#        'tests/image_data/test_image_data.cc',
-#      ],
-#      'include_dirs': [
-#        '..',
-#      ],
-#      'dependencies': [
-#        'ppapi_test'
-#      ],
-#      'conditions': [
-#        ['OS=="mac"', {
-#          'type': 'loadable_module',
-#          'mac_bundle': 1,
-#          'product_name': 'test_image_data',
-#          'product_extension': 'plugin',
-#        }],
-#        ['OS!="mac"', {
-#          'type': 'shared_library',
-#        }],
-#      ],
-#    },
+    { # Test file common for all tests.
+      'target_name': 'ppapi_test',
+      'type': 'static_library',
+      'dependencies': [
+        'ppapi_cpp'
+      ],
+      'sources': [
+        'tests/test_instance.cc',
+        'tests/test_instance.h',
+      ],
+    },
+    {
+      'target_name': 'test_image_data',
+      'sources': [
+        'tests/image_data/test_image_data.cc',
+      ],
+      'dependencies': [
+        'ppapi_test'
+      ],
+      'conditions': [
+        ['OS=="mac"', {
+          'type': 'loadable_module',
+          'mac_bundle': 1,
+          'product_name': 'test_image_data',
+          'product_extension': 'plugin',
+        }],
+        ['OS=="win"', {
+          'type': 'shared_library',
+        }],
+        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
+          # Shared libraries need -fPIC on x86-64
+          'type': 'shared_library',
+          'cflags': ['-fPIC'],
+        }]
+      ],
+    },
   ],
 }
