@@ -143,6 +143,11 @@
         'tests/test_instance.cc',
         'tests/test_instance.h',
       ],
+      'conditions': [
+        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
+          'cflags': ['-fPIC'],
+        }],
+      ],
     },
     {
       'target_name': 'test_image_data',
