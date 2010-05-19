@@ -152,7 +152,7 @@
     {
       'target_name': 'test_image_data',
       'sources': [
-        'tests/image_data/test_image_data.cc',
+        'tests/test_image_data/test_image_data.cc',
       ],
       'dependencies': [
         'ppapi_test'
