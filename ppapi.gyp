@@ -133,35 +133,26 @@
       #  }],
       #],
     },
-    { # Test file common for all tests.
-      'target_name': 'ppapi_test',
-      'type': 'static_library',
-      'dependencies': [
-        'ppapi_cpp'
-      ],
+    {
+      'target_name': 'ppapi_tests',
       'sources': [
+        # Common test files.
+        'tests/test_case.h',
         'tests/test_instance.cc',
         'tests/test_instance.h',
-      ],
-      'conditions': [
-        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
-          'cflags': ['-fPIC'],
-        }],
-      ],
-    },
-    {
-      'target_name': 'test_image_data',
-      'sources': [
-        'tests/test_image_data/test_image_data.cc',
+
+        # Test cases.
+        'tests/test_image_data.cc',
+        'tests/test_image_data.h',
       ],
       'dependencies': [
-        'ppapi_test'
+        'ppapi_cpp'
       ],
       'conditions': [
         ['OS=="mac"', {
           'type': 'loadable_module',
           'mac_bundle': 1,
-          'product_name': 'test_image_data',
+          'product_name': 'ppapi_tests',
           'product_extension': 'plugin',
         }],
         ['OS=="win"', {
