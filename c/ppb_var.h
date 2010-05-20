@@ -52,6 +52,10 @@ typedef struct _ppb_Var {
                       PP_Var name,
                       PP_Var* exception);
 
+  bool (*HasMethod)(PP_Var object,
+                    PP_Var name,
+                    PP_Var* exception);
+
   PP_Var (*GetProperty)(PP_Var object,
                         PP_Var name,
                         PP_Var* exception);
@@ -96,6 +100,13 @@ typedef struct _ppb_Var {
                       int32_t argc,
                       PP_Var* argv,
                       PP_Var* exception);
+
+  // If the object is an instance of the given class, then this method returns
+  // true and sets *object_data to the value passed to CreateObject provided
+  // object_data is non-NULL.  Otherwise, this method returns false.
+  bool (*IsInstanceOf)(PP_Var var,
+                       const PPP_Class* object_class,
+                       void** object_data);
 
   // Creates an object that the plugin implements. The plugin supplies a
   // pointer to the class interface it implements for that object, and its

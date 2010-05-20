@@ -10,9 +10,11 @@
 
 #include "ppapi/c/pp_var.h"
 
+typedef struct _ppp_Class PPP_Class;
+
 namespace pp {
 
-class PluginClass;
+class ScriptableObject;
 
 class Var {
  public:
@@ -33,7 +35,7 @@ class Var {
     needs_release_ = true;
   }
 
-  // This magic constructor is used when we've giveen a PP_Var as an input
+  // This magic constructor is used when we've given a PP_Var as an input
   // argument from somewhere and that reference is managing the reference
   // count for us. The object will not be AddRef'ed or Release'd by this
   // class instance..
@@ -44,7 +46,7 @@ class Var {
   }
 
   // Takes ownership of the given pointer.
-  Var(PluginClass* plugin_class);
+  Var(ScriptableObject* object);
 
   Var(const Var& other);
 
@@ -114,7 +116,8 @@ class Var {
   // where the caller expects the return value to be AddRef'ed for it.
   PP_Var Detach() {
     PP_Var ret = var_;
-    *this = Var();
+    var_ = PP_MakeVoid();
+    needs_release_ = false;
     return ret;
   }
 

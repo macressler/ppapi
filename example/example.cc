@@ -10,7 +10,23 @@
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/scriptable_object.h"
 #include "ppapi/cpp/var.h"
+
+class MyScriptableObject : public pp::ScriptableObject {
+ public:
+  virtual bool HasMethod(const pp::Var& method, pp::Var* exception) {
+    return method.AsString() == "toString";
+  }
+ 
+  virtual pp::Var Call(const pp::Var& method,
+                       const std::vector<pp::Var>& args,
+                       pp::Var* exception) {
+    if (method.AsString() == "toString")
+      return pp::Var("hello world");
+    return pp::Var();
+  }
+};
 
 class MyInstance : public pp::Instance {
  public:
@@ -82,11 +98,22 @@ class MyInstance : public pp::Instance {
 
  private:
   void SayHello() {
-    // alert(navigator.userAgent)
     pp::Var window = GetWindowObject();
-    pp::Var navigator = window.GetProperty(pp::Var("navigator"));
-    pp::Var user_agent = navigator.GetProperty(pp::Var("userAgent"));
-    window.Call(pp::Var("alert"), 1, &user_agent, NULL);
+    
+    pp::Var doc = window.GetProperty("document");
+    pp::Var body = doc.GetProperty("body");
+
+    pp::Var obj = pp::Var(new MyScriptableObject());
+    
+    // Our object should have its toString method called.
+    pp::Var node = doc.Call("createTextNode", obj);
+    body.Call("appendChild", node);
+
+    // body.appendChild(body) should throw an exception
+    pp::Var exception;
+    body.Call("appendChild", body, &exception);
+    if (!exception.is_void())
+      window.Call(pp::Var("alert"), exception);
   }
  
   pp::DeviceContext2D device_context_;

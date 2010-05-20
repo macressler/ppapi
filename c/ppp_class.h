@@ -17,7 +17,12 @@ typedef struct _pp_Var PP_Var;
 // being implemented.
 typedef struct _ppp_Class {
   bool (*HasProperty)(void* object,
-                      PP_Var name);
+                      PP_Var name,
+                      PP_Var* exception);
+
+  bool (*HasMethod)(void* object,
+                    PP_Var name,
+                    PP_Var* exception);
 
   PP_Var (*GetProperty)(void* object,
                         PP_Var name,

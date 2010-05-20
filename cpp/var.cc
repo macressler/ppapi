@@ -12,6 +12,7 @@
 #include "ppapi/c/ppb_var.h"
 #include "ppapi/cpp/logging.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/scriptable_object.h"
 
 namespace pp {
 
@@ -67,6 +68,12 @@ Var::Var(const char* str) {
 Var::Var(const std::string& str) {
   EnsureInit();
   var_ = ppb_var->VarFromUtf8(str.c_str(), str.size());
+  needs_release_ = true;
+}
+
+Var::Var(ScriptableObject* object) {
+  EnsureInit();
+  var_ = ppb_var->CreateObject(object->GetClass(), object);
   needs_release_ = true;
 }
 

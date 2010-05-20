@@ -37,9 +37,16 @@ void ArgListToVector(uint32_t argc, PP_Var* argv, std::vector<Var>* output) {
     output->push_back(Var(Var::DontManage(), argv[i]));
 }
 
-bool HasProperty(void* object, PP_Var name) {
+bool HasProperty(void* object, PP_Var name, PP_Var* exception) {
+  ExceptionConverter e(exception);
   return reinterpret_cast<ScriptableObject*>(object)->HasProperty(
-      Var(Var::DontManage(), name));
+      Var(Var::DontManage(), name), e.Get());
+}
+
+bool HasMethod(void* object, PP_Var name, PP_Var* exception) {
+  ExceptionConverter e(exception);
+  return reinterpret_cast<ScriptableObject*>(object)->HasMethod(
+      Var(Var::DontManage(), name), e.Get());
 }
 
 PP_Var GetProperty(void* object,
@@ -108,6 +115,7 @@ void Deallocate(void* object) {
 
 PPP_Class plugin_class = {
   &HasProperty,
+  &HasMethod,
   &GetProperty,
   &GetAllProperties,
   &SetProperty,
@@ -119,12 +127,15 @@ PPP_Class plugin_class = {
 
 }  // namespace
 
-bool ScriptableObject::HasProperty(const Var& name) {
+bool ScriptableObject::HasProperty(const Var& name, Var* exception) {
   return false;
 }
 
-Var ScriptableObject::GetProperty(const Var& name,
-                                  Var* exception) {
+bool ScriptableObject::HasMethod(const Var& name, Var* exception) {
+  return false;
+}
+
+Var ScriptableObject::GetProperty(const Var& name, Var* exception) {
   *exception = Var("Property does not exist on ScriptableObject");
   return Var();
 }
@@ -155,6 +166,11 @@ Var ScriptableObject::Construct(const std::vector<Var>& args,
                                 Var* exception) {
   *exception = Var("Constuct method does not exist in ScriptableObject");
   return Var();
+}
+
+// static
+const PPP_Class* ScriptableObject::GetClass() {
+  return &plugin_class;
 }
 
 }  // namespace pp

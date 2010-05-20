@@ -7,6 +7,8 @@
 
 #include <vector>
 
+typedef struct _ppp_Class PPP_Class;
+
 namespace pp {
 
 class Var;
@@ -17,7 +19,10 @@ class ScriptableObject {
   virtual ~ScriptableObject() {}
 
   // The default implementation returns false.
-  virtual bool HasProperty(const Var& name);
+  virtual bool HasProperty(const Var& name, Var* exception);
+
+  // The default implementation returns false.
+  virtual bool HasMethod(const Var& name, Var* exception);
 
   // The default implementation sets an exception that the property doesn't
   // exist.
@@ -53,6 +58,9 @@ class ScriptableObject {
                         Var* exception);
 
  private:
+  friend class Var;
+  static const PPP_Class* GetClass();
+
   // Unimplemented, copy and assigmnent is not allowed.
   ScriptableObject(const ScriptableObject& other);
   ScriptableObject& operator=(const ScriptableObject& other);
