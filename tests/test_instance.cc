@@ -4,6 +4,8 @@
 
 #include "ppapi/tests/test_instance.h"
 
+#include <string.h>
+
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
 #include "ppapi/tests/test_image_data.h"
