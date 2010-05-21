@@ -135,6 +135,7 @@
     },
     {
       'target_name': 'ppapi_tests',
+      'type': 'loadable_module',
       'sources': [
         # Common test files.
         'tests/test_case.h',
@@ -150,17 +151,14 @@
       ],
       'conditions': [
         ['OS=="mac"', {
-          'type': 'loadable_module',
           'mac_bundle': 1,
           'product_name': 'ppapi_tests',
           'product_extension': 'plugin',
         }],
         ['OS=="win"', {
-          'type': 'shared_library',
         }],
         ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
           # Shared libraries need -fPIC on x86-64
-          'type': 'shared_library',
           'cflags': ['-fPIC'],
         }]
       ],
