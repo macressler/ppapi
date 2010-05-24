@@ -28,9 +28,10 @@ typedef struct _ppp_Class {
                         PP_Var name,
                         PP_Var* exception);
 
-  void (*GetAllProperties)(void* object,
-                           uint32_t* property_count,
-                           PP_Var** properties);
+  void (*GetAllPropertyNames)(void* object,
+                              uint32_t* property_count,
+                              PP_Var** properties,
+                              PP_Var* exception);
 
   void (*SetProperty)(void* object,
                       PP_Var name,

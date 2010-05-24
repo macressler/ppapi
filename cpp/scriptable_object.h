@@ -29,7 +29,8 @@ class ScriptableObject {
   virtual Var GetProperty(const Var& name, Var* exception);
 
   // The default implementation returns no properties.
-  virtual void GetAllProperties(std::vector<Var>* properties);
+  virtual void GetAllPropertyNames(std::vector<Var>* properties,
+                                   Var* exception);
 
   // The default implementation sets an exception that the property can not be
   // set.

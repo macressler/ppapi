@@ -18,6 +18,23 @@ class MyScriptableObject : public pp::ScriptableObject {
   virtual bool HasMethod(const pp::Var& method, pp::Var* exception) {
     return method.AsString() == "toString";
   }
+  
+  virtual bool HasProperty(const pp::Var& name, pp::Var* exception) {
+    if (name.is_string() && name.AsString() == "blah")
+      return true;
+    return false;
+  }
+
+  virtual pp::Var GetProperty(const pp::Var& name, pp::Var* exception) {
+    if (name.is_string() && name.AsString() == "blah")
+      return new MyScriptableObject();
+    return pp::Var();
+  }
+  
+  virtual void GetAllPropertyNames(std::vector<pp::Var>* names,
+                                   pp::Var* exception) {
+    names->push_back("blah");
+  }
  
   virtual pp::Var Call(const pp::Var& method,
                        const std::vector<pp::Var>& args,
@@ -55,6 +72,10 @@ class MyInstance : public pp::Instance {
       default:
         return false;
     }
+  }
+  
+  virtual pp::Var GetInstanceObject() {
+    return new MyScriptableObject();
   }
 
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
@@ -97,25 +118,43 @@ class MyInstance : public pp::Instance {
   }
 
  private:
+  void Log(const pp::Var& var) {
+    pp::Var doc = GetWindowObject().GetProperty("document");
+    if (console_.is_void()) {
+      pp::Var body = doc.GetProperty("body");
+      console_ = doc.Call("createElement", "pre");
+      console_.GetProperty("style").SetProperty("backgroundColor", "lightgray");
+      body.Call("appendChild", console_);
+    }
+    console_.Call("appendChild", doc.Call("createTextNode", var));
+    console_.Call("appendChild", doc.Call("createTextNode", "\n"));    
+  }
+ 
   void SayHello() {
     pp::Var window = GetWindowObject();
-    
     pp::Var doc = window.GetProperty("document");
     pp::Var body = doc.GetProperty("body");
 
-    pp::Var obj = pp::Var(new MyScriptableObject());
-    
+    pp::Var obj(new MyScriptableObject());
+
     // Our object should have its toString method called.
-    pp::Var node = doc.Call("createTextNode", obj);
-    body.Call("appendChild", node);
+    Log("Testing MyScriptableObject::toString():");
+    Log(obj);
 
     // body.appendChild(body) should throw an exception
+    Log("\nCalling body.appendChild(body):");
     pp::Var exception;
     body.Call("appendChild", body, &exception);
-    if (!exception.is_void())
-      window.Call(pp::Var("alert"), exception);
+    Log(exception);
+
+    Log("\nEnumeration of window properties:");
+    std::vector<pp::Var> props;
+    window.GetAllPropertyNames(&props);
+    for (size_t i = 0; i < props.size(); ++i)
+      Log(props[i]);
   }
- 
+
+  pp::Var console_; 
   pp::DeviceContext2D device_context_;
 
   int width_;

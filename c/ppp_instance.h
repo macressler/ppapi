@@ -43,15 +43,15 @@ typedef struct _ppp_Instance {
   // event propogation should continue.
   bool (*HandleEvent)(PP_Instance instance, const PP_Event* event);
 
-  // Returns a Var representing the plugin object to the web page. Normally
-  // this will be a PluginClass object that exposes certain methods the page
+  // Returns a Var representing the instance object to the web page. Normally
+  // this will be a PPP_Class object that exposes certain methods the page
   // may want to call.
   //
   // On Failure, the returned var should be a "void" variant.
   //
   // The returned PP_Var should have a reference added for the caller, which
   // will be responsible for Release()ing that reference.
-  PP_Var (*GetPluginObject)(PP_Instance instance);
+  PP_Var (*GetInstanceObject)(PP_Instance instance);
 
   // Called when the position, the size, or the clip rect has changed.
   //

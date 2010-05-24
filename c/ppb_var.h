@@ -138,6 +138,3 @@ typedef struct _ppb_Var {
 } PPB_Var;
 
 #endif  // PPAPI_C_PPB_VAR_H_
-
-
-

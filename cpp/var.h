@@ -94,7 +94,7 @@ class Var {
 
   bool HasProperty(const Var& name, Var* exception = NULL) const;
   Var GetProperty(const Var& name, Var* exception = NULL) const;
-  void GetAllPropertyNames(std::vector<PP_Var>* properties,
+  void GetAllPropertyNames(std::vector<Var>* properties,
                            Var* exception = NULL) const;
   void SetProperty(const Var& name, const Var& value, Var* exception = NULL);
   void RemoveProperty(const Var& name, Var* exception = NULL);

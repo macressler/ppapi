@@ -5,6 +5,7 @@
 #include "ppapi/cpp/scriptable_object.h"
 
 #include "ppapi/c/ppp_class.h"
+#include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
@@ -39,13 +40,13 @@ void ArgListToVector(uint32_t argc, PP_Var* argv, std::vector<Var>* output) {
 
 bool HasProperty(void* object, PP_Var name, PP_Var* exception) {
   ExceptionConverter e(exception);
-  return reinterpret_cast<ScriptableObject*>(object)->HasProperty(
+  return static_cast<ScriptableObject*>(object)->HasProperty(
       Var(Var::DontManage(), name), e.Get());
 }
 
 bool HasMethod(void* object, PP_Var name, PP_Var* exception) {
   ExceptionConverter e(exception);
-  return reinterpret_cast<ScriptableObject*>(object)->HasMethod(
+  return static_cast<ScriptableObject*>(object)->HasMethod(
       Var(Var::DontManage(), name), e.Get());
 }
 
@@ -53,18 +54,24 @@ PP_Var GetProperty(void* object,
                    PP_Var name,
                    PP_Var* exception) {
   ExceptionConverter e(exception);
-  return reinterpret_cast<ScriptableObject*>(object)->GetProperty(
+  return static_cast<ScriptableObject*>(object)->GetProperty(
       Var(Var::DontManage(), name), e.Get()).Detach();
 }
 
-void GetAllProperties(void* object,
-                      uint32_t* property_count,
-                      PP_Var** properties) {
+void GetAllPropertyNames(void* object,
+                         uint32_t* property_count,
+                         PP_Var** properties,
+                         PP_Var* exception) {
+  ExceptionConverter e(exception);
   std::vector<Var> props;
-  reinterpret_cast<ScriptableObject*>(object)->GetAllProperties(&props);
-
-  // FIXME(brettw) convert to an array type.
-  // PP_Var* 
+  static_cast<ScriptableObject*>(object)->GetAllPropertyNames(&props, e.Get());
+  if (props.empty())
+    return;
+  *property_count = props.size();
+  *properties = static_cast<PP_Var*>(
+      Module::Get()->core().MemAlloc(sizeof(PP_Var) * props.size()));
+  for (size_t i = 0; i < props.size(); ++i)
+    (*properties)[i] = props[i].Detach();
 }
 
 void SetProperty(void* object,
@@ -72,7 +79,7 @@ void SetProperty(void* object,
                  PP_Var value,
                  PP_Var* exception) {
   ExceptionConverter e(exception);
-  reinterpret_cast<ScriptableObject*>(object)->SetProperty(
+  static_cast<ScriptableObject*>(object)->SetProperty(
       Var(Var::DontManage(), name), Var(Var::DontManage(), value), e.Get());
 }
 
@@ -80,7 +87,7 @@ void RemoveProperty(void* object,
                     PP_Var name,
                     PP_Var* exception) {
   ExceptionConverter e(exception);
-  reinterpret_cast<ScriptableObject*>(object)->RemoveProperty(
+  static_cast<ScriptableObject*>(object)->RemoveProperty(
       Var(Var::DontManage(), name), e.Get());
 }
 
@@ -93,7 +100,7 @@ PP_Var Call(void* object,
 
   std::vector<Var> args;
   ArgListToVector(argc, argv, &args);
-  return reinterpret_cast<ScriptableObject*>(object)->Call(
+  return static_cast<ScriptableObject*>(object)->Call(
       Var(Var::DontManage(), method_name), args, e.Get()).Detach();
 }
 
@@ -105,19 +112,19 @@ PP_Var Construct(void* object,
 
   std::vector<Var> args;
   ArgListToVector(argc, argv, &args);
-  return reinterpret_cast<ScriptableObject*>(object)->Construct(
+  return static_cast<ScriptableObject*>(object)->Construct(
       args, e.Get()).Detach();
 }
 
 void Deallocate(void* object) {
-  delete reinterpret_cast<ScriptableObject*>(object);
+  delete static_cast<ScriptableObject*>(object);
 }
 
 PPP_Class plugin_class = {
   &HasProperty,
   &HasMethod,
   &GetProperty,
-  &GetAllProperties,
+  &GetAllPropertyNames,
   &SetProperty,
   &RemoveProperty,
   &Call,
@@ -140,7 +147,8 @@ Var ScriptableObject::GetProperty(const Var& name, Var* exception) {
   return Var();
 }
 
-void ScriptableObject::GetAllProperties(std::vector<Var>* properties) {
+void ScriptableObject::GetAllPropertyNames(std::vector<Var>* properties,
+                                           Var* exception) {
 }
 
 void ScriptableObject::SetProperty(const Var& name,

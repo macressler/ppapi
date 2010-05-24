@@ -158,11 +158,21 @@ Var Var::GetProperty(const Var& name, Var* exception) const {
                                              OutException(exception)));
 }
 
-void Var::GetAllPropertyNames(std::vector<PP_Var>* properties,
+void Var::GetAllPropertyNames(std::vector<Var>* properties,
                               Var* exception) const {
   EnsureInit();
-
-  // TODO(brettw) implement this (needs memory management).
+  PP_Var* props = NULL;
+  uint32_t prop_count = 0;
+  ppb_var->GetAllPropertyNames(var_, &prop_count, &props,
+                               OutException(exception));
+  if (!prop_count)
+    return;
+  properties->resize(prop_count);
+  for (uint32_t i = 0; i < prop_count; ++i) {
+    Var temp(PassRef(), props[i]);
+    (*properties)[i].swap(temp);
+  }
+  Module::Get()->core().MemFree(props);
 }
 
 void Var::SetProperty(const Var& name, const Var& value, Var* exception) {
