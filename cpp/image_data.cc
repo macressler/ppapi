@@ -66,6 +66,7 @@ ImageData& ImageData::operator=(const ImageData& other) {
 void ImageData::swap(ImageData& other) {
   Resource::swap(other);
   std::swap(desc_, other.desc_);
+  std::swap(data_, other.data_);
 }
 
 const uint32_t* ImageData::GetAddr32(int x, int y) const {

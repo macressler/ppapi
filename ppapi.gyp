@@ -143,6 +143,8 @@
         'tests/test_instance.h',
 
         # Test cases.
+        'tests/test_device_context_2d.cc',
+        'tests/test_device_context_2d.h',
         'tests/test_image_data.cc',
         'tests/test_image_data.h',
       ],

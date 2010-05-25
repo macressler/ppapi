@@ -32,6 +32,9 @@ class DeviceContext2D : public Resource {
 
   DeviceContext2D& operator=(const DeviceContext2D& other);
   void swap(DeviceContext2D& other);
+  
+  int32_t width() const { return width_; }
+  int32_t height() const { return height_; }
 
   // Enqueues paint or scroll commands. THIS COMMAND HAS NO EFFECT UNTIL YOU
   // CALL Flush().
@@ -43,9 +46,10 @@ class DeviceContext2D : public Resource {
   bool Scroll(const PP_Rect* clip, int32_t dx, int32_t dy);
 
   // The browser will take ownership of the given image data. The object
-  // pointed to by the parameter will be cleared. Any other ImageData objects
-  // referring to the same resource will no longer be usable. THIS COMMAND HAS
-  // NO EFFECT UNTIL YOU CALL Flush().
+  // pointed to by the parameter will be cleared. To avoid horrible artifacts,
+  // you should also not use any other ImageData objects referring to the same
+  // resource will no longer be usable. THIS COMMAND HAS NO EFFECT UNTIL YOU
+  // CALL Flush().
   //
   // Please see PPB_DeviceContext2D.Swap for more details.
   bool ReplaceContents(ImageData* image);
@@ -56,6 +60,14 @@ class DeviceContext2D : public Resource {
   //
   // Please see PPB_DeviceContext2D.Flush for more details.
   bool Flush(PPB_DeviceContext2D_FlushCallback callback, void* callback_data);
+
+  // Please see PPB_DeviceContext2D.Flush for details and for the
+  // requirements of the image.
+  bool ReadImageData(ImageData* image, int32_t x, int32_t y) const;
+
+ private:
+  int32_t width_;
+  int32_t height_;  
 };
 
 }  // namespace pp

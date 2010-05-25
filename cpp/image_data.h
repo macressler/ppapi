@@ -10,6 +10,7 @@
 
 namespace pp {
 
+class DeviceContext2D;
 class Plugin;
 
 class ImageData : public Resource {

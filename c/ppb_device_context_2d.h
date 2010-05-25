@@ -30,6 +30,13 @@ typedef struct _ppb_DeviceContext2D {
   PP_Resource (*Create)(PP_Module module, int32_t width, int32_t height,
                         bool is_always_opaque);
 
+  // Retrieves the configuration for the given device context, filling the
+  // given values (which must not be NULL). On success, returns true. If the
+  // resource is invalid, the output parameters will be set to 0 and it will
+  // return false.
+  bool (*Describe)(PP_Resource device_context,
+                   int32_t* width, int32_t* height, bool* is_always_opqaue);
+
   // Enqueues a paint of the given image into the device. THIS HAS NO EFFECT
   // UNTIL YOU CALL Flush(). As a result, what counts is the contents of the
   // bitmap when you call Flush, not when you call this function.
@@ -44,8 +51,13 @@ typedef struct _ppb_DeviceContext2D {
   // the entire image, consider using SwapImageData which will give slightly
   // higher performance.
   //
+  // The painted area of the source bitmap must fall entirely within the
+  // device. Attempting to paint outside of the device will result in an error.
+  // However, the source bitmap may fall outside the device, as long as the
+  // src_rect subset of it falls entirely within the device.
+  //
   // Returns true on success, false on failure. Failure means one of the
-  // devices was invalid, or the coordinates were out of bounds.
+  // resources was invalid, or the coordinates were out of bounds.
   bool (*PaintImageData)(PP_Resource device_context,
                          PP_Resource image,
                          int32_t x, int32_t y,
@@ -81,12 +93,10 @@ typedef struct _ppb_DeviceContext2D {
   //
   // THE NEW IMAGE WILL NOT BE PAINTED UNTIL YOU CALL FLUSH.
   //
-  // After this call succeeds, the image in the input resource will be replaced
-  // with an image of zero size that will be unusable for other calls.  This is
-  // because the browser has taken ownership of the bitmap, and modifying it
-  // from the plugin can cause strange painting artifacts. The object itself
-  // will still be alive with the same reference count as before, so the plugin
-  // should continue doing reference counting as normal.
+  // After this call, you should take care to release your references to the
+  // image. If you paint to the image after a Swap, there is the possibility of
+  // significant painting artifacts because the page might use partially-
+  // rendered data when copying out of the backing store.
   //
   // In the case of an animation, you will want to allocate a new image for the
   // next frame. It is best if you wait until the flush callback has executed
@@ -126,6 +136,36 @@ typedef struct _ppb_DeviceContext2D {
   bool (*Flush)(PP_Resource device_context,
                 PPB_DeviceContext2D_FlushCallback callback,
                 void* callback_data);
+
+  // Reads the bitmap data out of the backing store for the device context and
+  // into the given image. If the data was successfully read, it will return
+  // true.
+  //
+  // This function should not generally be necessary for normal plugin
+  // operation. If you want to update portions of a device, the expectation is
+  // that you will either regenerate the data, or maintain a backing store
+  // pushing updates to the device from your backing store via PaintImageData.
+  // Using this function will introduce an extra copy which will make your
+  // plugin slower.
+  //
+  // Data will be read into the image starting at (x, y) in the device context,
+  // and proceeding down and to the right for as many pixels as the image is
+  // large. If any part of the image bound would fall outside of the backing
+  // store of the device if positioned at (x, y), this function will fail and
+  // return false.
+  //
+  // The image format must be of the format
+  // PPB_ImageData.GetNativeImageDataFormat() or this function will fail and
+  // return false.
+  //
+  // The returned image data will represent the current status of the backing
+  // store. This will not include any paint, scroll, or replace operations
+  // that have not yet been flushed; these operations are only reflected in
+  // the backing store (and hence ReadImageData) until after a Flush()
+  // operation has completed.
+  bool (*ReadImageData)(PP_Resource device_context,
+                        PP_Resource image,
+                        int32_t x, int32_t y);
 
 } PPB_DeviceContext2D;
 

@@ -8,6 +8,7 @@
 
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
+#include "ppapi/tests/test_device_context_2d.h"
 #include "ppapi/tests/test_image_data.h"
 
 // Returns a new heap-allocated test case for the given test, or NULL on
@@ -84,6 +85,8 @@ void TestInstance::LogTest(const std::string& test_name,
 TestCase* TestInstance::CaseForTestName(const char* name) {
   if (strcmp(name, "ImageData") == 0)
     return new TestImageData(this);
+  if (strcmp(name, "DeviceContext2D") == 0)
+    return new TestDeviceContext2D(this);
   return NULL;
 }
 
