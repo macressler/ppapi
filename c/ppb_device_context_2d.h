@@ -137,36 +137,6 @@ typedef struct _ppb_DeviceContext2D {
                 PPB_DeviceContext2D_FlushCallback callback,
                 void* callback_data);
 
-  // Reads the bitmap data out of the backing store for the device context and
-  // into the given image. If the data was successfully read, it will return
-  // true.
-  //
-  // This function should not generally be necessary for normal plugin
-  // operation. If you want to update portions of a device, the expectation is
-  // that you will either regenerate the data, or maintain a backing store
-  // pushing updates to the device from your backing store via PaintImageData.
-  // Using this function will introduce an extra copy which will make your
-  // plugin slower.
-  //
-  // Data will be read into the image starting at (x, y) in the device context,
-  // and proceeding down and to the right for as many pixels as the image is
-  // large. If any part of the image bound would fall outside of the backing
-  // store of the device if positioned at (x, y), this function will fail and
-  // return false.
-  //
-  // The image format must be of the format
-  // PPB_ImageData.GetNativeImageDataFormat() or this function will fail and
-  // return false.
-  //
-  // The returned image data will represent the current status of the backing
-  // store. This will not include any paint, scroll, or replace operations
-  // that have not yet been flushed; these operations are only reflected in
-  // the backing store (and hence ReadImageData) until after a Flush()
-  // operation has completed.
-  bool (*ReadImageData)(PP_Resource device_context,
-                        PP_Resource image,
-                        int32_t x, int32_t y);
-
 } PPB_DeviceContext2D;
 
 #endif  // PPAPI_C_PPB_DEVICE_CONTEXT_2D_H_

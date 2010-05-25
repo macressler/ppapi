@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "ppapi/c/pp_rect.h"
+#include "ppapi/c/ppb_testing.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
@@ -15,8 +16,57 @@
 
 namespace {
 
-void FillRectInImage(pp::ImageData* image, const PP_Rect& rect,
-                     uint32_t color) {
+}  // namespace
+
+bool TestDeviceContext2D::Init() {
+  device_context_interface_ = reinterpret_cast<PPB_DeviceContext2D const*>(
+      pp::Module::Get()->GetBrowserInterface(PPB_DEVICECONTEXT2D_INTERFACE));
+  image_data_interface_ = reinterpret_cast<PPB_ImageData const*>(
+      pp::Module::Get()->GetBrowserInterface(PPB_IMAGEDATA_INTERFACE));
+  testing_interface_ = reinterpret_cast<PPB_Testing const*>(
+      pp::Module::Get()->GetBrowserInterface(PPB_TESTING_INTERFACE));
+  return device_context_interface_ && image_data_interface_ &&
+         testing_interface_;
+}
+
+std::string TestDeviceContext2D::GetTestCaseName() const {
+  return std::string("DeviceContext");
+}
+
+void TestDeviceContext2D::RunTest() {
+  instance_->LogTest("InvalidResource", TestInvalidResource());
+  instance_->LogTest("InvalidSize", TestInvalidSize());
+  instance_->LogTest("Humongous", TestHumongous());
+  instance_->LogTest("InitToZero", TestInitToZero());
+  instance_->LogTest("Describe", TestDescribe());
+  instance_->LogTest("Paint", TestPaint());
+  //instance_->LogTest("Scroll", TestScroll());  // TODO(brettw) implement.
+  instance_->LogTest("Replace", TestReplace());
+}
+
+bool TestDeviceContext2D::ReadImageData(const pp::DeviceContext2D& dc,
+                                        pp::ImageData* image,
+                                        int32_t x, int32_t y) const {
+  return testing_interface_->ReadImageData(dc.pp_resource(),
+                                           image->pp_resource(), x, y);
+}
+
+bool TestDeviceContext2D::IsDCUniformColor(const pp::DeviceContext2D& dc,
+                                           uint32_t color) const {
+  pp::ImageData readback(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                         dc.width(), dc.height(), false);
+  if (readback.is_null())
+    return false;
+  if (!ReadImageData(dc, &readback, 0, 0))
+    return false;
+  return IsSquareInImage(readback, 0,
+                         PP_MakeRectFromXYWH(0, 0, dc.width(), dc.height()),
+                         color);
+}
+
+void TestDeviceContext2D::FillRectInImage(pp::ImageData* image,
+                                          const PP_Rect& rect,
+                                          uint32_t color) const {
   for (int y = rect.point.y; y < rect.point.y + rect.size.height; y++) {
     uint32_t* row = image->GetAddr32(rect.point.x, y);
     for (int pixel = 0; pixel < rect.size.width; pixel++)
@@ -24,10 +74,10 @@ void FillRectInImage(pp::ImageData* image, const PP_Rect& rect,
   }
 }
 
-// Validates that the given image is a single color with a square of another
-// color inside it.
-bool IsSquareInImage(const pp::ImageData& image_data, uint32_t background_color,
-                     const PP_Rect& square, uint32_t square_color) {
+bool TestDeviceContext2D::IsSquareInImage(const pp::ImageData& image_data,
+                                          uint32_t background_color,
+                                          const PP_Rect& square,
+                                          uint32_t square_color) const {
   for (int y = 0; y < image_data.height(); y++) {
     for (int x = 0; x < image_data.width(); x++) {
       uint32_t pixel = *image_data.GetAddr32(x, y);
@@ -44,55 +94,17 @@ bool IsSquareInImage(const pp::ImageData& image_data, uint32_t background_color,
   return true;
 }
 
-// Validates that the given device context is a single color with a square of
-// another color inside it.
-bool IsSquareInDC(const pp::DeviceContext2D& dc, uint32_t background_color,
-                  const PP_Rect& square, uint32_t square_color) {
+bool TestDeviceContext2D::IsSquareInDC(const pp::DeviceContext2D& dc,
+                                       uint32_t background_color,
+                                       const PP_Rect& square,
+                                       uint32_t square_color) const {
   pp::ImageData readback(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
                          dc.width(), dc.height(), false);
   if (readback.is_null())
     return false;
-  if (!dc.ReadImageData(&readback, 0, 0))
+  if (!ReadImageData(dc, &readback, 0, 0))
     return false;
   return IsSquareInImage(readback, background_color, square, square_color);
-}
-
-// Validates that the given device context is filled with the given color.
-bool IsDCUniformColor(const pp::DeviceContext2D& dc, uint32_t color) {
-  pp::ImageData readback(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-                         dc.width(), dc.height(), false);
-  if (readback.is_null())
-    return false;
-  if (!dc.ReadImageData(&readback, 0, 0))
-    return false;
-  return IsSquareInImage(readback, 0,
-                         PP_MakeRectFromXYWH(0, 0, dc.width(), dc.height()),
-                         color);
-}
-
-}  // namespace
-
-bool TestDeviceContext2D::Init() {
-  device_context_interface_ = reinterpret_cast<PPB_DeviceContext2D const*>(
-      pp::Module::Get()->GetBrowserInterface(PPB_DEVICECONTEXT2D_INTERFACE));
-  image_data_interface_ = reinterpret_cast<PPB_ImageData const*>(
-      pp::Module::Get()->GetBrowserInterface(PPB_IMAGEDATA_INTERFACE));
-  return !!device_context_interface_ && image_data_interface_;
-}
-
-std::string TestDeviceContext2D::GetTestCaseName() const {
-  return std::string("DeviceContext");
-}
-
-void TestDeviceContext2D::RunTest() {
-  instance_->LogTest("InvalidResource", TestInvalidResource());
-  instance_->LogTest("InvalidSize", TestInvalidSize());
-  instance_->LogTest("Humongous", TestHumongous());
-  instance_->LogTest("InitToZero", TestInitToZero());
-  instance_->LogTest("Describe", TestDescribe());
-  instance_->LogTest("Paint", TestPaint());
-  //instance_->LogTest("Scroll", TestScroll());  // TODO(brettw) implement.
-  instance_->LogTest("Replace", TestReplace());
 }
 
 // Test all the functions with an invalid handle.
@@ -142,10 +154,10 @@ std::string TestDeviceContext2D::TestInvalidResource() {
     return "Flush succeeded with a NULL resource";
 
   // ReadImageData.
-  if (device_context_interface_->ReadImageData(image.pp_resource(),
+  if (testing_interface_->ReadImageData(image.pp_resource(),
                                                image.pp_resource(), 0, 0))
     return "ReadImageData succeeded with a different resource";
-  if (device_context_interface_->ReadImageData(null_context.pp_resource(),
+  if (testing_interface_->ReadImageData(null_context.pp_resource(),
                                                image.pp_resource(), 0, 0))
     return "ReadImageData succeeded with a NULL resource";
 
@@ -193,7 +205,7 @@ std::string TestDeviceContext2D::TestInitToZero() {
   memset(image.data(), 0xFF, image.stride() * image.height() * 4);
 
   // Read out the initial data from the device & check.
-  if (!dc.ReadImageData(&image, 0, 0))
+  if (!ReadImageData(dc, &image, 0, 0))
     return "Couldn't read image data";
   if (!IsSquareInImage(image, 0, PP_MakeRectFromXYWH(0, 0, w, h), 0))
     return "Got a nonzero pixel";

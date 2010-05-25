@@ -28,6 +28,7 @@
         'c/ppb_device_context_2d.h',
         'c/ppb_image_data.h',
         'c/ppb_instance.h',
+        'c/ppb_testing.h',
         'c/ppb_var.h',
         'c/ppp.h',
         'c/ppp_class.h',

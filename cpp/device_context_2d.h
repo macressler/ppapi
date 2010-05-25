@@ -61,10 +61,6 @@ class DeviceContext2D : public Resource {
   // Please see PPB_DeviceContext2D.Flush for more details.
   bool Flush(PPB_DeviceContext2D_FlushCallback callback, void* callback_data);
 
-  // Please see PPB_DeviceContext2D.Flush for details and for the
-  // requirements of the image.
-  bool ReadImageData(ImageData* image, int32_t x, int32_t y) const;
-
  private:
   int32_t width_;
   int32_t height_;  

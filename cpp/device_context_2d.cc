@@ -96,12 +96,4 @@ bool DeviceContext2D::Flush(PPB_DeviceContext2D_FlushCallback callback,
   return device_context_2d_funcs->Flush(pp_resource(), callback, callback_data);
 }
 
-bool DeviceContext2D::ReadImageData(ImageData* image,
-                                    int32_t x, int32_t y) const {
-  if (!EnsureFuncs() || is_null())
-    return false;
-  return device_context_2d_funcs->ReadImageData(pp_resource(),
-                                                image->pp_resource(), x, y);
-}
-
 }  // namespace pp
