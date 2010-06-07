@@ -56,7 +56,7 @@ typedef struct _ppp_Instance {
   // Called when the position, the size, or the clip rect has changed.
   //
   // The |position| is the location on the page of this plugin instance. This is
-  // relative to the top left corner of the page and does not change if the page
+  // relative to the top left corner of the viewport, which changes as the page
   // is scrolled.
   //
   // The |clip| indicates the visible region of the plugin instance. This is
