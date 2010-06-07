@@ -23,15 +23,23 @@ typedef struct _ppb_Instance {
   // contents of this device is what will be displayed in the plugin's area
   // on the web page. The device must be a 2D or a 3D device.
   //
-  // Any previously-bound device will be Release()d.
+  // You can pass a NULL resource as the device parameter to unbind all
+  // devices from the given instance. The instance will then appear
+  // transparent. Re-binding the same device will return true and will do
+  // nothing. Unbinding a device will drop any pending flush callbacks.
+  //
+  // Any previously-bound device will be Release()d. It is an error to bind
+  // a device when it is already bound to another plugin instance. If you want
+  // to move a device between instances, first unbind it from the old one, and
+  // then rebind it to the new one.
   //
   // Returns true if the bind was successful. False means the device was not
   // the correct type. On success, a reference to the device will be held by
   // the plugin instance, so the caller can release its reference if it
   // chooses.
   //
-  // Binding will automatically schedule a repaint the plugin on the page. This
-  // repaint will happen asynchronously.
+  // Binding a device will invalidate that portion of the web page to flush the
+  // contents of the new device to the screen.
   bool (*BindGraphicsDeviceContext)(PP_Instance instance,
                                     PP_Resource device);
 } PPB_Instance;

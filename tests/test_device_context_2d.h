@@ -46,10 +46,10 @@ class TestDeviceContext2D : public TestCase {
   // another color inside it.
   bool IsSquareInDC(const pp::DeviceContext2D& dc, uint32_t background_color,
                     const PP_Rect& square, uint32_t square_color) const;
-                    
+
   // Validates that the given device context is filled with the given color.
   bool IsDCUniformColor(const pp::DeviceContext2D& dc, uint32_t color) const;
- 
+
   std::string TestInvalidResource();
   std::string TestInvalidSize();
   std::string TestHumongous();
@@ -58,6 +58,7 @@ class TestDeviceContext2D : public TestCase {
   std::string TestPaint();
   //std::string TestScroll();  // TODO(brettw) implement.
   std::string TestReplace();
+  std::string TestFlushSyncOnMainThread();
 
   // Used by the tests that access the C API directly.
   const PPB_DeviceContext2D* device_context_interface_;

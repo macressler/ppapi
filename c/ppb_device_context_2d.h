@@ -30,6 +30,10 @@ typedef struct _ppb_DeviceContext2D {
   PP_Resource (*Create)(PP_Module module, int32_t width, int32_t height,
                         bool is_always_opaque);
 
+  // Returns true if the given resource is a valid DeviceContext2D, false if it
+  // is an invalid resource or is a resource of another type.
+  bool (*IsDeviceContext2D)(PP_Resource resource);
+
   // Retrieves the configuration for the given device context, filling the
   // given values (which must not be NULL). On success, returns true. If the
   // resource is invalid, the output parameters will be set to 0 and it will
@@ -113,7 +117,8 @@ typedef struct _ppb_DeviceContext2D {
 
   // Flushes any enqueued paint, scroll, and swap commands for the backing
   // store. This actually executes the updates, and causes a repaint of the
-  // webpage. This can run in two modes:
+  // webpage, assuming this device context is bound to a plugin instance. This
+  // can run in two modes:
   //
   // - In synchronous mode, you specify NULL for the callback and the callback
   //   data. This function will block the calling thread until the image has
@@ -130,9 +135,33 @@ typedef struct _ppb_DeviceContext2D {
   // before painting the next frame, you can ensure you're not generating
   // updates faster than the screen can be updated.
   //
+  // Unbound devices: If the device is not bound to a plugin instance, you will
+  //   still get a callback. It will execute after the Flush function returns
+  //   to avoid reentrancy. Of course, it will not wait until anything is
+  //   painted to the screen because there will be nothing on the screen. The
+  //   timing of this callback is not guaranteed and may be deprioritized by
+  //   the browser because it is not affecting the user experience.
+  //
+  // Off-screen instances: If the device is bound to an instance that is
+  //   currently not visible (for example, scrolled out of view) it will behave
+  //   like the "unbound device" case.
+  //
+  // Detaching a device: If you detach a device from a plugin instance, any
+  //   pending flush callbacks will be converted into the "unbound device" case.
+  //
+  // Released devices: A callback may or may not still get called even if you
+  //   have released all of your references to the device. This can occur if
+  //   there are internal references to the device that means it has not been
+  //   internally destroyed (for example, if it is still bound to an instance)
+  //   or due to other implementation details. As a result, you should be
+  //   careful to check that flush callbacks are for the device you expect and
+  //   that you're capable of handling callbacks for devices that you may have
+  //   released your reference to.
+  //
   // Returns true on success or false on failure. Failure means the device
   // context is invalid or you are requesting a synchronous flush from the
-  // main thread of the plugin. In this case, nothing will be updated.
+  // main thread of the plugin. In this case, nothing will be updated and no
+  // callback will be scheduled.
   bool (*Flush)(PP_Resource device_context,
                 PPB_DeviceContext2D_FlushCallback callback,
                 void* callback_data);

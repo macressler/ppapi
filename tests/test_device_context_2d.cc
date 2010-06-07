@@ -16,6 +16,10 @@
 
 namespace {
 
+// A NOP flush callback for use in various tests.
+void FlushCallbackNOP(PP_Resource context, void* data) {
+}
+
 }  // namespace
 
 bool TestDeviceContext2D::Init() {
@@ -42,6 +46,7 @@ void TestDeviceContext2D::RunTest() {
   instance_->LogTest("Paint", TestPaint());
   //instance_->LogTest("Scroll", TestScroll());  // TODO(brettw) implement.
   instance_->LogTest("Replace", TestReplace());
+  instance_->LogTest("FlushSyncOnMainThread", TestFlushSyncOnMainThread());
 }
 
 bool TestDeviceContext2D::ReadImageData(const pp::DeviceContext2D& dc,
@@ -148,9 +153,11 @@ std::string TestDeviceContext2D::TestInvalidResource() {
     return "ReplaceContents succeeded with a NULL resource";
 
   // Flush.
-  if (device_context_interface_->Flush(image.pp_resource(), NULL, NULL))
+  if (device_context_interface_->Flush(image.pp_resource(),
+                                       &FlushCallbackNOP, NULL))
     return "Flush succeeded with a different resource";
-  if (device_context_interface_->Flush(null_context.pp_resource(), NULL, NULL))
+  if (device_context_interface_->Flush(null_context.pp_resource(),
+                                       &FlushCallbackNOP, NULL))
     return "Flush succeeded with a NULL resource";
 
   // ReadImageData.
@@ -226,7 +233,7 @@ std::string TestDeviceContext2D::TestDescribe() {
     return "Describe failed";
   if (out_w != w || out_h != h || is_always_opaque != false)
     return "Mismatch of data.";
-  
+
   return "";
 }
 
@@ -239,7 +246,7 @@ std::string TestDeviceContext2D::TestPaint() {
   // Make sure the device background is 0.
   if (!IsDCUniformColor(dc, 0))
     return "Bad initial color";
-    
+
   // Fill the backing store with white.
   const uint32_t background_color = 0xFFFFFFFF;
   pp::ImageData background(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w, h, false);
@@ -247,13 +254,13 @@ std::string TestDeviceContext2D::TestPaint() {
                   background_color);
   if (!dc.PaintImageData(background, 0, 0, NULL))
     return "Couldn't fill background";
-  if (!dc.Flush(NULL, NULL)) {
+  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
     // NOTE: Technically this should fail because Flush should prohibit
     // blocking on the main thread. When we implement that, this will have to
     // be refactored to run asynchronously.
     return "Couldn't flush (this will fail when we implement Flush properly)";
   }
-  
+
   // Try painting where the dirty rect is outside of the bitmap bounds, this
   // should fail.
   const int fill_w = 2, fill_h = 3;
@@ -277,7 +284,7 @@ std::string TestDeviceContext2D::TestPaint() {
   const int paint_x = 4, paint_y = 5;
   if (!dc.PaintImageData(fill, paint_x, paint_y, NULL))
     return "Couldn't paint the rect.";
-    
+
   // Validate that nothing has been actually painted.
   if (!IsDCUniformColor(dc, background_color))
     return "Image updated before flush (or failure in readback).";
@@ -288,7 +295,7 @@ std::string TestDeviceContext2D::TestPaint() {
   const uint32_t fill_color = 0x80000080;
   FillRectInImage(&fill, PP_MakeRectFromXYWH(0, 0, fill_w, fill_h),
                   fill_color);
-  if (!dc.Flush(NULL, NULL)) {
+  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
     // See comment above for Flush().
     return "Couldn't flush (this will fail when we implement Flush properly)";
   }
@@ -310,16 +317,16 @@ std::string TestDeviceContext2D::TestPaint() {
                          &PP_MakeRectFromXYWH(-second_paint_x, -second_paint_y,
                                               1, 1)))
     return "Painting failed.";
-  if (!dc.Flush(NULL, NULL)) {
+  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
     // See comment above for Flush().
     return "Couldn't flush (this will fail when we implement Flush properly)";
   }
-  
+
   // Now we should have a little bit of the image peeking out the top left.
   if (!IsSquareInDC(dc, background_color, PP_MakeRectFromXYWH(0, 0, 1, 1),
                     fill_color))
     return "Partially offscreen paint failed.";
-    
+
   // Now repaint that top left pixel by doing a subset of the source image.
   pp::ImageData subset(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w, h, false);
   uint32_t subset_color = 0x80808080;
@@ -328,10 +335,8 @@ std::string TestDeviceContext2D::TestPaint() {
   if (!dc.PaintImageData(subset, -subset_x, -subset_y,
                          &PP_MakeRectFromXYWH(subset_x, subset_y, 1, 1)))
     return "Couldn't paint the subset.";
-  if (!dc.Flush(NULL, NULL)) {
-    // See comment above for Flush().
-    return "Couldn't flush (this will fail when we implement Flush properly)";
-  }
+  if (!dc.Flush(&FlushCallbackNOP, NULL))
+    return "Couldn't flush";
   if (!IsSquareInDC(dc, background_color, PP_MakeRectFromXYWH(0, 0, 1, 1),
                     subset_color))
     return "Subset paint failed.";
@@ -344,7 +349,7 @@ std::string TestDeviceContext2D::TestReplace() {
   pp::DeviceContext2D dc(w, h, false);
   if (dc.is_null())
     return "Failure creating a boring device";
-    
+
   // Replacing with a different size image should fail.
   pp::ImageData weird_size(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w - 1, h, true);
   if (weird_size.is_null())
@@ -374,7 +379,7 @@ std::string TestDeviceContext2D::TestReplace() {
   // The background should be unchanged since we didn't flush yet.
   if (!IsDCUniformColor(dc, 0))
     return "Image updated before flush (or failure in readback).";
-  
+
   // Test the C++ wrapper. The size of the swapped image should be reset.
   if (swapped.pp_resource() || swapped.width() || swapped.height() ||
       swapped.data())
@@ -385,7 +390,7 @@ std::string TestDeviceContext2D::TestReplace() {
     return "Painting with the swapped image should fail.";
 
   // Flush and make sure the result is correct.
-  if (!dc.Flush(NULL, NULL)) {
+  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
     // NOTE: Technically this should fail because Flush should prohibit
     // blocking on the main thread. When we implement that, this will have to
     // be refactored to run asynchronously.
@@ -395,6 +400,27 @@ std::string TestDeviceContext2D::TestReplace() {
   // The background should be green from the swapped image.
   if (!IsDCUniformColor(dc, swapped_color))
     return "Flushed color incorrect (or failure in readback).";
-  
+
+  return "";
+}
+
+std::string TestDeviceContext2D::TestFlushSyncOnMainThread() {
+  // Tests that synchronous flushes (NULL callback) fail on the main thread
+  // (which is the current one).
+  const int w = 15, h = 17;
+  pp::DeviceContext2D dc(w, h, false);
+  if (dc.is_null())
+    return "Failure creating a boring device";
+
+  // Fill the background with blue but don't flush yet.
+  const int32_t background_color = 0xFF0000FF;
+  pp::ImageData background(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w, h, true);
+  if (background.is_null())
+    return "Failure to allocate background image";
+  if (!dc.PaintImageData(background, 0, 0, NULL))
+    return "Couldn't paint the background.";
+
+  if (dc.Flush(NULL, NULL))
+    return "Flush succeeded from the main thread with no callback.";
   return "";
 }
