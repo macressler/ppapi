@@ -27,7 +27,7 @@ bool TestInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
       if (!current_case_)
         errors_.append(std::string("Unknown test case ") + argv[i]);
       else if (!current_case_->Init())
-        errors_.append("Test case could not initialize");
+        errors_.append(" Test case could not initialize.");
       return true;
     }
   }
@@ -51,7 +51,7 @@ void TestInstance::ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
     if (!errors_.empty()) {
       // Catch initialization errors and output the current error string to
       // the console.
-      AppendHTML("Plugin arguments were wrong: " + errors_);
+      AppendHTML("Plugin initialization failed: " + errors_);
     } else {
       current_case_->RunTest();
     }
@@ -80,6 +80,13 @@ void TestInstance::LogTest(const std::string& test_name,
   }
   html.append("</div>");
   AppendHTML(html);
+}
+
+void TestInstance::AppendError(const std::string& message) {
+  //AppendHTML(std::string("<div><i>") + message + "</i></div>");
+  if (!errors_.empty())
+    errors_.append(", ");
+  errors_.append(message);
 }
 
 TestCase* TestInstance::CaseForTestName(const char* name) {

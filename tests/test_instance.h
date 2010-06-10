@@ -36,11 +36,14 @@ class TestInstance : public pp::Instance {
   //   }
   void LogTest(const std::string& test_name, const std::string& error_message);
 
+  // Appends an error message to the log.
+  void AppendError(const std::string& message);
+
  private:
   // Creates a new TestCase for the give test name, or NULL if there is no such
   // test. Ownership is passed to the caller.
   TestCase* CaseForTestName(const char* name);
- 
+
   // Appends the given HTML string to the console in the document.
   void AppendHTML(const std::string& html);
 
