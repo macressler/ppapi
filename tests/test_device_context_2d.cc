@@ -20,6 +20,10 @@ namespace {
 void FlushCallbackNOP(PP_Resource context, void* data) {
 }
 
+void FlushCallbackQuitMessageLoop(PP_Resource context, void* data) {
+  reinterpret_cast<TestDeviceContext2D*>(data)->QuitMessageLoop();
+}
+
 }  // namespace
 
 bool TestDeviceContext2D::Init() {
@@ -53,7 +57,11 @@ void TestDeviceContext2D::RunTest() {
   instance_->LogTest("Paint", TestPaint());
   //instance_->LogTest("Scroll", TestScroll());  // TODO(brettw) implement.
   instance_->LogTest("Replace", TestReplace());
-  instance_->LogTest("FlushSyncOnMainThread", TestFlushSyncOnMainThread());
+  instance_->LogTest("Flush", TestFlush());
+}
+
+void TestDeviceContext2D::QuitMessageLoop() {
+  testing_interface_->QuitMessageLoop();
 }
 
 bool TestDeviceContext2D::ReadImageData(const pp::DeviceContext2D& dc,
@@ -74,6 +82,13 @@ bool TestDeviceContext2D::IsDCUniformColor(const pp::DeviceContext2D& dc,
   return IsSquareInImage(readback, 0,
                          PP_MakeRectFromXYWH(0, 0, dc.width(), dc.height()),
                          color);
+}
+
+bool TestDeviceContext2D::FlushAndWaitForDone(pp::DeviceContext2D* context) {
+  if (!context->Flush(&FlushCallbackQuitMessageLoop, this))
+    return false;
+  testing_interface_->RunMessageLoop();
+  return true;
 }
 
 void TestDeviceContext2D::FillRectInImage(pp::ImageData* image,
@@ -261,12 +276,8 @@ std::string TestDeviceContext2D::TestPaint() {
                   background_color);
   if (!dc.PaintImageData(background, 0, 0, NULL))
     return "Couldn't fill background";
-  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
-    // NOTE: Technically this should fail because Flush should prohibit
-    // blocking on the main thread. When we implement that, this will have to
-    // be refactored to run asynchronously.
-    return "Couldn't flush (this will fail when we implement Flush properly)";
-  }
+  if (!FlushAndWaitForDone(&dc))
+    return "Couldn't flush to fill backing store";
 
   // Try painting where the dirty rect is outside of the bitmap bounds, this
   // should fail.
@@ -302,10 +313,8 @@ std::string TestDeviceContext2D::TestPaint() {
   const uint32_t fill_color = 0x80000080;
   FillRectInImage(&fill, PP_MakeRectFromXYWH(0, 0, fill_w, fill_h),
                   fill_color);
-  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
-    // See comment above for Flush().
-    return "Couldn't flush (this will fail when we implement Flush properly)";
-  }
+  if (!FlushAndWaitForDone(&dc))
+    return "Couldn't flush 50% blue paint";
 
   if (!IsSquareInDC(dc, background_color,
                     PP_MakeRectFromXYWH(paint_x, paint_y, fill_w, fill_h),
@@ -324,10 +333,8 @@ std::string TestDeviceContext2D::TestPaint() {
                          &PP_MakeRectFromXYWH(-second_paint_x, -second_paint_y,
                                               1, 1)))
     return "Painting failed.";
-  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
-    // See comment above for Flush().
-    return "Couldn't flush (this will fail when we implement Flush properly)";
-  }
+  if (!FlushAndWaitForDone(&dc))
+    return "Couldn't flush second paint";
 
   // Now we should have a little bit of the image peeking out the top left.
   if (!IsSquareInDC(dc, background_color, PP_MakeRectFromXYWH(0, 0, 1, 1),
@@ -342,8 +349,8 @@ std::string TestDeviceContext2D::TestPaint() {
   if (!dc.PaintImageData(subset, -subset_x, -subset_y,
                          &PP_MakeRectFromXYWH(subset_x, subset_y, 1, 1)))
     return "Couldn't paint the subset.";
-  if (!dc.Flush(&FlushCallbackNOP, NULL))
-    return "Couldn't flush";
+  if (!FlushAndWaitForDone(&dc))
+    return "Couldn't flush repaint";
   if (!IsSquareInDC(dc, background_color, PP_MakeRectFromXYWH(0, 0, 1, 1),
                     subset_color))
     return "Subset paint failed.";
@@ -397,12 +404,8 @@ std::string TestDeviceContext2D::TestReplace() {
     return "Painting with the swapped image should fail.";
 
   // Flush and make sure the result is correct.
-  if (!dc.Flush(&FlushCallbackNOP, NULL)) {
-    // NOTE: Technically this should fail because Flush should prohibit
-    // blocking on the main thread. When we implement that, this will have to
-    // be refactored to run asynchronously.
-    return "Couldn't flush (this will fail when we implement Flush properly)";
-  }
+  if (!FlushAndWaitForDone(&dc))
+    return "Couldn't flush";
 
   // The background should be green from the swapped image.
   if (!IsDCUniformColor(dc, swapped_color))
@@ -411,7 +414,7 @@ std::string TestDeviceContext2D::TestReplace() {
   return "";
 }
 
-std::string TestDeviceContext2D::TestFlushSyncOnMainThread() {
+std::string TestDeviceContext2D::TestFlush() {
   // Tests that synchronous flushes (NULL callback) fail on the main thread
   // (which is the current one).
   const int w = 15, h = 17;
@@ -429,5 +432,20 @@ std::string TestDeviceContext2D::TestFlushSyncOnMainThread() {
 
   if (dc.Flush(NULL, NULL))
     return "Flush succeeded from the main thread with no callback.";
+
+  // Test flushing with no operations still issues a callback.
+  // (This may also hang if the browser never issues the callback).
+  pp::DeviceContext2D dc_nopaints(w, h, false);
+  if (dc.is_null())
+    return "Failure creating the nopaint device";
+  if (!FlushAndWaitForDone(&dc_nopaints))
+    return "Couldn't flush the nopaint device";
+
+  // Test that multiple flushes fail if we don't get a callback in between.
+  if (!dc_nopaints.Flush(&FlushCallbackNOP, NULL))
+    return "Couldn't flush first time for multiple flush test.";
+  if (dc_nopaints.Flush(&FlushCallbackNOP, NULL))
+    return "Second flush succeeded before callback ran.";
+
   return "";
 }

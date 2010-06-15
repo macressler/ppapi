@@ -127,7 +127,9 @@ typedef struct _ppb_DeviceContext2D {
   //
   // - In asynchronous mode, you specify a callback function and the argument
   //   for that callback function. The callback function will be executed on
-  //   the calling thread when the image has been painted to the screen.
+  //   the calling thread when the image has been painted to the screen. While
+  //   you are waiting for a Flush callback, additional calls to Flush will
+  //   fail.
   //
   // Because the callback is executed (or thread unblocked) only when the
   // plugin's current state is actually on the screen, this function provides a
@@ -158,10 +160,14 @@ typedef struct _ppb_DeviceContext2D {
   //   that you're capable of handling callbacks for devices that you may have
   //   released your reference to.
   //
+  // Shutdown: If a plugin instance is removed when a Flush is pending, the
+  //   callback will not be executed.
+  //
   // Returns true on success or false on failure. Failure means the device
-  // context is invalid or you are requesting a synchronous flush from the
-  // main thread of the plugin. In this case, nothing will be updated and no
-  // callback will be scheduled.
+  // context is invalid, you are requesting a synchronous flush from the main
+  // thread of the plugin, or you already have a Flush pending that has not
+  // issued its callback yet. In the failure case, nothing will be updated and
+  // no callback will be scheduled.
   bool (*Flush)(PP_Resource device_context,
                 PPB_DeviceContext2D_FlushCallback callback,
                 void* callback_data);

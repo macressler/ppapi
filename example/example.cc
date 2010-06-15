@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <math.h>
 #include <stdio.h>  // FIXME(brettw) eraseme.
+
+#include <algorithm>
 
 #include "ppapi/c/pp_event.h"
 #include "ppapi/c/pp_rect.h"
@@ -12,6 +15,20 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/scriptable_object.h"
 #include "ppapi/cpp/var.h"
+
+void FlushCallback(PP_Resource context, void* data);
+
+void FillRect(pp::ImageData* image, int left, int top, int width, int height,
+              uint32_t color) {
+  for (int y = std::max(0, top);
+       y < std::min(image->height() - 1, top + height);
+       y++) {
+    for (int x = std::max(0, left);
+         x < std::min(image->width() - 1, left + width);
+         x++)
+      *image->GetAddr32(x, y) = color;
+  }
+}
 
 class MyScriptableObject : public pp::ScriptableObject {
  public:
@@ -50,7 +67,8 @@ class MyInstance : public pp::Instance {
   MyInstance(PP_Instance instance)
       : pp::Instance(instance),
         width_(0),
-        height_(0) {}
+        height_(0),
+        animation_counter_(0) {}
   virtual ~MyInstance() {}
 
   virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
@@ -78,21 +96,7 @@ class MyInstance : public pp::Instance {
     return new MyScriptableObject();
   }
 
-  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
-    printf("ViewChanged %d,%d,%d,%d\n", position.point.x, position.point.y,
-           position.size.width, position.size.height);
-    if (position.size.width == width_ || position.size.height == height_)
-      return;  // We don't care about the position, only the size.
-
-    width_ = position.size.width;
-    height_ = position.size.height;
-
-    device_context_ = pp::DeviceContext2D(width_, height_, false);
-    if (!BindGraphicsDeviceContext(device_context_)) {
-      printf("Couldn't bind the device context\n");
-      return;
-    }
-
+  void Paint() {
     pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, width_, height_, false);
     if (image.is_null()) {
       printf("Couldn't allocate the image data\n");
@@ -110,11 +114,41 @@ class MyInstance : public pp::Instance {
       }
     }
 
-    // Either of these calls is OK in this context, Swap is slightly more
-    // efficient since it avoids the copy.
+    const int kStepsPerCircle = 800;
+    float radians = static_cast<float>(animation_counter_) / kStepsPerCircle *
+        2 * M_PI;
+
+    float radius = std::min(width_, height_) / 2 - 3;
+    int x = static_cast<int>(cos(radians) * radius) + radius + 2;
+    int y = static_cast<int>(sin(radians) * radius) + radius + 2;
+
+    FillRect(&image, x - 3, y - 3, 7, 7, 0x80000000);
+
     device_context_.ReplaceContents(&image);
-    //device_context_.PaintImageData(image, 0, 0, NULL);
-    device_context_.Flush(NULL, NULL);
+    device_context_.Flush(&FlushCallback, this);
+  }
+
+  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
+    printf("ViewChanged %d,%d,%d,%d\n", position.point.x, position.point.y,
+           position.size.width, position.size.height);
+    if (position.size.width == width_ || position.size.height == height_)
+      return;  // We don't care about the position, only the size.
+
+    width_ = position.size.width;
+    height_ = position.size.height;
+
+    device_context_ = pp::DeviceContext2D(width_, height_, false);
+    if (!BindGraphicsDeviceContext(device_context_)) {
+      printf("Couldn't bind the device context\n");
+      return;
+    }
+
+    Paint();
+  }
+
+  void OnFlush() {
+    animation_counter_++;
+    Paint();
   }
 
  private:
@@ -159,7 +193,14 @@ class MyInstance : public pp::Instance {
 
   int width_;
   int height_;
+
+  // Incremented for each flush we get.
+  int animation_counter_;
 };
+
+void FlushCallback(PP_Resource context, void* data) {
+  static_cast<MyInstance*>(data)->OnFlush();
+}
 
 class MyModule : public pp::Module {
  public:

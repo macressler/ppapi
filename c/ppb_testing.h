@@ -10,9 +10,9 @@
 
 #define PPB_TESTING_INTERFACE "PPB_Testing;1"
 
-// This interface contains functions used for unit testing. They are not
-// guaranteed to be available in normal plugin environments so you should not
-// depend on them.
+// This interface contains functions used for unit testing. Do not use in
+// production code. They are not guaranteed to be available in normal plugin
+// environments so you should not depend on them.
 typedef struct _ppb_Testing {
   // Reads the bitmap data out of the backing store for the given
   // DeviceContext2D and into the given image. If the data was successfully
@@ -44,6 +44,20 @@ typedef struct _ppb_Testing {
   bool (*ReadImageData)(PP_Resource device_context_2d,
                         PP_Resource image,
                         int32_t x, int32_t y);
+
+  // Runs a nested message loop. The plugin will be reentered from this call.
+  // This function is used for unit testing the API. The normal pattern is to
+  // issue some asynchronous call that has a callback. Then you call
+  // RunMessageLoop which will suspend the plugin and go back to processing
+  // messages, giving the asynchronous operation time to complete. In your
+  // callback, you save the data and call QuitMessageLoop, which will then
+  // pop back up and continue with the test. This avoids having to write a
+  // complicated state machine for simple tests for asynchronous APIs.
+  void (*RunMessageLoop)();
+
+  // Posts a quit message for the outermost nested message loop. Use this to
+  // exit and return back to the caller after you call RunMessageLoop.
+  void (*QuitMessageLoop)();
 
 } PPB_Testing;
 

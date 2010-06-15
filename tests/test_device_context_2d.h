@@ -27,6 +27,8 @@ class TestDeviceContext2D : public TestCase {
   virtual std::string GetTestCaseName() const;
   virtual void RunTest();
 
+  void QuitMessageLoop();
+
  private:
   bool ReadImageData(const pp::DeviceContext2D& dc,
                      pp::ImageData* image,
@@ -50,6 +52,10 @@ class TestDeviceContext2D : public TestCase {
   // Validates that the given device context is filled with the given color.
   bool IsDCUniformColor(const pp::DeviceContext2D& dc, uint32_t color) const;
 
+  // Issues a flush on the given device context and blocks until the flush
+  // has issued its callback. Returns true on success.
+  bool FlushAndWaitForDone(pp::DeviceContext2D* context);
+
   std::string TestInvalidResource();
   std::string TestInvalidSize();
   std::string TestHumongous();
@@ -58,7 +64,7 @@ class TestDeviceContext2D : public TestCase {
   std::string TestPaint();
   //std::string TestScroll();  // TODO(brettw) implement.
   std::string TestReplace();
-  std::string TestFlushSyncOnMainThread();
+  std::string TestFlush();
 
   // Used by the tests that access the C API directly.
   const PPB_DeviceContext2D* device_context_interface_;
