@@ -116,11 +116,11 @@ class MyInstance : public pp::Instance {
 
     const int kStepsPerCircle = 800;
     float radians = static_cast<float>(animation_counter_) / kStepsPerCircle *
-        2 * M_PI;
+        2 * 3.14159265358979;
 
-    float radius = std::min(width_, height_) / 2 - 3;
-    int x = static_cast<int>(cos(radians) * radius) + radius + 2;
-    int y = static_cast<int>(sin(radians) * radius) + radius + 2;
+    float radius = static_cast<float>(std::min(width_, height_)) / 2.0f - 3.0f;
+    int x = static_cast<int>(cos(radians) * radius + radius + 2);
+    int y = static_cast<int>(sin(radians) * radius + radius + 2);
 
     FillRect(&image, x - 3, y - 3, 7, 7, 0x80000000);
 
