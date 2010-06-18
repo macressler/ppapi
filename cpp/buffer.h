@@ -14,7 +14,7 @@ class Buffer : public Resource {
   // Creates an is_null() Buffer object.
   Buffer();
 
-  explicit Buffer(const Buffer& other);
+  Buffer(const Buffer& other);
 
   // Allocates a new Buffer in the browser with the given size. The
   // resulting object will be is_null() if the allocation failed.
