@@ -9,6 +9,7 @@
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_module.h"
+#include "ppapi/c/pp_print_output_format.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppb.h"
@@ -42,6 +43,13 @@ class Module {
   // if you need to implement your own interface types that this wrapper
   // doesn't support.
   virtual const void* GetInstanceInterface(const char* interface_name);
+
+  // Module-wide print interface
+  virtual const PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
+      uint32_t* format_count) {
+    *format_count = 0;
+    return NULL;
+  }
 
   // Returns an interface in the browser.
   const void* GetBrowserInterface(const char* interface_name);

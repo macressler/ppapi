@@ -7,9 +7,12 @@
 #include <string.h>
 
 #include "ppapi/c/pp_instance.h"
+#include "ppapi/c/pp_print_settings.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_instance.h"
+#include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/instance.h"
+#include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
@@ -94,6 +97,63 @@ static PPP_Instance instance_interface = {
   &Instance_ViewChanged,
 };
 
+// PPP_Printing implementation -------------------------------------------------
+
+const PP_PrintOutputFormat* Printing_QuerySupportedFormats(
+    uint32_t* format_count) {
+  if (!module_singleton) {
+    *format_count = 0;
+    return NULL;
+  }
+  return module_singleton->QuerySupportedPrintOutputFormats(format_count);
+}
+
+int32_t Printing_Begin(PP_Instance pp_instance,
+                       const PP_PrintSettings* print_settings) {
+  if (!module_singleton)
+    return 0;
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return 0;
+
+  // See if we support the specified print output format.
+  uint32_t format_count = 0;
+  const PP_PrintOutputFormat* formats =
+      module_singleton->QuerySupportedPrintOutputFormats(&format_count);
+  if (!formats)
+    return 0;
+  for (uint32_t index = 0; index < format_count; index++) {
+    if (formats[index] == print_settings->format)
+      return instance->PrintBegin(*print_settings);
+  }
+  return 0;
+}
+
+PP_Resource Printing_PrintPage(PP_Instance pp_instance, int32_t page_number) {
+  if (!module_singleton)
+    return Resource().pp_resource();
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return Resource().pp_resource();
+  return instance->PrintPage(page_number).pp_resource();
+}
+
+void Printing_End(PP_Instance pp_instance) {
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return;
+  return instance->PrintEnd();
+}
+
+static PPP_Printing printing_interface = {
+  &Printing_QuerySupportedFormats,
+  &Printing_Begin,
+  &Printing_PrintPage,
+  &Printing_End,
+};
+
 // Module ----------------------------------------------------------------------
 
 Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
@@ -112,6 +172,9 @@ Module* Module::Get() {
 const void* Module::GetInstanceInterface(const char* interface_name) {
   if (strcmp(interface_name, PPP_INSTANCE_INTERFACE) == 0)
     return &instance_interface;
+  if (strcmp(interface_name, PPP_PRINTING_INTERFACE) == 0)
+    return &printing_interface;
+
   return NULL;
 }
 

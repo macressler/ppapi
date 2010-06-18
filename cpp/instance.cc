@@ -5,8 +5,10 @@
 #include "ppapi/cpp/instance.h"
 
 #include "ppapi/c/ppb_instance.h"
+#include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
@@ -39,6 +41,10 @@ bool Instance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
 
 Var Instance::GetInstanceObject() {
   return Var();
+}
+
+Resource Instance::PrintPage(int32_t page_number) {
+  return Resource();
 }
 
 Var Instance::GetWindowObject() {

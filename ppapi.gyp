@@ -18,12 +18,16 @@
         'c/pp_instance.h',
         'c/pp_module.h',
         'c/pp_point.h',
+        'c/pp_print_orientation.h',
+        'c/pp_print_output_format.h',
+        'c/pp_print_settings.h',
         'c/pp_rect.h',
         'c/pp_resource.h',
         'c/pp_size.h',
         'c/pp_stdint.h',
         'c/pp_var.h',
         'c/ppb.h',
+        'c/ppb_buffer.h',
         'c/ppb_core.h',
         'c/ppb_device_context_2d.h',
         'c/ppb_image_data.h',
@@ -33,6 +37,7 @@
         'c/ppp.h',
         'c/ppp_class.h',
         'c/ppp_instance.h',
+        'c/ppp_printing.h',
       ],
     },
     {
@@ -45,6 +50,8 @@
         '..',
       ],
       'sources': [
+        'cpp/buffer.cc',
+        'cpp/buffer.h',
         'cpp/device_context_2d.cc',
         'cpp/device_context_2d.h',
         'cpp/image_data.cc',
@@ -144,6 +151,8 @@
         'tests/test_instance.h',
 
         # Test cases.
+        'tests/test_buffer.cc',
+        'tests/test_buffer.h',
         'tests/test_device_context_2d.cc',
         'tests/test_device_context_2d.h',
         'tests/test_image_data.cc',

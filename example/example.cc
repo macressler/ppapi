@@ -8,7 +8,9 @@
 #include <algorithm>
 
 #include "ppapi/c/pp_event.h"
+#include "ppapi/c/pp_print_settings.h"
 #include "ppapi/c/pp_rect.h"
+#include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
@@ -68,7 +70,9 @@ class MyInstance : public pp::Instance {
       : pp::Instance(instance),
         width_(0),
         height_(0),
-        animation_counter_(0) {}
+        animation_counter_(0),
+        print_settings_valid_(false) {}
+
   virtual ~MyInstance() {}
 
   virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
@@ -96,11 +100,11 @@ class MyInstance : public pp::Instance {
     return new MyScriptableObject();
   }
 
-  void Paint() {
-    pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, width_, height_, false);
+  pp::ImageData PaintImage(int width, int height) {
+    pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, width, height, false);
     if (image.is_null()) {
       printf("Couldn't allocate the image data\n");
-      return;
+      return image;
     }
 
     // Fill with semitransparent gradient.
@@ -118,14 +122,20 @@ class MyInstance : public pp::Instance {
     float radians = static_cast<float>(animation_counter_) / kStepsPerCircle *
         2 * 3.14159265358979;
 
-    float radius = static_cast<float>(std::min(width_, height_)) / 2.0f - 3.0f;
+    float radius = static_cast<float>(std::min(width, height)) / 2.0f - 3.0f;
     int x = static_cast<int>(cos(radians) * radius + radius + 2);
     int y = static_cast<int>(sin(radians) * radius + radius + 2);
 
     FillRect(&image, x - 3, y - 3, 7, 7, 0x80000000);
+    return image;
+  }
 
-    device_context_.ReplaceContents(&image);
-    device_context_.Flush(&FlushCallback, this);
+  void Paint() {
+    pp::ImageData image = PaintImage(width_, height_);
+    if (!image.is_null()) {
+      device_context_.ReplaceContents(&image);
+      device_context_.Flush(&FlushCallback, this);
+    }
   }
 
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
@@ -144,6 +154,34 @@ class MyInstance : public pp::Instance {
     }
 
     Paint();
+  }
+
+  // Print interfaces.
+  virtual int32_t PrintBegin(const PP_PrintSettings& print_settings) {
+    if (print_settings_.format != PP_PrintOutputFormat_Raster)
+      return 0;
+
+    print_settings_ = print_settings;
+    print_settings_valid_ = true;
+    return 1;
+  }
+
+  virtual pp::Resource PrintPage(int32_t page_number) {
+    if (!print_settings_valid_)
+      return pp::Resource();
+
+    int width = static_cast<int>(
+        (print_settings_.printable_area.size.width / 72.0) *
+         print_settings_.dpi);
+    int height = static_cast<int>(
+        (print_settings_.printable_area.size.height / 72.0) *
+         print_settings_.dpi);
+
+    return PaintImage(width, height);
+  }
+
+  virtual void PrintEnd() {
+    print_settings_valid_ = false;
   }
 
   void OnFlush() {
@@ -196,11 +234,17 @@ class MyInstance : public pp::Instance {
 
   // Incremented for each flush we get.
   int animation_counter_;
+  bool print_settings_valid_;
+  PP_PrintSettings print_settings_;
 };
 
 void FlushCallback(PP_Resource context, void* data) {
   static_cast<MyInstance*>(data)->OnFlush();
 }
+
+PP_PrintOutputFormat supported_print_formats[] = {
+  PP_PrintOutputFormat_Raster,
+};
 
 class MyModule : public pp::Module {
  public:
@@ -209,6 +253,14 @@ class MyModule : public pp::Module {
 
   virtual pp::Instance* CreateInstance(PP_Instance instance) {
     return new MyInstance(instance);
+  }
+
+  virtual const PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
+      uint32_t* format_count) {
+    // TODO(sanjeevr): Use arraysize.
+    *format_count =
+        sizeof(supported_print_formats)/sizeof(supported_print_formats[0]);
+    return supported_print_formats;
   }
 };
 
