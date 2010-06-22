@@ -7,6 +7,7 @@
 
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
+#include "ppapi/c/pp_time.h"
 #include "ppapi/c/pp_var.h"
 
 #define PPB_CORE_INTERFACE "PPB_Core;1"
@@ -23,18 +24,17 @@ typedef struct _ppb_Core {
   void* (*MemAlloc)(size_t num_bytes);
   void (*MemFree)(void* ptr);
 
-  // Returns the wall clock time according to the browser, which is defined as
-  // the number of seconds since the Epoch (00:00:00 UTC, January 1, 1970).
-  // This clock is used by the browser when passing time values to the plugin
-  // (e.g., via the PP_Event::time_stamp_seconds field).
-  double (*GetTime)();
+  // Returns the "wall clock time" according to the browser.  This clock is
+  // used by the browser when passing time values to the plugin (e.g., via the
+  // PP_Event::time_stamp_seconds field).
+  PP_Time (*GetTime)();
 
   // Schedules work to be executed on the main plugin thread after the
   // specified delay.  The context parameter is a user defined argument that
   // will be passed to the callback function when it runs.  NOTE: If the
   // browser is shutting down or if the plugin has no instances, then the
   // function may not be called.
-  void (*CallOnMainThread)(int delay_in_milliseconds,
+  void (*CallOnMainThread)(int32_t delay_in_milliseconds,
                            void (*func)(void* context),
                            void* context);
 } PPB_Core;

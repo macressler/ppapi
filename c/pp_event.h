@@ -6,6 +6,7 @@
 #define PPAPI_C_PP_EVENT_H_
 
 #include "ppapi/c/pp_stdint.h"
+#include "ppapi/c/pp_time.h"
 
 typedef enum {
   PP_Event_MouseButton_None   = -1,
@@ -76,7 +77,7 @@ typedef struct _pp_Event_Focus {
 typedef struct _pp_Event {
   uint32_t size;
   int32_t type;
-  double time_stamp_seconds;
+  PP_Time time_stamp_seconds;
   union {
     PP_Event_Key key;
     PP_Event_Character character;
