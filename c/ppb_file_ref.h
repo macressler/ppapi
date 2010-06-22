@@ -26,6 +26,10 @@ typedef struct _ppb_FileRef {
   // filesystem.  File paths are POSIX style.  Returns 0 if the path is
   // malformed.
   PP_Resource (*CreateTemporaryFileRef)(PP_Module module, const char* path);
+
+  // Returns true if the given resource is a FileRef. Returns false if the
+  // resource is invalid or some type other than a FileRef.
+  bool (*IsFileRef)(PP_Resource resource);
  
   // Returns the file system identifier of this file.
   PP_FileSystemType (*GetFileSystemType)(PP_Resource file_ref);

@@ -22,6 +22,7 @@ class Var {
 
   Var();  // PP_Var of type Void.
   Var(Null);  // PP_Var of type Null.
+  Var(bool b);
   Var(int32_t i);
   Var(double d);
   Var(const char* str);
@@ -110,6 +111,11 @@ class Var {
            const Var& arg3, Var* exception = NULL);
   Var Call(const Var& method_name, const Var& arg1, const Var& arg2,
            const Var& arg3, const Var& arg4, Var* exception = NULL);
+
+  // Returns a const reference to the PP_Var managed by this Var object.
+  const PP_Var& pp_var() const {
+    return var_;
+  }
 
   // Detaches from the internal PP_Var of this object, keeping the reference
   // count the same. This is used when returning a PP_Var from an API function

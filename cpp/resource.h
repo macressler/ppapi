@@ -13,7 +13,13 @@ namespace pp {
 class Resource {
  public:
   Resource();
+
+  // This constructor is used when we've gotten a PP_Resource as a return value
+  // that we need to addref.
+  explicit Resource(PP_Resource resource);
+
   Resource(const Resource& other);
+
   virtual ~Resource();
 
   Resource& operator=(const Resource& other);
@@ -25,12 +31,6 @@ class Resource {
   PP_Resource pp_resource() const { return pp_resource_; }
 
  protected:
-  // Internal constructor that assumes the given resource has already been
-  // AddRef'ed for us. This is used for converting the return value of a
-  // browser function into a resource object.
-  struct PassRef {};
-  Resource(PassRef, PP_Resource resource);
-
   // Called by derived class' constructors to initialize this Resource with
   // a PP_Resource that has already been AddRef'ed. It also assumes this object
   // has no current resource.

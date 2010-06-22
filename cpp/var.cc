@@ -47,6 +47,12 @@ Var::Var(Null) {
   needs_release_ = false;
 }
 
+Var::Var(bool b) {
+  var_.type = PP_VarType_Bool;
+  var_.value.as_bool = b;
+  needs_release_ = false;
+}
+
 Var::Var(int32_t i) {
   var_.type = PP_VarType_Int32;
   var_.value.as_int = i;

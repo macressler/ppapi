@@ -20,6 +20,13 @@ static bool EnsureFuncs() {
   return true;
 }
 
+FileRef::FileRef(PP_Resource resource) : Resource(resource) {
+}
+
+FileRef::FileRef(PassRef, PP_Resource resource) {
+  PassRefFromConstructor(resource);
+}
+
 FileRef::FileRef(InPersistentFS, const char* path) {
   if (!EnsureFuncs())
     return;

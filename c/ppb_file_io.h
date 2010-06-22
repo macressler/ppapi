@@ -19,6 +19,10 @@ typedef struct _pp_FileInfo PP_FileInfo;
 typedef struct _ppb_FileIO {
   // Creates a new FileIO object.  Returns 0 if the module is invalid.
   PP_Resource (*Create)(PP_Module module);
+
+  // Returns true if the given resource is a FileIO. Returns false if the
+  // resource is invalid or some type other than a FileIO.
+  bool (*IsFileIO)(PP_Resource resource);
  
   // Open the specified regular file for I/O according to the given open flags,
   // which is a bit-mask of the PP_FileOpenFlags values.  Upon success, the

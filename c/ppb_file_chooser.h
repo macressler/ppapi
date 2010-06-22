@@ -21,6 +21,10 @@ typedef struct _ppb_FileChooser {
   PP_Resource (*Create)(PP_Instance instance,
                         const PP_FileChooserOptions* options);
 
+  // Returns true if the given resource is a FileChooser. Returns false if the
+  // resource is invalid or some type other than a FileChooser.
+  bool (*IsFileChooser)(PP_Resource resource);
+
   // Prompts the user to choose a file or files.
   int32_t (*Show)(PP_Resource chooser, PP_CompletionCallback callback);
 

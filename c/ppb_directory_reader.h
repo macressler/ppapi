@@ -20,6 +20,10 @@ typedef struct _ppb_DirectoryReader {
   // destroyed.
   PP_Resource (*Create)(PP_Resource directory_ref);
 
+  // Returns true if the given resource is a DirectoryReader. Returns false if
+  // the resource is invalid or some type other than a DirectoryReader.
+  bool (*IsDirectoryReader)(PP_Resource resource);
+
   // Reads the next entry in the directory.  Return PP_OK and sets
   // entry->file_ref to 0 to indicate reaching the end of the directory.  If
   // entry->file_ref is non-zero when passed to GetNextEntry, it will be

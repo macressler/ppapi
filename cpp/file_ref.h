@@ -16,7 +16,14 @@ class FileRef : public Resource {
   // Creates an is_null() FileRef object.
   FileRef() {}
 
+  // This constructor is used when we've gotten a PP_Resource as a return value
+  // that we need to addref.
   explicit FileRef(PP_Resource resource);
+
+  // This constructor is used when we've gotten a PP_Resource as a return value
+  // that has already been addref'ed for us.
+  struct PassRef {};
+  FileRef(PassRef, PP_Resource resource);
 
   // Creates a FileRef pointing to a path in the persistent filesystem.
   struct InPersistentFS {};
@@ -44,10 +51,6 @@ class FileRef : public Resource {
   // Returns the parent directory of this file.  See PPB_FileRef::GetParent for
   // more details.
   FileRef GetParent() const;
-
- private:
-  friend class FileChooser;
-  FileRef(PassRef, PP_Resource resource);
 };
 
 }  // namespace pp
