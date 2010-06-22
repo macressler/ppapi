@@ -8,7 +8,7 @@
 typedef enum _pp_PrintOutputFormat {
   PP_PrintOutputFormat_Raster     = 0,
   PP_PrintOutputFormat_PDF        = 1,
-  PP_PrintOutputFormat_PostScript = 2,
+  PP_PrintOutputFormat_PostScript = 2
 } PP_PrintOutputFormat;
 
 #endif  // PPAPI_C_PP_PRINT_OUTPUT_FORMAT_H_
