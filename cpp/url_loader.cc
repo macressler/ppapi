@@ -8,6 +8,7 @@
 #include "ppapi/c/ppb_url_loader.h"
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/file_ref.h"
+#include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/url_request_info.h"
 #include "ppapi/cpp/url_response_info.h"
@@ -26,10 +27,10 @@ static bool EnsureFuncs() {
   return true;
 }
 
-URLLoader::URLLoader() {
+URLLoader::URLLoader(const Instance& instance) {
   if (!EnsureFuncs())
     return;
-  PassRefFromConstructor(url_loader_funcs->Create(Module::Get()->pp_module()));
+  PassRefFromConstructor(url_loader_funcs->Create(instance.pp_instance()));
 }
 
 URLLoader::URLLoader(const URLLoader& other)

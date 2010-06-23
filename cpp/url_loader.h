@@ -13,6 +13,7 @@
 namespace pp {
 
 class CompletionCallback;
+class Instance;
 class URLRequestInfo;
 class URLResponseInfo;
 
@@ -22,7 +23,10 @@ class URLResponseInfo;
 //
 //   class MyHandler {
 //    public:
-//     MyHandler() : factory_(this), did_open_(false) {
+//     MyHandler(const Instance& instance)
+//         : factory_(this),
+//           loader_(instance),
+//           did_open_(false) {
 //     }
 //     void ProcessURL(const char* url) {
 //       CompletionCallback* cc = NewCallback();
@@ -75,7 +79,7 @@ class URLResponseInfo;
 //
 class URLLoader : public Resource {
  public:
-  URLLoader();
+  explicit URLLoader(const Instance& instance);
   URLLoader(const URLLoader& other);
 
   URLLoader& operator=(const URLLoader& other);

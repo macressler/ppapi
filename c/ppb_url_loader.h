@@ -5,7 +5,7 @@
 #ifndef PPAPI_C_PPB_URL_LOADER_H_
 #define PPAPI_C_PPB_URL_LOADER_H_
 
-#include "ppapi/c/pp_module.h"
+#include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
@@ -29,8 +29,12 @@ typedef struct _pp_CompletionCallback PP_CompletionCallback;
 // will complete once the file is fully downloaded.  The downloaded file may be
 // accessed from the URLResponseInfo.
 typedef struct _ppb_URLLoader {
-  // Create a new URLLoader object.  Returns 0 if the module is invalid.
-  PP_Resource (*Create)(PP_Module module);
+  // Create a new URLLoader object.  Returns 0 if the instance is invalid.  The
+  // URLLoader is associated with a particular instance, so that any UI dialogs
+  // that need to be shown to the user can be positioned relative to the window
+  // containing the instance.  It is also important for security reasons to
+  // know the origin of the URL request.
+  PP_Resource (*Create)(PP_Instance instance);
 
   // Returns true if the given resource is an URLLoader. Returns false if the
   // resource is invalid or some type other than an URLLoader.
