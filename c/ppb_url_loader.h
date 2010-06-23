@@ -25,9 +25,9 @@ typedef struct _pp_CompletionCallback PP_CompletionCallback;
 // 6- If the status code is 200, then call ReadResponseBody to stream the data
 //    for the response.
 //
-// Alternatively, if StreamToFile is specified in the URLRequestInfo, 
-// then Open will complete once the file is fully downloaded.  The
-// downloaded file may be accessed from the URLResponseInfo.
+// Alternatively, if StreamToFile is specified in the URLRequestInfo, then Open
+// will complete once the file is fully downloaded.  The downloaded file may be
+// accessed from the URLResponseInfo.
 typedef struct _ppb_URLLoader {
   // Create a new URLLoader object.  Returns 0 if the module is invalid.
   PP_Resource (*Create)(PP_Module module);
@@ -40,7 +40,7 @@ typedef struct _ppb_URLLoader {
   // received or when an error occurs.  Use the GetResponseInfo method to
   // access the response headers.
   int32_t (*Open)(PP_Resource loader,
-                  PP_Resource request,
+                  PP_Resource request_info,
                   PP_CompletionCallback callback);
 
   // If the current URLResponseInfo object corresponds to a redirect, then call

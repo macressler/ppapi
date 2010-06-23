@@ -22,8 +22,8 @@ enum PP_URLRequestProperty {
   PP_URLRequestProperty_AllowAuthentication,   // bool
   PP_URLRequestProperty_AllowCookies,          // bool
   PP_URLRequestProperty_AllowReferrer,         // bool
-  // TODO(darin): add an option to suppress the Origin header?
-  // Consider dropping support for CORS in favor of UMP.
+  // TODO(darin): add an option to suppress the Origin header?  Consider
+  // dropping support for CORS in favor of UMP.
 };
 
 #define PPB_URLREQUESTINFO_INTERFACE "PPB_URLRequestInfo;1"
@@ -49,14 +49,14 @@ typedef struct _ppb_URLRequestInfo {
 
   // Append a file reference to be uploaded.
   //
-  // A sub-range of the file starting from start_offset may be 
-  // specified.  If number_of_bytes is -1, then the sub-range to 
-  // upload extends to the end of the file.
+  // A sub-range of the file starting from start_offset may be specified.  If
+  // number_of_bytes is -1, then the sub-range to upload extends to the end of
+  // the file.
   //
-  // An optional (non-zero) last modified time stamp may be provided, 
-  // which will be used to validate that the file was not modified 
-  // since the given time before it is uploaded.  The upload will 
-  // fail if the file has been modified since the given time.
+  // An optional (non-zero) last modified time stamp may be provided, which
+  // will be used to validate that the file was not modified since the given
+  // time before it is uploaded.  The upload will fail if the file has been
+  // modified since the given time.
   //
   // Returns false if any of the parameters are invalid.
   bool (*AppendFileToBody)(PP_Resource request,

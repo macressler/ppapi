@@ -62,18 +62,21 @@ class CompletionCallback {
 //         ProcessBytes(buf_, result);
 //         offset_ += result;
 //         ReadMore();
+//       } else if (result == PP_OK && offset_ == 0) {
+//         // The file is open, and we can begin reading.
+//         ReadMore();
 //       } else {
 //         // Done reading (possibly with an error given by 'result').
 //       }
-//     }
-//     void ProcessBytes(const char* bytes, int32_t length) {
-//       // Do work ...
 //     }
 //     void ReadMore() {
 //       CompletionCallback* cc = NewCallback();
 //       int32_t rv = fio_.Read(offset_, buf_, sizeof(buf_), cc);
 //       if (rv != PP_Error_WouldBlock)
 //         cc->Run(rv);
+//     }
+//     void ProcessBytes(const char* bytes, int32_t length) {
+//       // Do work ...
 //     }
 //     pp::CompletionCallbackFactory<MyHandler> factory_;
 //     pp::FileIO fio_;
