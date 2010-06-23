@@ -55,8 +55,9 @@ typedef struct _ppb_URLRequestInfo {
   //
   // An optional (non-zero) last modified time stamp may be provided, which
   // will be used to validate that the file was not modified since the given
-  // time before it is uploaded.  The upload will fail if the file has been
-  // modified since the given time.
+  // time before it is uploaded.  The upload will fail with an error code of
+  // PP_Error_FileChanged if the file has been modified since the given time.
+  // If expected_last_modified_time is 0, then no validation is performed.
   //
   // Returns false if any of the parameters are invalid.
   bool (*AppendFileToBody)(PP_Resource request,

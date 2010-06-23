@@ -10,12 +10,20 @@
 
 namespace pp {
 
+// A CompletionCallback provides a wrapper around PP_CompletionCallback.  Use
+// CompletionCallbackFactory<T> to create instances of CompletionCallback.
 class CompletionCallback {
  public:
+  // Call this method to explicitly run the CompletionCallback.  Normally, the
+  // system runs a CompletionCallback after an asynchronous operation
+  // completes, but programs may wish to run the CompletionCallback manually
+  // in order to reuse the same code paths.  This has the side-effect of
+  // destroying the CompletionCallback object after it is run.
   void Run(int32_t result) {
     thunk_(this, result);
   }
 
+  // Create a PP_CompletionCallback corresponding to this CompletionCallback.
   static PP_CompletionCallback ToPP(CompletionCallback* cc) {
     if (!cc)
       return PP_BlockUntilComplete();
@@ -99,6 +107,7 @@ class CompletionCallbackFactory {
     ResetBackPointer();
   }
 
+  // Cancels all CompletionCallbacks allocated from this factory.
   void CancelAll() {
     ResetBackPointer();
     InitBackPointer();
@@ -108,6 +117,11 @@ class CompletionCallbackFactory {
     return object_;
   }
 
+  // Allocates a new, single-use CompletionCallback.  The CompletionCallback
+  // must be run in order for the memory allocated by NewCallback to be freed.
+  // If after passing the CompletionCallback to a PPAPI method, the method does
+  // not return PP_Error_WouldBlock, then you should manually call the
+  // CompletionCallback's Run method.
   CompletionCallback* NewCallback(Method method) {
     return new CallbackImpl(back_pointer_, method);
   }

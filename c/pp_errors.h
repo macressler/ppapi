@@ -51,6 +51,9 @@ enum {
 
   // Indicates failure due to a file that is too big.
   PP_Error_FileTooBig = -22,
+
+  // Indicates failure due to a file having been modified unexpectedly.
+  PP_Error_FileChanged = -23,
  
   // Indicates failure due to a time limit being exceeded.
   PP_Error_TimedOut = -30,

@@ -13,11 +13,6 @@ namespace pp {
 class Resource {
  public:
   Resource();
-
-  // This constructor is used when we've gotten a PP_Resource as a return value
-  // that we need to addref.
-  explicit Resource(PP_Resource resource);
-
   Resource(const Resource& other);
 
   virtual ~Resource();
@@ -31,6 +26,10 @@ class Resource {
   PP_Resource pp_resource() const { return pp_resource_; }
 
  protected:
+  // This constructor is used when we've gotten a PP_Resource as a return value
+  // that we need to addref.
+  explicit Resource(PP_Resource resource);
+
   // Called by derived class' constructors to initialize this Resource with
   // a PP_Resource that has already been AddRef'ed. It also assumes this object
   // has no current resource.
