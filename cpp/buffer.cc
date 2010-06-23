@@ -27,8 +27,8 @@ Buffer::Buffer() : data_(NULL), size_(0) {
 
 Buffer::Buffer(const Buffer& other)
     : Resource(other),
-      size_(other.size_),
-      data_(other.data_) {
+      data_(other.data_),
+      size_(other.size_) {
 }
 
 Buffer::Buffer(int32_t size) : data_(NULL), size_(0) {

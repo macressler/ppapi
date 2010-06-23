@@ -109,7 +109,7 @@ class CompletionCallbackFactory {
   }
 
   CompletionCallback* NewCallback(Method method) {
-    return new CallbackImpl<T>(back_pointer_, method);
+    return new CallbackImpl(back_pointer_, method);
   }
 
  private:
@@ -140,11 +140,10 @@ class CompletionCallbackFactory {
     CompletionCallbackFactory<T>* factory_;
   };
 
-  template <typename T>
   class CallbackImpl : public CompletionCallback {
    public:
     CallbackImpl(BackPointer* back_pointer, Method method)
-        : CompletionCallback(&Self::Thunk),
+        : CompletionCallback(&CallbackImpl::Thunk),
           back_pointer_(back_pointer),
           method_(method) {
       back_pointer_->AddRef();
@@ -156,7 +155,7 @@ class CompletionCallbackFactory {
 
    private:
     static void Thunk(void* user_data, int32_t result) {
-      CallbackImpl<T>* self = static_cast<CallbackImpl<T>*>(user_data);
+      CallbackImpl* self = static_cast<CallbackImpl*>(user_data);
       T* object = self->back_pointer_->GetObject();
       if (object)
         (object->*(self->method_))(result);

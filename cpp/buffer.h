@@ -29,8 +29,8 @@ class Buffer : public Resource {
   void* data() const { return data_; }
 
  private:
-  int32_t size_;
   void* data_;
+  int32_t size_;
 };
 
 }  // namespace pp
