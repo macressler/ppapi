@@ -5,7 +5,7 @@
 #ifndef PPAPI_CPP_DIRECTORY_ENTRY_H_
 #define PPAPI_CPP_DIRECTORY_ENTRY_H_
 
-#include "ppapi/c/pp_directory_entry.h"
+#include "ppapi/c/ppb_directory_reader.h"
 #include "ppapi/cpp/file_ref.h"
 
 namespace pp {

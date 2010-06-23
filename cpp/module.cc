@@ -7,10 +7,8 @@
 #include <string.h>
 
 #include "ppapi/c/pp_instance.h"
-#include "ppapi/c/pp_print_settings.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_instance.h"
-#include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/var.h"

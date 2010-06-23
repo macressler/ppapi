@@ -9,7 +9,25 @@
 #include "ppapi/c/pp_resource.h"
 
 typedef struct _pp_CompletionCallback PP_CompletionCallback;
-typedef struct _pp_FileChooserOptions PP_FileChooserOptions;
+
+typedef enum _pp_FileChooserMode {
+  PP_FileChooserMode_Open,
+  PP_FileChooserMode_OpenMultiple,
+  PP_FileChooserMode_Save
+  // TODO(darin): Should there be a way to choose a directory?  We may need to
+  // kill the save mode since that may get dropped from the web platform specs.
+} PP_FileChooserMode;
+
+typedef struct _pp_FileChooserOptions {
+  PP_FileChooserMode mode;
+ 
+  // A comma-separated list of MIME types such as audio/*,text/plain.  The
+  // dialog may restrict selectable files to the specified MIME types.
+  // TODO(darin): What if the mime type is unknown to the system?  The plugin
+  // may wish to describe the mime type and provide a matching file extension.
+  // It is more webby to use mime types here instead of file extensions.
+  const char* accept_mime_types;
+} PP_FileChooserOptions;
 
 #define PPB_FILECHOOSER_INTERFACE "PPB_FileChooser;1"
 

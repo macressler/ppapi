@@ -9,11 +9,11 @@
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_module.h"
-#include "ppapi/c/pp_print_output_format.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppb.h"
 #include "ppapi/c/ppp.h"
+#include "ppapi/c/ppp_printing.h"
 
 namespace pp {
 

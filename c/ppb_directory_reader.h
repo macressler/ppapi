@@ -5,11 +5,16 @@
 #ifndef PPAPI_C_PPB_DIRECTORY_READER_H_
 #define PPAPI_C_PPB_DIRECTORY_READER_H_
 
+#include "ppapi/c/pp_file_info.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 
 typedef struct _pp_CompletionCallback PP_CompletionCallback;
-typedef struct _pp_DirectoryEntry PP_DirectoryEntry;
+
+typedef struct _pp_DirectoryEntry {
+  PP_Resource file_ref;
+  PP_FileType file_type;
+} PP_DirectoryEntry;
 
 #define PPB_DIRECTORYREADER_INTERFACE "PPB_DirectoryReader;1"
 

@@ -5,7 +5,7 @@
 #ifndef PPAPI_C_PPB_FILE_REF_H_
 #define PPAPI_C_PPB_FILE_REF_H_
 
-#include "ppapi/c/pp_file_system_type.h"
+#include "ppapi/c/pp_file_info.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_var.h"

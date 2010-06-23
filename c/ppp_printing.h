@@ -6,11 +6,31 @@
 #define PPAPI_C_PPP_PRINTING_H_
 
 #include "ppapi/c/pp_instance.h"
-#include "ppapi/c/pp_print_output_format.h"
+#include "ppapi/c/pp_rect.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-typedef struct _pp_PrintSettings PP_PrintSettings;
+typedef enum _pp_PrintOrientation {
+  PP_PrintOrientation_Normal         = 0,
+  PP_PrintOrientation_Rotated_90_CW  = 1,
+  PP_PrintOrientation_Rotated_180    = 2,
+  PP_PrintOrientation_Rotated_90_CCW = 3
+} PP_PrintOrientation;
+
+typedef enum _pp_PrintOutputFormat {
+  PP_PrintOutputFormat_Raster     = 0,
+  PP_PrintOutputFormat_PDF        = 1,
+  PP_PrintOutputFormat_PostScript = 2
+} PP_PrintOutputFormat;
+
+typedef struct _pp_PrintSettings {
+  // This is the size of the printable area in points (1/72 of an inch)
+  PP_Rect printable_area;
+  int32_t dpi;
+  PP_PrintOrientation orientation;
+  bool grayscale;
+  PP_PrintOutputFormat format;
+} PP_PrintSettings;
 
 // Interface for the plugin to implement printing.
 #define PPP_PRINTING_INTERFACE "PPP_Printing;1"

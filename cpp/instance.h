@@ -6,7 +6,6 @@
 #define PPAPI_CPP_INSTANCE_H_
 
 #include "ppapi/c/pp_instance.h"
-#include "ppapi/c/pp_print_output_format.h"
 #include "ppapi/c/pp_stdint.h"
 
 typedef struct _pp_Event PP_Event;
