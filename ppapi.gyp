@@ -4,6 +4,9 @@
 
 
 {
+  'variables': {
+    'chromium_code': 1,  # Use higher warning level.
+  },
   'targets': [
     {
       'target_name': 'ppapi_c',

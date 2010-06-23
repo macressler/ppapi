@@ -286,11 +286,11 @@ std::string TestDeviceContext2D::TestPaint() {
                              fill_w, fill_h, false);
   if (invalid_clip.is_null())
     return "Failure to allocate invalid_clip image";
-  if (dc.PaintImageData(invalid_clip, 0, 0,
-                        &PP_MakeRectFromXYWH(-1, 0, fill_w, fill_h)))
+  PP_Rect rect = PP_MakeRectFromXYWH(-1, 0, fill_w, fill_h);
+  if (dc.PaintImageData(invalid_clip, 0, 0, &rect))
     return "Accepted a negative dirty rect";
-  if (dc.PaintImageData(invalid_clip, 0, 0,
-                        &PP_MakeRectFromXYWH(0, 0, fill_w, fill_h + 1)))
+  rect = PP_MakeRectFromXYWH(0, 0, fill_w, fill_h + 1);
+  if (dc.PaintImageData(invalid_clip, 0, 0, &rect))
     return "Accepted a too-big dirty rect";
 
   // Make an image to paint with that's opaque white and enqueue a paint.
@@ -329,9 +329,8 @@ std::string TestDeviceContext2D::TestPaint() {
   const int second_paint_x = -1, second_paint_y = -2;
   if (dc.PaintImageData(fill, second_paint_x, second_paint_y, NULL))
     return "Trying to paint outside of the image.";
-  if (!dc.PaintImageData(fill, second_paint_x, second_paint_y,
-                         &PP_MakeRectFromXYWH(-second_paint_x, -second_paint_y,
-                                              1, 1)))
+  rect = PP_MakeRectFromXYWH(-second_paint_x, -second_paint_y, 1, 1);
+  if (!dc.PaintImageData(fill, second_paint_x, second_paint_y, &rect))
     return "Painting failed.";
   if (!FlushAndWaitForDone(&dc))
     return "Couldn't flush second paint";
@@ -346,8 +345,8 @@ std::string TestDeviceContext2D::TestPaint() {
   uint32_t subset_color = 0x80808080;
   const int subset_x = 2, subset_y = 1;
   *subset.GetAddr32(subset_x, subset_y) = subset_color;
-  if (!dc.PaintImageData(subset, -subset_x, -subset_y,
-                         &PP_MakeRectFromXYWH(subset_x, subset_y, 1, 1)))
+  rect = PP_MakeRectFromXYWH(subset_x, subset_y, 1, 1);
+  if (!dc.PaintImageData(subset, -subset_x, -subset_y, &rect))
     return "Couldn't paint the subset.";
   if (!FlushAndWaitForDone(&dc))
     return "Couldn't flush repaint";
@@ -423,7 +422,6 @@ std::string TestDeviceContext2D::TestFlush() {
     return "Failure creating a boring device";
 
   // Fill the background with blue but don't flush yet.
-  const int32_t background_color = 0xFF0000FF;
   pp::ImageData background(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w, h, true);
   if (background.is_null())
     return "Failure to allocate background image";
