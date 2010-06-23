@@ -11,7 +11,6 @@
 
 typedef struct _pp_ImageDataDesc PP_ImageDataDesc;
 typedef struct _pp_Rect PP_Rect;
-typedef struct _pp_Var PP_Var;
 
 enum PP_ImageDataFormat {
   PP_IMAGEDATAFORMAT_BGRA_PREMUL

@@ -6,8 +6,7 @@
 #define PPAPI_C_PPB_URL_RESPONSE_INFO_H_
 
 #include "ppapi/c/pp_resource.h"
-
-typedef struct _pp_Var PP_Var;
+#include "ppapi/c/pp_var.h"
 
 enum PP_URLResponseProperty {
   PP_URLResponseProperty_URL,             // string
