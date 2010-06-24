@@ -11,6 +11,7 @@
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/resource.h"
+#include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
@@ -56,6 +57,16 @@ bool Instance_Initialize(PP_Instance pp_instance,
   return instance->Init(argc, argn, argv);
 }
 
+bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
+                                 PP_Resource pp_url_loader) {
+  if (!module_singleton)
+    return false;
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return false;
+  return instance->HandleDocumentLoad(URLLoader(pp_url_loader));
+}
+
 bool Instance_HandleEvent(PP_Instance pp_instance,
                           const PP_Event* event) {
   if (!module_singleton)
@@ -90,6 +101,7 @@ static PPP_Instance instance_interface = {
   &Instance_New,
   &Instance_Delete,
   &Instance_Initialize,
+  &Instance_HandleDocumentLoad,
   &Instance_HandleEvent,
   &Instance_GetInstanceObject,
   &Instance_ViewChanged,

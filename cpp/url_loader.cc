@@ -27,6 +27,9 @@ static bool EnsureFuncs() {
   return true;
 }
 
+URLLoader::URLLoader(PP_Resource resource) : Resource(resource) {
+}
+
 URLLoader::URLLoader(const Instance& instance) {
   if (!EnsureFuncs())
     return;
