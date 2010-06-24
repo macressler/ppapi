@@ -4,6 +4,8 @@
 
 #include "ppapi/cpp/directory_entry.h"
 
+#include <string.h>
+
 #include "ppapi/cpp/module.h"
 
 namespace pp {
