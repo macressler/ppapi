@@ -34,6 +34,16 @@ typedef struct _ppp_Instance {
                      const char* argn[],
                      const char* argv[]);
 
+  // Called after Initialize for a plugin that was instantiated based on the
+  // MIME type of a DOMWindow navigation.  This only applies to plugins that
+  // are registered to handle certain MIME types.  The given url_loader
+  // corresponds to a PPB_URLLoader instance that is already opened.  Its
+  // response headers may be queried using PPB_URLLoader::GetResponseInfo.
+  // This method returns false if the plugin cannot handle the data.  In
+  // response to this method, the plugin should call ReadResponseBody to read
+  // the incoming data.
+  bool (*HandleDocumentLoad)(PP_Instance instance, PP_Resource url_loader);
+
   // General handler for all event types. Returns true if the event was handled
   // or false if it was not.
   //

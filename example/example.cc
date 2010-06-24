@@ -8,7 +8,6 @@
 #include <algorithm>
 
 #include "ppapi/c/pp_event.h"
-#include "ppapi/c/pp_print_settings.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/device_context_2d.h"
@@ -120,7 +119,7 @@ class MyInstance : public pp::Instance {
 
     const int kStepsPerCircle = 800;
     float radians = static_cast<float>(animation_counter_) / kStepsPerCircle *
-        2 * 3.14159265358979;
+        2 * 3.14159265358979F;
 
     float radius = static_cast<float>(std::min(width, height)) / 2.0f - 3.0f;
     int x = static_cast<int>(cos(radians) * radius + radius + 2);
