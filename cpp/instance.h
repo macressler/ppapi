@@ -31,13 +31,23 @@ class Instance {
   // |argv|.
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
 
-  virtual bool HandleDocumentLoad(const URLLoader& url_loader) { return false; }
-  virtual bool HandleEvent(const PP_Event& event) { return false; }
+  virtual bool HandleDocumentLoad(const URLLoader& url_loader) {
+    (void)url_loader;
+    return false;
+  }
+  virtual bool HandleEvent(const PP_Event& event) {
+    (void)event;
+    return false;
+  }
   virtual Var GetInstanceObject();
-  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {}
+  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
+    (void)position;
+    (void)clip;
+  }
 
   // Print interfaces.
   virtual int32_t PrintBegin(const PP_PrintSettings& print_settings) {
+    (void)print_settings;
     return 0;
   }
   virtual Resource PrintPage(int32_t page_number);
