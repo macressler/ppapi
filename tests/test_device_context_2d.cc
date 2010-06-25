@@ -6,8 +6,11 @@
 
 #include <string.h>
 
+#include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/ppb_testing.h"
+#include "ppapi/c/ppb_device_context_2d.h"
+#include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
@@ -17,10 +20,10 @@
 namespace {
 
 // A NOP flush callback for use in various tests.
-void FlushCallbackNOP(PP_Resource context, void* data) {
+void FlushCallbackNOP(void* data, int32_t result) {
 }
 
-void FlushCallbackQuitMessageLoop(PP_Resource context, void* data) {
+void FlushCallbackQuitMessageLoop(void* data, int32_t result) {
   reinterpret_cast<TestDeviceContext2D*>(data)->QuitMessageLoop();
 }
 
@@ -85,7 +88,11 @@ bool TestDeviceContext2D::IsDCUniformColor(const pp::DeviceContext2D& dc,
 }
 
 bool TestDeviceContext2D::FlushAndWaitForDone(pp::DeviceContext2D* context) {
-  if (!context->Flush(&FlushCallbackQuitMessageLoop, this))
+  pp::CompletionCallback cc(&FlushCallbackQuitMessageLoop, this);
+  int32_t rv = context->Flush(cc);
+  if (rv == PP_OK)
+    return true;
+  if (rv != PP_Error_WouldBlock)
     return false;
   testing_interface_->RunMessageLoop();
   return true;
@@ -175,11 +182,13 @@ std::string TestDeviceContext2D::TestInvalidResource() {
     return "ReplaceContents succeeded with a NULL resource";
 
   // Flush.
-  if (device_context_interface_->Flush(image.pp_resource(),
-                                       &FlushCallbackNOP, NULL))
+  if (device_context_interface_->Flush(
+          image.pp_resource(),
+          PP_MakeCompletionCallback(&FlushCallbackNOP, NULL)) == PP_OK)
     return "Flush succeeded with a different resource";
-  if (device_context_interface_->Flush(null_context.pp_resource(),
-                                       &FlushCallbackNOP, NULL))
+  if (device_context_interface_->Flush(
+          null_context.pp_resource(),
+          PP_MakeCompletionCallback(&FlushCallbackNOP, NULL)) == PP_OK)
     return "Flush succeeded with a NULL resource";
 
   // ReadImageData.
@@ -428,7 +437,8 @@ std::string TestDeviceContext2D::TestFlush() {
   if (!dc.PaintImageData(background, 0, 0, NULL))
     return "Couldn't paint the background.";
 
-  if (dc.Flush(NULL, NULL))
+  int32_t rv = dc.Flush(pp::CompletionCallback::Block());
+  if (rv == PP_OK || rv == PP_Error_WouldBlock)
     return "Flush succeeded from the main thread with no callback.";
 
   // Test flushing with no operations still issues a callback.
@@ -440,10 +450,16 @@ std::string TestDeviceContext2D::TestFlush() {
     return "Couldn't flush the nopaint device";
 
   // Test that multiple flushes fail if we don't get a callback in between.
-  if (!dc_nopaints.Flush(&FlushCallbackNOP, NULL))
+  rv = dc_nopaints.Flush(pp::CompletionCallback(&FlushCallbackNOP, NULL));
+  if (rv != PP_OK && rv != PP_Error_WouldBlock)
     return "Couldn't flush first time for multiple flush test.";
-  if (dc_nopaints.Flush(&FlushCallbackNOP, NULL))
-    return "Second flush succeeded before callback ran.";
+
+  if (rv != PP_OK) {
+    // If the first flush would block, then a second should fail.
+    rv = dc_nopaints.Flush(pp::CompletionCallback(&FlushCallbackNOP, NULL));
+    if (rv == PP_OK || rv == PP_Error_WouldBlock)
+      return "Second flush succeeded before callback ran.";
+  }
 
   return "";
 }

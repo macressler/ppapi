@@ -4,6 +4,9 @@
 
 #include "ppapi/cpp/device_context_2d.h"
 
+#include "ppapi/c/pp_errors.h"
+#include "ppapi/c/ppb_device_context_2d.h"
+#include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
 
@@ -89,11 +92,13 @@ bool DeviceContext2D::ReplaceContents(ImageData* image) {
   return false;
 }
 
-bool DeviceContext2D::Flush(PPB_DeviceContext2D_FlushCallback callback,
-                            void* callback_data) {
-  if (!EnsureFuncs() || is_null())
-    return false;
-  return device_context_2d_funcs->Flush(pp_resource(), callback, callback_data);
+int32_t DeviceContext2D::Flush(const CompletionCallback& cc) {
+  if (!EnsureFuncs())
+    return PP_Error_NoInterface;
+  if (is_null())
+    return PP_Error_BadResource;
+  return device_context_2d_funcs->Flush(pp_resource(),
+                                        cc.pp_completion_callback());
 }
 
 }  // namespace pp

@@ -6,13 +6,14 @@
 #define PPAPI_CPP_DEVICE_CONTEXT_2D_H_
 
 #include "ppapi/c/pp_stdint.h"
-#include "ppapi/c/ppb_device_context_2d.h"
 #include "ppapi/cpp/resource.h"
 
+typedef struct _pp_CompletionCallback PP_CompletionCallback;
 typedef struct _pp_Rect PP_Rect;
 
 namespace pp {
 
+class CompletionCallback;
 class ImageData;
 
 class DeviceContext2D : public Resource {
@@ -54,12 +55,12 @@ class DeviceContext2D : public Resource {
   // Please see PPB_DeviceContext2D.Swap for more details.
   bool ReplaceContents(ImageData* image);
 
-  // Flushes all the currently enqueued Paint, Scroll, and Swap commands. Can
-  // be used in synchronous mode (NULL callback pointer) from background
+  // Flushes all the currently enqueued Paint, Scroll, and Replace commands.
+  // Can be used in synchronous mode (NULL callback pointer) from background
   // threads.
   //
   // Please see PPB_DeviceContext2D.Flush for more details.
-  bool Flush(PPB_DeviceContext2D_FlushCallback callback, void* callback_data);
+  int32_t Flush(const CompletionCallback& cc);
 
  private:
   int32_t width_;

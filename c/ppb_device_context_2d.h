@@ -9,11 +9,8 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
+typedef struct _pp_CompletionCallback PP_CompletionCallback;
 typedef struct _pp_Rect PP_Rect;
-
-// Callback function type for PaintImageData.
-typedef void (*PPB_DeviceContext2D_FlushCallback)(PP_Resource context,
-                                                  void* data);
 
 #define PPB_DEVICECONTEXT2D_INTERFACE "PPB_DeviceContext2D;1"
 
@@ -163,14 +160,15 @@ typedef struct _ppb_DeviceContext2D {
   // Shutdown: If a plugin instance is removed when a Flush is pending, the
   //   callback will not be executed.
   //
-  // Returns true on success or false on failure. Failure means the device
-  // context is invalid, you are requesting a synchronous flush from the main
-  // thread of the plugin, or you already have a Flush pending that has not
-  // issued its callback yet. In the failure case, nothing will be updated and
-  // no callback will be scheduled.
-  bool (*Flush)(PP_Resource device_context,
-                PPB_DeviceContext2D_FlushCallback callback,
-                void* callback_data);
+  // TODO(darin): We should ensure that the completion callback always runs, so
+  // that it is easier for consumers to manage memory referenced by a callback.
+  //
+  // Returns PP_OK on success, PP_Error_BadResource if the device context is
+  // invalid, PP_Error_BadArgument if the callback is null and Flush is being
+  // called from the main thread of the plugin, or PP_Error_InProgress if a
+  // Flush is already pending that has not issued its callback yet.  In the
+  // failure case, nothing will be updated and no callback will be scheduled.
+  int32_t (*Flush)(PP_Resource device_context, PP_CompletionCallback callback);
 
 } PPB_DeviceContext2D;
 

@@ -10,6 +10,7 @@
 #include "ppapi/c/pp_event.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/ppp_printing.h"
+#include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
@@ -17,7 +18,7 @@
 #include "ppapi/cpp/scriptable_object.h"
 #include "ppapi/cpp/var.h"
 
-void FlushCallback(PP_Resource context, void* data);
+void FlushCallback(void* data, int32_t result);
 
 void FillRect(pp::ImageData* image, int left, int top, int width, int height,
               uint32_t color) {
@@ -133,7 +134,7 @@ class MyInstance : public pp::Instance {
     pp::ImageData image = PaintImage(width_, height_);
     if (!image.is_null()) {
       device_context_.ReplaceContents(&image);
-      device_context_.Flush(&FlushCallback, this);
+      device_context_.Flush(pp::CompletionCallback(&FlushCallback, this));
     }
   }
 
@@ -237,7 +238,7 @@ class MyInstance : public pp::Instance {
   PP_PrintSettings print_settings_;
 };
 
-void FlushCallback(PP_Resource context, void* data) {
+void FlushCallback(void* data, int32_t result) {
   static_cast<MyInstance*>(data)->OnFlush();
 }
 

@@ -42,6 +42,9 @@ enum {
 
   // Indicates failure due to insufficient storage quota.
   PP_Error_NoQuota = -10,
+
+  // Indicates failure due to an action already being in progress.
+  PP_Error_InProgress = -11,
  
   // Indicates failure due to a file that does not exist.
   PP_Error_FileNotFound = -20,
