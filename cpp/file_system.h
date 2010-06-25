@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 
-#include "ppapi/c/pp_completion_callback.h"
+#include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_time.h"
 
 typedef struct _pp_FileInfo PP_FileInfo;
@@ -21,27 +21,27 @@ class FileRef;
 class FileSystem {
  public:
   static int32_t MakeDirectory(const FileRef& directory_ref,
-                               CompletionCallback* callback = NULL);
+                               const CompletionCallback& cc);
 
   static int32_t MakeDirectoryIncludingAncestors(
       const FileRef& directory_ref,
-      CompletionCallback* callback = NULL);
+      const CompletionCallback& cc);
 
   static int32_t Query(const FileRef& file_ref,
                        PP_FileInfo* result_buf,
-                       CompletionCallback* callback = NULL);
+                       const CompletionCallback& cc);
 
   static int32_t Touch(const FileRef& file_ref,
                        PP_Time last_access_time,
                        PP_Time last_modified_time,
-                       CompletionCallback* callback = NULL);
+                       const CompletionCallback& cc);
 
   static int32_t Delete(const FileRef& file_ref,
-                        CompletionCallback* callback = NULL);
+                        const CompletionCallback& cc);
 
   static int32_t Rename(const FileRef& file_ref,
                         const FileRef& new_file_ref,
-                        CompletionCallback* callback = NULL);
+                        const CompletionCallback& cc);
 };
 
 }  // namespace pp

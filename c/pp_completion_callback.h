@@ -5,7 +5,11 @@
 #ifndef PPAPI_C_PP_COMPLETION_CALLBACK_H_
 #define PPAPI_C_PP_COMPLETION_CALLBACK_H_
 
+#include <stdlib.h>
+
 #include "ppapi/c/pp_stdint.h"
+
+typedef void (*PP_CompletionCallback_Func)(void* user_data, int32_t result);
 
 // Any method that takes a PP_CompletionCallback has the option of completing
 // asynchronously if the operation would block.  Such a method should return
@@ -18,13 +22,26 @@
 // code.  Otherwise the result value indicates success.  If it is a positive
 // value then it may carry additional information.
 typedef struct _pp_CompletionCallback {
-  void (*Run)(void* user_data, int32_t result);
+  PP_CompletionCallback_Func func;
   void* user_data;
 } PP_CompletionCallback;
 
-inline PP_CompletionCallback PP_BlockUntilComplete() {
-  PP_CompletionCallback cc = {0};
+inline PP_CompletionCallback PP_MakeCompletionCallback(
+    PP_CompletionCallback_Func func,
+    void* user_data) {
+  PP_CompletionCallback cc = { func, user_data };
   return cc;
-};
+}
+
+inline void PP_RunCompletionCallback(PP_CompletionCallback* cc, int32_t res) {
+  cc->func(cc->user_data, res);
+}
+
+// Use this in place of an actual completion callback to request blocking
+// behavior.  If specified, the calling thread will block until a method
+// completes.  This is only usable from background threads.
+inline PP_CompletionCallback PP_BlockUntilComplete() {
+  return PP_MakeCompletionCallback(NULL, 0);
+}
 
 #endif  // PPAPI_C_PP_COMPLETION_CALLBACK_H_

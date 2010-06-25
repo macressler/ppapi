@@ -46,13 +46,12 @@ void DirectoryReader::swap(DirectoryReader& other) {
 }
 
 int32_t DirectoryReader::GetNextEntry(DirectoryEntry* entry,
-                                      CompletionCallback* callback) {
+                                      const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
-  return directory_reader_funcs->GetNextEntry(
-      pp_resource(),
-      &entry->data_,
-      CompletionCallback::ToPP(callback));
+  return directory_reader_funcs->GetNextEntry(pp_resource(),
+                                              &entry->data_,
+                                              cc.pp_completion_callback());
 }
 
 }  // namespace pp

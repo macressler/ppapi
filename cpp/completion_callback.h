@@ -10,43 +10,44 @@
 
 namespace pp {
 
-// A CompletionCallback provides a wrapper around PP_CompletionCallback.  Use
-// CompletionCallbackFactory<T> to create instances of CompletionCallback.
+// A CompletionCallback provides a wrapper around PP_CompletionCallback.
 class CompletionCallback {
  public:
+  // Use this special constructor to create a 'blocking' CompletionCallback
+  // that may be passed to a method to indicate that the calling thread should
+  // be blocked until the asynchronous operation corresponding to the method
+  // completes.
+  struct Block {};
+  CompletionCallback(Block) {
+    cc_ = PP_BlockUntilComplete();
+  }
+
+  CompletionCallback(PP_CompletionCallback_Func func, void* user_data) {
+    cc_ = PP_MakeCompletionCallback(func, user_data);
+  }
+
   // Call this method to explicitly run the CompletionCallback.  Normally, the
   // system runs a CompletionCallback after an asynchronous operation
   // completes, but programs may wish to run the CompletionCallback manually
-  // in order to reuse the same code paths.  This has the side-effect of
-  // destroying the CompletionCallback object after it is run.
+  // in order to reuse the same code paths.
   void Run(int32_t result) {
-    thunk_(this, result);
+    PP_DCHECK(cc_.func);
+    PP_RunCompletionCallback(&cc_, result);
   }
 
-  // Create a PP_CompletionCallback corresponding to this CompletionCallback.
-  static PP_CompletionCallback ToPP(CompletionCallback* cc) {
-    if (!cc)
-      return PP_BlockUntilComplete();
-    PP_CompletionCallback result = { cc->thunk_, cc };
-    return result;
-  }
+  const PP_CompletionCallback& pp_completion_callback() const { return cc_; }
 
  protected:
-  typedef void (*ThunkType)(void* user_data, int32_t result);
-
-  CompletionCallback(ThunkType thunk) : thunk_(thunk) {}
-  ~CompletionCallback() {}
-
- private:
-  // Disallowed:
-  CompletionCallback(const CompletionCallback&);
-  CompletionCallback& operator=(const CompletionCallback&);
-
-  ThunkType thunk_;
+  PP_CompletionCallback cc_;
 };
 
-// CompletionCallbackFactory<T> should be used to create CompletionCallback
+// CompletionCallbackFactory<T> may be used to create CompletionCallback
 // objects that are bound to member functions.
+//
+// If a factory is destroyed, then any pending callbacks will be cancelled
+// preventing any bound member functions from being called.  The CancelAll
+// method allows pending callbacks to be cancelled without destroying the
+// factory.
 // 
 // EXAMPLE USAGE:
 //
@@ -54,38 +55,51 @@ class CompletionCallback {
 //    public:
 //     MyHandler() : factory_(this), offset_(0) {
 //     }
+//
 //     void ProcessFile(const FileRef& file) {
-//       CompletionCallback* cc = NewCallback();
+//       CompletionCallback cc = factory_.NewCallback(&MyHandler::DidOpen);
 //       int32_t rv = fio_.Open(file, PP_FileOpenFlag_Read, cc);
 //       if (rv != PP_Error_WouldBlock)
-//         cc->Run(rv);
+//         cc.Run(rv);
 //     }
+//
 //    private:
-//     CompletionCallback* NewCallback() {
+//     CompletionCallback NewCallback() {
 //       return factory_.NewCallback(&MyHandler::DidCompleteIO);
 //     }
-//     void DidCompleteIO(int32_t result) {
+//
+//     void DidOpen(int32_t result) {
+//       if (result == PP_OK) {
+//         // The file is open, and we can begin reading.
+//         offset_ = 0;
+//         ReadMore();
+//       } else {
+//         // Failed to open the file with error given by 'result'.
+//       }
+//     }
+//
+//     void DidRead(int32_t result) {
 //       if (result > 0) {
 //         // buf_ now contains 'result' number of bytes from the file.
 //         ProcessBytes(buf_, result);
 //         offset_ += result;
 //         ReadMore();
-//       } else if (result == PP_OK && offset_ == 0) {
-//         // The file is open, and we can begin reading.
-//         ReadMore();
 //       } else {
 //         // Done reading (possibly with an error given by 'result').
 //       }
 //     }
+//
 //     void ReadMore() {
-//       CompletionCallback* cc = NewCallback();
+//       CompletionCallback cc = factory_.NewCallback(&MyHandler::DidRead);
 //       int32_t rv = fio_.Read(offset_, buf_, sizeof(buf_), cc);
 //       if (rv != PP_Error_WouldBlock)
-//         cc->Run(rv);
+//         cc.Run(rv);
 //     }
+//
 //     void ProcessBytes(const char* bytes, int32_t length) {
 //       // Do work ...
 //     }
+//
 //     pp::CompletionCallbackFactory<MyHandler> factory_;
 //     pp::FileIO fio_;
 //     char buf_[4096];
@@ -121,9 +135,10 @@ class CompletionCallbackFactory {
   // must be run in order for the memory allocated by NewCallback to be freed.
   // If after passing the CompletionCallback to a PPAPI method, the method does
   // not return PP_Error_WouldBlock, then you should manually call the
-  // CompletionCallback's Run method.
-  CompletionCallback* NewCallback(Method method) {
-    return new CallbackImpl(back_pointer_, method);
+  // CompletionCallback's Run method otherwise memory will be leaked.
+  CompletionCallback NewCallback(Method method) {
+    return CompletionCallback(&CallbackData::Thunk,
+                              new CallbackData(back_pointer_, method));
   }
 
  private:
@@ -154,28 +169,28 @@ class CompletionCallbackFactory {
     CompletionCallbackFactory<T>* factory_;
   };
 
-  class CallbackImpl : public CompletionCallback {
+  class CallbackData {
    public:
-    CallbackImpl(BackPointer* back_pointer, Method method)
-        : CompletionCallback(&CallbackImpl::Thunk),
+    CallbackData(BackPointer* back_pointer, Method method)
+        : CompletionCallback(&CallbackData::Thunk),
           back_pointer_(back_pointer),
           method_(method) {
       back_pointer_->AddRef();
     }
 
-    ~CallbackImpl() {
+    ~CallbackData() {
       back_pointer_->Release();
     }
 
-   private:
     static void Thunk(void* user_data, int32_t result) {
-      CallbackImpl* self = static_cast<CallbackImpl*>(user_data);
+      CallbackData* self = static_cast<CallbackData*>(user_data);
       T* object = self->back_pointer_->GetObject();
       if (object)
         (object->*(self->method_))(result);
       delete self;
     }
 
+   private:
     BackPointer* back_pointer_;
     Method method_;
   };

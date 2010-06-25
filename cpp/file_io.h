@@ -28,23 +28,23 @@ class FileIO : public Resource {
   // PPB_FileIO methods:
   int32_t Open(const FileRef& file_ref,
                int32_t open_flags,
-               CompletionCallback* callback = NULL);
+               const CompletionCallback& cc);
   int32_t Query(PP_FileInfo* result_buf,
-                CompletionCallback* callback = NULL);
+                const CompletionCallback& cc);
   int32_t Touch(PP_Time last_access_time,
                 PP_Time last_modified_time,
-                CompletionCallback* callback = NULL);
+                const CompletionCallback& cc);
   int32_t Read(int64_t offset,
                char* buffer,
                int32_t bytes_to_read,
-               CompletionCallback* callback = NULL);
+               const CompletionCallback& cc);
   int32_t Write(int64_t offset,
                 const char* buffer,
                 int32_t bytes_to_write,
-                CompletionCallback* callback = NULL);
+                const CompletionCallback& cc);
   int32_t SetLength(int64_t length,
-                CompletionCallback* callback = NULL);
-  int32_t Flush(CompletionCallback* callback = NULL);
+                    const CompletionCallback& cc);
+  int32_t Flush(const CompletionCallback& cc);
   void Close();
 
   // PPB_FileIOTrusted methods:
@@ -53,9 +53,9 @@ class FileIO : public Resource {
   int32_t GetOSFileDescriptor();
   int32_t WillWrite(int64_t offset,
                     int32_t bytes_to_write,
-                    CompletionCallback* callback = NULL);
+                    const CompletionCallback& cc);
   int32_t WillSetLength(int64_t length,
-                        CompletionCallback* callback = NULL);
+                        const CompletionCallback& cc);
 };
 
 }  // namespace pp

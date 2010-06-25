@@ -88,8 +88,8 @@ class URLLoader : public Resource {
 
   // PPB_URLLoader methods:
   int32_t Open(const URLRequestInfo& request_info,
-               CompletionCallback* callback = NULL);
-  int32_t FollowRedirect(CompletionCallback* callback = NULL);
+               const CompletionCallback& cc);
+  int32_t FollowRedirect(const CompletionCallback& cc);
   bool GetUploadProgress(int64_t* bytes_sent,
                          int64_t* total_bytes_to_be_sent) const;
   bool GetDownloadProgress(int64_t* bytes_received,
@@ -97,7 +97,7 @@ class URLLoader : public Resource {
   URLResponseInfo GetResponseInfo() const;
   int32_t ReadResponseBody(char* buffer,
                            int32_t bytes_to_read,
-                           CompletionCallback* callback = NULL);
+                           const CompletionCallback& cc);
   void Close();
 };
 

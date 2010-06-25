@@ -51,19 +51,19 @@ void URLLoader::swap(URLLoader& other) {
 }
 
 int32_t URLLoader::Open(const URLRequestInfo& request_info,
-                        CompletionCallback* callback) {
+                        const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return url_loader_funcs->Open(pp_resource(),
                                 request_info.pp_resource(),
-                                CompletionCallback::ToPP(callback));
+                                cc.pp_completion_callback());
 }
 
-int32_t URLLoader::FollowRedirect(CompletionCallback* callback) {
+int32_t URLLoader::FollowRedirect(const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return url_loader_funcs->FollowRedirect(pp_resource(),
-                                          CompletionCallback::ToPP(callback));
+                                          cc.pp_completion_callback());
 }
 
 bool URLLoader::GetUploadProgress(int64_t* bytes_sent,
@@ -95,13 +95,13 @@ URLResponseInfo URLLoader::GetResponseInfo() const {
 
 int32_t URLLoader::ReadResponseBody(char* buffer,
                                     int32_t bytes_to_read,
-                                    CompletionCallback* callback) {
+                                    const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return url_loader_funcs->ReadResponseBody(pp_resource(),
                                             buffer,
                                             bytes_to_read,
-                                            CompletionCallback::ToPP(callback));
+                                            cc.pp_completion_callback());
 }
 
 void URLLoader::Close() {

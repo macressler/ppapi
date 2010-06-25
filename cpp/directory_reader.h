@@ -27,8 +27,7 @@ class DirectoryReader : public Resource {
   void swap(DirectoryReader& other);
 
   // See PPB_DirectoryReader::GetNextEntry.
-  int32_t GetNextEntry(DirectoryEntry* entry,
-                       CompletionCallback* callback = NULL);
+  int32_t GetNextEntry(DirectoryEntry* entry, const CompletionCallback& cc);
 };
 
 }  // namespace pp

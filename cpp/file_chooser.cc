@@ -47,11 +47,10 @@ void FileChooser::swap(FileChooser& other) {
   Resource::swap(other);
 }
 
-int32_t FileChooser::Show(CompletionCallback* callback) {
+int32_t FileChooser::Show(const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
-  return file_chooser_funcs->Show(pp_resource(),
-                                  CompletionCallback::ToPP(callback));
+  return file_chooser_funcs->Show(pp_resource(), cc.pp_completion_callback());
 }
 
 FileRef FileChooser::GetNextChosenFile() const {

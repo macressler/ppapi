@@ -30,7 +30,7 @@ class FileChooser : public Resource {
   void swap(FileChooser& other);
 
   // PPB_FileChooser methods:
-  int32_t Show(CompletionCallback* callback = NULL);
+  int32_t Show(const CompletionCallback& cc);
   FileRef GetNextChosenFile() const;
 };
 

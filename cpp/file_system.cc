@@ -26,67 +26,67 @@ static bool EnsureFuncs() {
 
 // static
 int32_t FileSystem::MakeDirectory(const FileRef& directory_ref,
-                                  CompletionCallback* callback) {
+                                  const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return file_sys_funcs->MakeDirectory(directory_ref.pp_resource(),
                                        false,  // make_ancestors
-                                       CompletionCallback::ToPP(callback));
+                                       cc.pp_completion_callback());
 }
 
 // static
 int32_t FileSystem::MakeDirectoryIncludingAncestors(
     const FileRef& directory_ref,
-    CompletionCallback* callback) {
+    const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return file_sys_funcs->MakeDirectory(directory_ref.pp_resource(),
                                        true,  // make_ancestors
-                                       CompletionCallback::ToPP(callback));
+                                       cc.pp_completion_callback());
 }
 
 // static
 int32_t FileSystem::Query(const FileRef& file_ref,
                           PP_FileInfo* result_buf,
-                          CompletionCallback* callback) {
+                          const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return file_sys_funcs->Query(file_ref.pp_resource(),
                                result_buf,
-                               CompletionCallback::ToPP(callback));
+                               cc.pp_completion_callback());
 }
 
 // static
 int32_t FileSystem::Touch(const FileRef& file_ref,
                           PP_Time last_access_time,
                           PP_Time last_modified_time,
-                          CompletionCallback* callback) {
+                          const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return file_sys_funcs->Touch(file_ref.pp_resource(),
                                last_access_time,
                                last_modified_time,
-                               CompletionCallback::ToPP(callback));
+                               cc.pp_completion_callback());
 }
 
 // static
 int32_t FileSystem::Delete(const FileRef& file_ref,
-                           CompletionCallback* callback) {
+                           const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return file_sys_funcs->Delete(file_ref.pp_resource(),
-                                CompletionCallback::ToPP(callback));
+                                cc.pp_completion_callback());
 }
 
 // static
 int32_t FileSystem::Rename(const FileRef& file_ref,
                            const FileRef& new_file_ref,
-                           CompletionCallback* callback) {
+                           const CompletionCallback& cc) {
   if (!EnsureFuncs())
     return PP_Error_NoInterface;
   return file_sys_funcs->Rename(file_ref.pp_resource(),
                                 new_file_ref.pp_resource(),
-                                CompletionCallback::ToPP(callback));
+                                cc.pp_completion_callback());
 }
 
 }  // namespace pp
