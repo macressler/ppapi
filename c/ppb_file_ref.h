@@ -6,7 +6,7 @@
 #define PPAPI_C_PPB_FILE_REF_H_
 
 #include "ppapi/c/pp_file_info.h"
-#include "ppapi/c/pp_module.h"
+#include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_var.h"
 
@@ -20,12 +20,14 @@ typedef struct _ppb_FileRef {
   // Creates a weak pointer to a file in the application's local persistent
   // filesystem.  File paths are POSIX style.  Returns 0 if the path is
   // malformed.
-  PP_Resource (*CreatePersistentFileRef)(PP_Module module, const char* path);
+  PP_Resource (*CreatePersistentFileRef)(PP_Instance instance,
+                                         const char* path);
  
   // Creates a weak pointer to a file in the application's local temporary
   // filesystem.  File paths are POSIX style.  Returns 0 if the path is
   // malformed.
-  PP_Resource (*CreateTemporaryFileRef)(PP_Module module, const char* path);
+  PP_Resource (*CreateTemporaryFileRef)(PP_Instance instance,
+                                        const char* path);
 
   // Returns true if the given resource is a FileRef. Returns false if the
   // resource is invalid or some type other than a FileRef.

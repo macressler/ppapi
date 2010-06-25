@@ -6,6 +6,8 @@
 #define PPAPI_C_PPB_FILE_SYSTEM_H_
 
 #include "ppapi/c/pp_resource.h"
+#include "ppapi/c/pp_stdint.h"
+#include "ppapi/c/pp_time.h"
 
 typedef struct _pp_CompletionCallback PP_CompletionCallback;
 typedef struct _pp_FileInfo PP_FileInfo;
