@@ -146,6 +146,10 @@ class CompletionCallbackFactory {
    public:
     BackPointer() : ref_(0), factory_(NULL) {
     }
+    BackPointer(CompletionCallbackFactory<T>* factory)
+        : ref_(0),
+          factory_(factory) {
+    }
 
     void AddRef() {
       ref_++;
@@ -172,8 +176,7 @@ class CompletionCallbackFactory {
   class CallbackData {
    public:
     CallbackData(BackPointer* back_pointer, Method method)
-        : CompletionCallback(&CallbackData::Thunk),
-          back_pointer_(back_pointer),
+        : back_pointer_(back_pointer),
           method_(method) {
       back_pointer_->AddRef();
     }
