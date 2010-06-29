@@ -7,6 +7,7 @@
 
 #include <algorithm>
 
+#include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_event.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/ppp_printing.h"
@@ -16,6 +17,8 @@
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/scriptable_object.h"
+#include "ppapi/cpp/url_request_info.h"
+#include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
 
 void FlushCallback(void* data, int32_t result);
@@ -64,16 +67,109 @@ class MyScriptableObject : public pp::ScriptableObject {
   }
 };
 
-class MyInstance : public pp::Instance {
+class MyFetcherClient {
+ public:
+  virtual void DidFetch(bool success, const std::string& data) = 0;
+};
+
+class MyFetcher {
+ public:
+  MyFetcher()
+      : loader_(NULL),
+        client_(NULL) {
+    callback_factory_.Initialize(this);
+  }
+
+  ~MyFetcher() {
+    Close();
+  }
+
+  void Close() {
+    client_ = NULL;
+    if (loader_) {
+      loader_->Close();
+      loader_ = NULL;
+    }
+  }
+
+  void Start(const pp::Instance& instance,
+             const pp::Var& url,
+             MyFetcherClient* client) {
+    if (loader_)
+      return;
+
+    pp::URLRequestInfo request;
+    request.SetURL(url);
+    request.SetMethod("GET");
+
+    loader_ = new pp::URLLoader(instance);
+    client_ = client;
+
+    pp::CompletionCallback callback =
+        callback_factory_.NewCallback(&MyFetcher::DidOpen);
+    int rv = loader_->Open(request, callback);
+    if (rv != PP_Error_WouldBlock)
+      callback.Run(rv);
+  }
+
+ private:
+  void ReadMore() {
+    pp::CompletionCallback callback =
+        callback_factory_.NewCallback(&MyFetcher::DidRead);
+    int rv = loader_->ReadResponseBody(buf_, sizeof(buf_), callback);
+    if (rv != PP_Error_WouldBlock)
+      callback.Run(rv);
+  }
+
+  void DidOpen(int32_t result) {
+    if (result == PP_OK) {
+      ReadMore();
+    } else {
+      DidFinish(result);
+    }
+  }
+
+  void DidRead(int32_t result) {
+    if (result > 0) {
+      data_.append(buf_, result);
+      ReadMore();
+    } else {
+      DidFinish(result);
+    }
+  }
+
+  void DidFinish(int32_t result) {
+    if (loader_) {
+      loader_->Close();
+      loader_ = NULL;
+    }
+    if (client_)
+      client_->DidFetch(result == PP_OK, data_);
+  }
+
+  pp::CompletionCallbackFactory<MyFetcher> callback_factory_;
+  pp::URLLoader* loader_;
+  MyFetcherClient* client_;
+  char buf_[4096];
+  std::string data_;
+};
+
+class MyInstance : public pp::Instance, public MyFetcherClient {
  public:
   MyInstance(PP_Instance instance)
       : pp::Instance(instance),
+        fetcher_(NULL),
         width_(0),
         height_(0),
         animation_counter_(0),
         print_settings_valid_(false) {}
 
-  virtual ~MyInstance() {}
+  virtual ~MyInstance() {
+    if (fetcher_) {
+      delete fetcher_;
+      fetcher_ = NULL;
+    }
+  }
 
   virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
     return true;
@@ -224,10 +320,31 @@ class MyInstance : public pp::Instance {
     window.GetAllPropertyNames(&props);
     for (size_t i = 0; i < props.size(); ++i)
       Log(props[i]);
+
+    pp::Var location = window.GetProperty("location");
+    pp::Var href = location.GetProperty("href");
+
+    if (!fetcher_) {
+      fetcher_ = new MyFetcher();
+      fetcher_->Start(*this, href, this);
+    }
   }
 
-  pp::Var console_; 
+  void DidFetch(bool success, const std::string& data) {
+    Log("\nDownloaded location.href:");
+    if (success) {
+      Log(data);
+    } else {
+      Log("Failed to download.");
+    }
+    delete fetcher_;
+    fetcher_ = NULL;
+  }
+
+  pp::Var console_;
   pp::DeviceContext2D device_context_;
+
+  MyFetcher* fetcher_;
 
   int width_;
   int height_;

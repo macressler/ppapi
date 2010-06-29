@@ -113,7 +113,6 @@ class CompletionCallbackFactory {
 
   explicit CompletionCallbackFactory(T* object = NULL)
       : object_(object) {
-    PP_DCHECK(object_);  // Expects a non-null object!
     InitBackPointer();
   }
 
@@ -127,6 +126,12 @@ class CompletionCallbackFactory {
     InitBackPointer();
   }
 
+  void Initialize(T* object) {
+    PP_DCHECK(object);
+    PP_DCHECK(!object_);  // May only initialize once!
+    object_ = object;
+  }
+
   T* GetObject() {
     return object_;
   }
@@ -137,6 +142,7 @@ class CompletionCallbackFactory {
   // not return PP_Error_WouldBlock, then you should manually call the
   // CompletionCallback's Run method otherwise memory will be leaked.
   CompletionCallback NewCallback(Method method) {
+    PP_DCHECK(object_);  // Expects a non-null object!
     return CompletionCallback(&CallbackData::Thunk,
                               new CallbackData(back_pointer_, method));
   }
