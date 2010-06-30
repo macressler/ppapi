@@ -43,7 +43,8 @@ Var Instance::GetInstanceObject() {
   return Var();
 }
 
-Resource Instance::PrintPage(int32_t page_number) {
+Resource Instance::PrintPages(const PP_PrintPageNumberRange* page_ranges,
+                              uint32_t page_range_count) {
   return Resource();
 }
 

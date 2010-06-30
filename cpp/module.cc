@@ -139,13 +139,15 @@ int32_t Printing_Begin(PP_Instance pp_instance,
   return 0;
 }
 
-PP_Resource Printing_PrintPage(PP_Instance pp_instance, int32_t page_number) {
+PP_Resource Printing_PrintPages(PP_Instance pp_instance,
+                                const PP_PrintPageNumberRange* page_ranges,
+                                uint32_t page_range_count) {
   if (!module_singleton)
     return Resource().pp_resource();
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
     return Resource().pp_resource();
-  return instance->PrintPage(page_number).pp_resource();
+  return instance->PrintPages(page_ranges, page_range_count).pp_resource();
 }
 
 void Printing_End(PP_Instance pp_instance) {
@@ -160,7 +162,7 @@ void Printing_End(PP_Instance pp_instance) {
 static PPP_Printing printing_interface = {
   &Printing_QuerySupportedFormats,
   &Printing_Begin,
-  &Printing_PrintPage,
+  &Printing_PrintPages,
   &Printing_End,
 };
 

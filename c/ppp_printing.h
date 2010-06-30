@@ -32,6 +32,13 @@ typedef struct _pp_PrintSettings {
   PP_PrintOutputFormat format;
 } PP_PrintSettings;
 
+// Specifies a contiguous range of page numbers to be printed.
+// The page numbers use a zero-based index.
+typedef struct _pp_PrintPageNumberRange {
+  uint32_t first_page_number;
+  uint32_t last_page_number;
+} PP_PrintPageNumberRange;
+
 // Interface for the plugin to implement printing.
 #define PPP_PRINTING_INTERFACE "PPP_Printing;1"
 
@@ -48,11 +55,13 @@ typedef struct _ppp_Printing {
   int32_t (*Begin)(PP_Instance instance,
                    const PP_PrintSettings* print_settings);
 
-  // Prints the specified page using the specified format. |page_number| is a
-  // zero-based index. Returns a resource that represents the printed output.
+  // Prints the specified pages using the format specified in Begin.
+  // Returns a resource that represents the printed output.
   // This is a PPB_ImageData resource if the output format is
   // PP_PrintOutputFormat_Raster and a PPB_Blob otherwise. Returns 0 on failure.
-  PP_Resource (*PrintPage)(PP_Instance instance, int32_t page_number);
+  PP_Resource (*PrintPages)(PP_Instance instance,
+                            const PP_PrintPageNumberRange* page_ranges,
+                            uint32_t page_range_count);
 
   // Ends the print session. Further calls to PrintPage will fail.
   void (*End)(PP_Instance instance);

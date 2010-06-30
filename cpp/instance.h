@@ -9,6 +9,7 @@
 #include "ppapi/c/pp_stdint.h"
 
 typedef struct _pp_Event PP_Event;
+typedef struct _pp_PrintPageNumberRange PP_PrintPageNumberRange;
 typedef struct _pp_PrintSettings PP_PrintSettings;
 typedef struct _pp_Rect PP_Rect;
 
@@ -45,7 +46,8 @@ class Instance {
   virtual int32_t PrintBegin(const PP_PrintSettings&) {
     return 0;
   }
-  virtual Resource PrintPage(int32_t page_number);
+  virtual Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
+                              uint32_t page_range_count);
   virtual void PrintEnd() {}
 
   Var GetWindowObject();

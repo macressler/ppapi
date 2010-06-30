@@ -262,9 +262,19 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     return 1;
   }
 
-  virtual pp::Resource PrintPage(int32_t page_number) {
+  virtual pp::Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
+                                  uint32_t page_range_count) {
     if (!print_settings_valid_)
       return pp::Resource();
+
+    if (page_range_count != 1)
+      return pp::Resource();
+
+    // Check if the page numbers are valid. We returned 1 in PrintBegin so we
+    // only have 1 page to print.
+    if (page_ranges[0].first_page_number || page_ranges[0].last_page_number) {
+      return pp::Resource();
+    }
 
     int width = static_cast<int>(
         (print_settings_.printable_area.size.width / 72.0) *
