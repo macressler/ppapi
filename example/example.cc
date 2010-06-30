@@ -74,49 +74,40 @@ class MyFetcherClient {
 
 class MyFetcher {
  public:
-  MyFetcher()
-      : loader_(NULL),
-        client_(NULL) {
+  MyFetcher() : client_(NULL) {
     callback_factory_.Initialize(this);
-  }
-
-  ~MyFetcher() {
-    Close();
-  }
-
-  void Close() {
-    client_ = NULL;
-    if (loader_) {
-      loader_->Close();
-      loader_ = NULL;
-    }
   }
 
   void Start(const pp::Instance& instance,
              const pp::Var& url,
              MyFetcherClient* client) {
-    if (loader_)
-      return;
-
     pp::URLRequestInfo request;
     request.SetURL(url);
     request.SetMethod("GET");
 
-    loader_ = new pp::URLLoader(instance);
+    loader_ = pp::URLLoader(instance);
     client_ = client;
 
     pp::CompletionCallback callback =
         callback_factory_.NewCallback(&MyFetcher::DidOpen);
-    int rv = loader_->Open(request, callback);
+    int rv = loader_.Open(request, callback);
     if (rv != PP_Error_WouldBlock)
       callback.Run(rv);
+  }
+
+  void StartWithOpenedLoader(const pp::URLLoader& loader,
+                             MyFetcherClient* client) {
+    loader_ = loader;
+    client_ = client;
+
+    ReadMore();
   }
 
  private:
   void ReadMore() {
     pp::CompletionCallback callback =
         callback_factory_.NewCallback(&MyFetcher::DidRead);
-    int rv = loader_->ReadResponseBody(buf_, sizeof(buf_), callback);
+    int rv = loader_.ReadResponseBody(buf_, sizeof(buf_), callback);
     if (rv != PP_Error_WouldBlock)
       callback.Run(rv);
   }
@@ -139,16 +130,12 @@ class MyFetcher {
   }
 
   void DidFinish(int32_t result) {
-    if (loader_) {
-      loader_->Close();
-      loader_ = NULL;
-    }
     if (client_)
       client_->DidFetch(result == PP_OK, data_);
   }
 
   pp::CompletionCallbackFactory<MyFetcher> callback_factory_;
-  pp::URLLoader* loader_;
+  pp::URLLoader loader_;
   MyFetcherClient* client_;
   char buf_[4096];
   std::string data_;
@@ -172,6 +159,12 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
+    return true;
+  }
+
+  virtual bool HandleDocumentLoad(const pp::URLLoader& loader) {
+    fetcher_ = new MyFetcher();
+    fetcher_->StartWithOpenedLoader(loader, this);
     return true;
   }
 

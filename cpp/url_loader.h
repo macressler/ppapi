@@ -79,6 +79,9 @@ class URLResponseInfo;
 //
 class URLLoader : public Resource {
  public:
+  // Creates an is_null() URLLoader object.
+  URLLoader() {}
+
   explicit URLLoader(PP_Resource resource);
   explicit URLLoader(const Instance& instance);
   URLLoader(const URLLoader& other);
