@@ -4,6 +4,8 @@
 
 #include <math.h>
 #include <stdio.h>  // FIXME(brettw) erase me.
+#include <sys/time.h>
+#include <time.h>
 
 #include <algorithm>
 
@@ -20,6 +22,8 @@
 #include "ppapi/cpp/url_request_info.h"
 #include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
+
+static const int kStepsPerCircle = 800;
 
 void FlushCallback(void* data, int32_t result);
 
@@ -145,6 +149,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
  public:
   MyInstance(PP_Instance instance)
       : pp::Instance(instance),
+        time_at_last_check_(0.0),
         fetcher_(NULL),
         width_(0),
         height_(0),
@@ -207,7 +212,6 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
       }
     }
 
-    const int kStepsPerCircle = 800;
     float radians = static_cast<float>(animation_counter_) / kStepsPerCircle *
         2 * 3.14159265358979F;
 
@@ -243,6 +247,27 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     }
 
     Paint();
+  }
+
+  void UpdateFps() {
+    pp::Var window = GetWindowObject();
+    pp::Var doc = window.GetProperty("document");
+    pp::Var fps = doc.Call("getElementById", "fps");
+
+    struct timeval tv;
+    struct timezone tz = {0, 0};
+    gettimeofday(&tv, &tz);
+
+    double time_now = tv.tv_sec + tv.tv_usec / 1000000.0;
+
+    if (animation_counter_ > 0) {
+      char fps_text[64];
+      sprintf(fps_text, "%g fps",
+              kStepsPerCircle / (time_now - time_at_last_check_));
+      fps.SetProperty("innerHTML", fps_text);
+    }
+
+    time_at_last_check_ = time_now;
   }
 
   // Print interfaces.
@@ -284,6 +309,8 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   void OnFlush() {
+    if (animation_counter_ % kStepsPerCircle == 0)
+      UpdateFps();
     animation_counter_++;
     Paint();
   }
@@ -346,6 +373,8 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
 
   pp::Var console_;
   pp::DeviceContext2D device_context_;
+
+  double time_at_last_check_;
 
   MyFetcher* fetcher_;
 
