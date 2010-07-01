@@ -42,6 +42,12 @@ typedef struct _ppb_Instance {
   // contents of the new device to the screen.
   bool (*BindGraphicsDeviceContext)(PP_Instance instance,
                                     PP_Resource device);
+
+  // Returns true if the instance is full-frame.  Such a plugin represents the
+  // entire document in a frame rather than an embedded resource. This can
+  // happen if the user does a top level navigation or the page specifies an
+  // iframe to a resource with a MIME type registered by the plugin.
+  bool (*IsFullFrame)(PP_Instance instance);
 } PPB_Instance;
 
 #endif  // PPAPI_C_PPB_INSTANCE_H_

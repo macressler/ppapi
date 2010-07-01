@@ -39,7 +39,7 @@ class Instance {
     return false;
   }
   virtual Var GetInstanceObject();
-  virtual void ViewChanged(const PP_Rect&, const PP_Rect&) {
+  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
   }
 
   // Print interfaces.
@@ -54,6 +54,7 @@ class Instance {
   Var GetOwnerElementObject();
   bool BindGraphicsDeviceContext(const DeviceContext2D& context);
   //bool BindGraphicsDeviceContext(const DeviceContext3D& context);
+  bool IsFullFrame();
 
  private:
   PP_Instance pp_instance_;

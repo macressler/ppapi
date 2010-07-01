@@ -69,4 +69,10 @@ bool Instance::BindGraphicsDeviceContext(const DeviceContext2D& context) {
                                                        context.pp_resource());
 }
 
+bool Instance::IsFullFrame() {
+  if (!EnsureFuncs())
+    return false;
+  return ppb_instance_funcs->IsFullFrame(pp_instance());
+}
+
 }  // namespace pp
