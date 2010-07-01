@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include <math.h>
-#include <stdio.h>  // FIXME(brettw) eraseme.
+#include <stdio.h>  // FIXME(brettw) erase me.
 
 #include <algorithm>
 
