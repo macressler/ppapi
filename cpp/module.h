@@ -10,9 +10,8 @@
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_stdint.h"
-#include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppb.h"
-#include "ppapi/c/ppp.h"
+#include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppp_printing.h"
 
 namespace pp {
@@ -86,13 +85,6 @@ class Module {
   PPB_GetInterface get_browser_interface_;
   PPB_Core const* core_;
 };
-
-// Implemented by the embedder.
-//
-// Creates the pp::Module object associated with this plugin. Returns the
-// module if it was successfully created, or NULL on failure. Upon failure,
-// the plugin will be unloaded.
-Module* CreateModule();
 
 }  // namespace pp
 

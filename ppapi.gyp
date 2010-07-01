@@ -6,6 +6,18 @@
 {
   'variables': {
     'chromium_code': 1,  # Use higher warning level.
+    'conditions': [
+      # Linux shared libraries should always be built -fPIC.
+      #
+      # TODO(ajwong): For internal pepper plugins, which are statically linked
+      # into chrome, do we want to build w/o -fPIC?  If so, how can we express
+      # that in the build system?
+      ['OS=="linux" or OS=="openbsd" or OS=="freebsd" or OS=="solaris"', {
+        'use_fpic': 1,
+      },{
+        'use_fpic': 0,
+      }],
+    ],
   },
   'targets': [
     {
@@ -53,7 +65,7 @@
       ],
     },
     {
-      'target_name': 'ppapi_cpp',
+      'target_name': 'ppapi_cpp_objects',
       'type': 'static_library',
       'dependencies': [
         'ppapi_c'
@@ -103,7 +115,30 @@
         ['OS=="win"', {
           'msvs_guid': 'AD371A1D-3459-4E2D-8E8A-881F4B83B908',
         }],
-        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
+        ['use_fpic==1', {
+          'cflags': ['-fPIC'],
+        }],
+      ],
+    },
+    {
+      'target_name': 'ppapi_cpp',
+      'type': 'static_library',
+      'dependencies': [
+        'ppapi_c',
+        'ppapi_cpp_objects',
+      ],
+      'include_dirs': [
+        '..',
+      ],
+      'sources': [
+        'cpp/module_embedder.h',
+        'cpp/ppp_entrypoints.cc',
+      ],
+      'conditions': [
+        ['OS=="win"', {
+          'msvs_guid': '057E7FA0-83C0-11DF-8395-0800200C9A66',
+        }],
+        ['use_fpic==1', {
           'cflags': ['-fPIC'],
         }],
       ],
@@ -136,20 +171,12 @@
           },
         }],
         ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+          'product_name': 'ppapi_example',
           'type': 'shared_library',
           'cflags': ['-fvisibility=hidden'],
           # -gstabs, used in the official builds, causes an ICE. Simply remove
           # it.
           'cflags!': ['-gstabs'],
-        }],
-        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
-          'product_name': 'ppapi_example',
-          # Shared libraries need -fPIC on x86-64
-          'cflags': ['-fPIC'],
-        }, {
-          # Dependencies for all other OS/CPU combinations except those above
-          'dependencies': [
-          ],
         }],
         ['OS=="mac"', {
           'type': 'loadable_module',
@@ -159,6 +186,9 @@
           'sources+': [
             'example/Info.plist'
           ],
+        }],
+        ['use_fpic', {
+          'cflags': ['-fPIC'],
         }],
       ],
       # See README for instructions on how to run and debug on the Mac.
@@ -198,12 +228,6 @@
           'product_name': 'ppapi_tests',
           'product_extension': 'plugin',
         }],
-        ['OS=="win"', {
-        }],
-        ['OS=="linux" or OS=="openbsd" or OS=="freebsd" and (target_arch=="x64" or target_arch=="arm") and linux_fpic!=1', {
-          # Shared libraries need -fPIC on x86-64
-          'cflags': ['-fPIC'],
-        }]
       ],
     },
   ],

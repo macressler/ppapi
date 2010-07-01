@@ -6,6 +6,7 @@
 // using C++, you will want to look at stub.cc which uses the more convenient
 // C++ wrappers.
 
+#include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/ppb.h"
 #include "ppapi/c/ppp.h"
@@ -19,8 +20,7 @@ PP_EXPORT int PPP_InitializeModule(PP_Module module,
   g_module_id = module_id;
   g_get_browser_interface = get_browser_interface;
 
-  // Returning 0 indicates success.
-  return 0;
+  return PP_OK;
 }
 
 PP_EXPORT void PPP_ShutdownModule() {

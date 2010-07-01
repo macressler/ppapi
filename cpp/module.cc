@@ -2,6 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Note that the single accessor, Module::Get(), is not actually implemented
+// in this file.  This is an intentional hook that allows users of ppapi's
+// C++ wrapper objects to provide difference semantics for how the singleton
+// object is accessed.
+//
+// In general, users of ppapi will also link in ppp_entrypoints.cc, which
+// provides a simple default implementation of Module::Get().
+//
+// A notable exception where the default ppp_entrypoints will not work is
+// when implementing "internal plugins" that are statically linked into the
+// browser. In this case, the process may actually have multiple Modules
+// loaded at once making a traditional "singleton" unworkable.  To get around
+// this, the users of ppapi need to get creative about how to properly
+// implement the Module::Get() so that ppapi's C++ wrappers can find the
+// right Module object.  One example solution is to use thread local storage
+// to change the Module* returned based on which thread is invoking the
+// function. Leaving Module::Get() unimplemented provides a hook for
+// implementing such behavior.
+
 #include "ppapi/cpp/module.h"
 
 #include <string.h>
@@ -9,6 +28,7 @@
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_instance.h"
+#include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/url_loader.h"
@@ -16,11 +36,10 @@
 
 namespace pp {
 
-static Module* module_singleton = NULL;
-
 // PPP_Instance implementation -------------------------------------------------
 
 bool Instance_New(PP_Instance instance) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return false;
   Instance* obj = module_singleton->CreateInstance(instance);
@@ -32,6 +51,7 @@ bool Instance_New(PP_Instance instance) {
 }
 
 void Instance_Delete(PP_Instance instance) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return;
   Module::InstanceMap::iterator found =
@@ -49,6 +69,7 @@ bool Instance_Initialize(PP_Instance pp_instance,
                          uint32_t argc,
                          const char* argn[],
                          const char* argv[]) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return false;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -59,6 +80,7 @@ bool Instance_Initialize(PP_Instance pp_instance,
 
 bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
                                  PP_Resource pp_url_loader) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return false;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -69,6 +91,7 @@ bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
 
 bool Instance_HandleEvent(PP_Instance pp_instance,
                           const PP_Event* event) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return false;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -78,6 +101,7 @@ bool Instance_HandleEvent(PP_Instance pp_instance,
 }
 
 PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return Var().Detach();
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -89,6 +113,7 @@ PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
 void Instance_ViewChanged(PP_Instance pp_instance,
                           const PP_Rect* position,
                           const PP_Rect* clip) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -111,6 +136,7 @@ static PPP_Instance instance_interface = {
 
 const PP_PrintOutputFormat* Printing_QuerySupportedFormats(
     uint32_t* format_count) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton) {
     *format_count = 0;
     return NULL;
@@ -120,6 +146,7 @@ const PP_PrintOutputFormat* Printing_QuerySupportedFormats(
 
 int32_t Printing_Begin(PP_Instance pp_instance,
                        const PP_PrintSettings* print_settings) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return 0;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -142,6 +169,7 @@ int32_t Printing_Begin(PP_Instance pp_instance,
 PP_Resource Printing_PrintPages(PP_Instance pp_instance,
                                 const PP_PrintPageNumberRange* page_ranges,
                                 uint32_t page_range_count) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return Resource().pp_resource();
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -151,6 +179,7 @@ PP_Resource Printing_PrintPages(PP_Instance pp_instance,
 }
 
 void Printing_End(PP_Instance pp_instance) {
+  Module* module_singleton = Module::Get();
   if (!module_singleton)
     return;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
@@ -169,16 +198,9 @@ static PPP_Printing printing_interface = {
 // Module ----------------------------------------------------------------------
 
 Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
-  module_singleton = this;
 }
 
 Module::~Module() {
-  module_singleton = NULL;
-}
-
-// static
-Module* Module::Get() {
-  return module_singleton;
 }
 
 const void* Module::GetInstanceInterface(const char* interface_name) {
@@ -214,29 +236,3 @@ bool Module::InternalInit(PP_Module mod,
 }
 
 }  // namespace pp
-
-// Global PPP functions --------------------------------------------------------
-
-PP_EXPORT int PPP_InitializeModule(PP_Module module_id,
-                                   PPB_GetInterface get_browser_interface) {
-  pp::Module* module = pp::CreateModule();
-  if (!module)
-    return 1;
-
-  if (!module->InternalInit(module_id, get_browser_interface)) {
-    delete module;
-    return 2;  // Return a different error code for init failure so we can
-               // differentiate these two cases when debugging.
-  }
-  return 0;
-}
-
-PP_EXPORT void PPP_ShutdownModule() {
-  delete pp::module_singleton;
-}
-
-PP_EXPORT const void* PPP_GetInterface(const char* interface_name) {
-  if (!pp::module_singleton)
-    return NULL;
-  return pp::module_singleton->GetInstanceInterface(interface_name);
-}

@@ -415,6 +415,7 @@ class MyModule : public pp::Module {
 
 namespace pp {
 
+// Factory function for your specialization of the Module object.
 Module* CreateModule() {
   return new MyModule();
 }
