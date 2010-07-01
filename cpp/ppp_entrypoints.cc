@@ -28,7 +28,7 @@ pp::Module* Module::Get() {
 
 PP_EXPORT int PPP_InitializeModule(PP_Module module_id,
                                    PPB_GetInterface get_browser_interface) {
-  pp::Module* module = CreateModule();
+  pp::Module* module = pp::CreateModule();
   if (!module)
     return PP_Error_Failed;
 
