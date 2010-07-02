@@ -230,6 +230,9 @@
           'product_name': 'ppapi_tests',
           'product_extension': 'plugin',
         }],
+        ['use_fpic', {
+          'cflags': ['-fPIC'],
+        }],
       ],
     },
   ],
