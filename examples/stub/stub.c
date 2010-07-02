@@ -14,8 +14,8 @@
 PP_Module g_module_id;
 PPB_GetInterface g_get_browser_interface = NULL;
 
-PP_EXPORT int PPP_InitializeModule(PP_Module module,
-                                   PPB_GetInterface get_browser_interface) {
+PP_EXPORT int32_t PPP_InitializeModule(PP_Module module,
+                                       PPB_GetInterface get_browser_interface) {
   // Save the global module information for later.
   g_module_id = module_id;
   g_get_browser_interface = get_browser_interface;

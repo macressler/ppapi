@@ -26,8 +26,8 @@ pp::Module* Module::Get() {
 
 // Global PPP functions --------------------------------------------------------
 
-PP_EXPORT int PPP_InitializeModule(PP_Module module_id,
-                                   PPB_GetInterface get_browser_interface) {
+PP_EXPORT int32_t PPP_InitializeModule(PP_Module module_id,
+                                       PPB_GetInterface get_browser_interface) {
   pp::Module* module = pp::CreateModule();
   if (!module)
     return PP_Error_Failed;

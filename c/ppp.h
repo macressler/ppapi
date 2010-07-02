@@ -6,6 +6,7 @@
 #define PPAPI_C_PPP_H_
 
 #include "ppapi/c/pp_module.h"
+#include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/ppb.h"
 
 #if __GNUC__ >= 4
@@ -19,11 +20,11 @@ extern "C" {
 
 // Entrypoint for the module.
 //
-// Returns 0 on success, any other value on failure. Failure indicates to the
-// browser that this plugin can not be used. In this case, the plugin will be
-// unloaded and ShutdownModule will NOT be called.
-PP_EXPORT int PPP_InitializeModule(PP_Module module,
-                                   PPB_GetInterface get_browser_interface);
+// Returns PP_OK on success, any other value on failure. Failure indicates to
+// the browser that this plugin can not be used. In this case, the plugin will
+// be unloaded and ShutdownModule will NOT be called.
+PP_EXPORT int32_t PPP_InitializeModule(PP_Module module,
+                                       PPB_GetInterface get_browser_interface);
 
 // Called before the plugin module is unloaded.
 PP_EXPORT void PPP_ShutdownModule();
