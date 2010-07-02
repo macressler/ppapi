@@ -77,6 +77,8 @@
         'cpp/buffer.cc',
         'cpp/buffer.h',
         'cpp/completion_callback.h',
+        'cpp/core.cc',
+        'cpp/core.h',
         'cpp/device_context_2d.cc',
         'cpp/device_context_2d.h',
         'cpp/directory_entry.cc',

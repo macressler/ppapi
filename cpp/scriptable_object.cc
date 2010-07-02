@@ -69,7 +69,7 @@ void GetAllPropertyNames(void* object,
     return;
   *property_count = props.size();
   *properties = static_cast<PP_Var*>(
-      Module::Get()->core().MemAlloc(sizeof(PP_Var) * props.size()));
+      Module::Get()->core()->MemAlloc(sizeof(PP_Var) * props.size()));
   for (size_t i = 0; i < props.size(); ++i)
     (*properties)[i] = props[i].Detach();
 }

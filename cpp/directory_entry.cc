@@ -18,12 +18,12 @@ DirectoryEntry::DirectoryEntry(const DirectoryEntry& other) {
   data_.file_ref = other.data_.file_ref;
   data_.file_type = other.data_.file_type;
   if (data_.file_ref)
-    Module::Get()->core().AddRefResource(data_.file_ref);
+    Module::Get()->core()->AddRefResource(data_.file_ref);
 }
 
 DirectoryEntry::~DirectoryEntry() {
   if (data_.file_ref)
-    Module::Get()->core().ReleaseResource(data_.file_ref);
+    Module::Get()->core()->ReleaseResource(data_.file_ref);
 }
 
 DirectoryEntry& DirectoryEntry::operator=(const DirectoryEntry& other) {

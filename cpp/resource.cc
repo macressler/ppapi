@@ -16,12 +16,12 @@ Resource::Resource() : pp_resource_(NULL) {
 
 Resource::Resource(const Resource& other) : pp_resource_(other.pp_resource_) {
   if (!is_null())
-    Module::Get()->core().AddRefResource(pp_resource_);
+    Module::Get()->core()->AddRefResource(pp_resource_);
 }
 
 Resource::~Resource() {
   if (!is_null())
-    Module::Get()->core().ReleaseResource(pp_resource_);
+    Module::Get()->core()->ReleaseResource(pp_resource_);
 }
 
 Resource& Resource::operator=(const Resource& other) {
@@ -36,7 +36,7 @@ void Resource::swap(Resource& other) {
 
 Resource::Resource(PP_Resource resource) : pp_resource_(resource) {
   if (!is_null())
-    Module::Get()->core().AddRefResource(pp_resource_);
+    Module::Get()->core()->AddRefResource(pp_resource_);
 }
 
 void Resource::PassRefFromConstructor(PP_Resource resource) {

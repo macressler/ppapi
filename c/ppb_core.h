@@ -10,6 +10,8 @@
 #include "ppapi/c/pp_time.h"
 #include "ppapi/c/pp_var.h"
 
+typedef struct _pp_CompletionCallback PP_CompletionCallback;
+
 #define PPB_CORE_INTERFACE "PPB_Core;1"
 
 typedef struct _ppb_Core {
@@ -30,13 +32,18 @@ typedef struct _ppb_Core {
   PP_Time (*GetTime)();
 
   // Schedules work to be executed on the main plugin thread after the
-  // specified delay.  The context parameter is a user defined argument that
-  // will be passed to the callback function when it runs.  NOTE: If the
-  // browser is shutting down or if the plugin has no instances, then the
-  // function may not be called.
+  // specified delay. The delay may be 0 to specify a call back as soon as
+  // possible.
+  //
+  // The |result| parameter will just be passed as the second argument as the
+  // callback. Many applications won't need this, but it allows a plugin to
+  // emulate calls of some callbacks which do use this value.
+  //
+  // NOTE: If the browser is shutting down or if the plugin has no instances,
+  // then the callback function may not be called.
   void (*CallOnMainThread)(int32_t delay_in_milliseconds,
-                           void (*func)(void* context),
-                           void* context);
+                           PP_CompletionCallback callback,
+                           int32_t result);
 } PPB_Core;
 
 #endif  // PPAPI_C_PPB_CORE_H_

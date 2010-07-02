@@ -178,7 +178,7 @@ void Var::GetAllPropertyNames(std::vector<Var>* properties,
     Var temp(PassRef(), props[i]);
     (*properties)[i].swap(temp);
   }
-  Module::Get()->core().MemFree(props);
+  Module::Get()->core()->MemFree(props);
 }
 
 void Var::SetProperty(const Var& name, const Var& value, Var* exception) {

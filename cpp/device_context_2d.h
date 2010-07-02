@@ -8,7 +8,6 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/cpp/resource.h"
 
-typedef struct _pp_CompletionCallback PP_CompletionCallback;
 typedef struct _pp_Rect PP_Rect;
 
 namespace pp {
@@ -33,7 +32,7 @@ class DeviceContext2D : public Resource {
 
   DeviceContext2D& operator=(const DeviceContext2D& other);
   void swap(DeviceContext2D& other);
-  
+
   int32_t width() const { return width_; }
   int32_t height() const { return height_; }
 
@@ -64,7 +63,7 @@ class DeviceContext2D : public Resource {
 
  private:
   int32_t width_;
-  int32_t height_;  
+  int32_t height_;
 };
 
 }  // namespace pp

@@ -13,6 +13,7 @@
 #include "ppapi/c/ppb.h"
 #include "ppapi/c/ppb_core.h"
 #include "ppapi/c/ppp_printing.h"
+#include "ppapi/cpp/core.h"
 
 namespace pp {
 
@@ -35,8 +36,15 @@ class Module {
   // now that the module has been created.
   virtual bool Init() { return true; }
 
+  // Returns the internal module handle.
   PP_Module pp_module() const { return pp_module_; }
-  const PPB_Core& core() const { return *core_; }
+
+  // Returns the core interface for doing basic global operations. This is
+  // guaranteed to be non-NULL once the module has successfully initialized
+  // and during the Init() call.
+  //
+  // It will be NULL before Init() has been called.
+  Core* core() { return core_; }
 
   // Implements GetInterface for the browser to get plugin interfaces. Override
   // if you need to implement your own interface types that this wrapper
@@ -83,7 +91,8 @@ class Module {
 
   PP_Module pp_module_;
   PPB_GetInterface get_browser_interface_;
-  PPB_Core const* core_;
+
+  Core* core_;
 };
 
 }  // namespace pp

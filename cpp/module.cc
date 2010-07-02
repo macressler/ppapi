@@ -201,6 +201,8 @@ Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
 }
 
 Module::~Module() {
+  delete core_;
+  core_ = NULL;
 }
 
 const void* Module::GetInstanceInterface(const char* interface_name) {
@@ -227,10 +229,13 @@ bool Module::InternalInit(PP_Module mod,
                           PPB_GetInterface get_browser_interface) {
   pp_module_ = mod;
   get_browser_interface_ = get_browser_interface;
-  core_ = reinterpret_cast<const PPB_Core*>(GetBrowserInterface(
+
+  // Get the core interface which we require to run.
+  const PPB_Core* core = reinterpret_cast<const PPB_Core*>(GetBrowserInterface(
       PPB_CORE_INTERFACE));
-  if (!core_)
-    return false;  // Can't run without the core interface.
+  if (!core)
+    return false;
+  core_ = new Core(core);
 
   return Init();
 }
