@@ -4,7 +4,9 @@
 
 #include <math.h>
 #include <stdio.h>  // FIXME(brettw) erase me.
+#ifndef WIN32
 #include <sys/time.h>
+#endif
 #include <time.h>
 
 #include <algorithm>
@@ -250,6 +252,8 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   void UpdateFps() {
+// Time code doesn't currently compile on Windows, just skip FPS for now.
+#ifndef WIN32
     pp::Var window = GetWindowObject();
     pp::Var doc = window.GetProperty("document");
     pp::Var fps = doc.Call("getElementById", "fps");
@@ -268,6 +272,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     }
 
     time_at_last_check_ = time_now;
+#endif
   }
 
   // Print interfaces.
