@@ -17,7 +17,6 @@ class TestBuffer : public TestCase {
 
   // TestCase implementation.
   virtual bool Init();
-  virtual std::string GetTestCaseName() const;
   virtual void RunTest();
 
  private:
@@ -30,4 +29,3 @@ class TestBuffer : public TestCase {
 };
 
 #endif  // PAPPI_TESTS_TEST_BUFFER_H_
-

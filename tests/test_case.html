@@ -1,0 +1,14 @@
+<html><head>
+<link rel="stylesheet" href="test_page.css">
+</head><body>
+
+<script>
+var testcase = location.search.substring(1);
+document.title = 'Test PPAPI ' + testcase;
+document.write('<h1>Test PPAPI ' + testcase + '</h1>');
+document.write('<object id="plugin" type="application/x-ppapi-tests" width="400" height="16" testcase="' + testcase + '"></object>');
+</script>
+
+<div id="console" /><span class="load_msg">loading...</span></div>
+
+</body></html>

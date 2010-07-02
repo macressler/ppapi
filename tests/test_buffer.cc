@@ -11,14 +11,12 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/tests/test_instance.h"
 
+REGISTER_TEST_CASE(Buffer);
+
 bool TestBuffer::Init() {
   buffer_interface_ = reinterpret_cast<PPB_Buffer const*>(
       pp::Module::Get()->GetBrowserInterface(PPB_BUFFER_INTERFACE));
   return !!buffer_interface_;
-}
-
-std::string TestBuffer::GetTestCaseName() const {
-  return std::string("Buffer");
 }
 
 void TestBuffer::RunTest() {

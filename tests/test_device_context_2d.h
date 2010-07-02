@@ -24,7 +24,6 @@ class TestDeviceContext2D : public TestCase {
 
   // TestCase implementation.
   virtual bool Init();
-  virtual std::string GetTestCaseName() const;
   virtual void RunTest();
 
   void QuitMessageLoop();

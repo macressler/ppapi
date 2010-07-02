@@ -20,7 +20,7 @@ class TestInstance : public pp::Instance {
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip);
 
   // Outputs the information from one test run, using the format
-  //   <GetTestCaseName()>.<test_name> [PASS|FAIL <error_message>]
+  //   <test_name> [PASS|FAIL <error_message>]
   // If error_message is empty, we say the test passed and emit PASS. If
   // error_message is nonempty, the test failed with that message as the error
   // string.

@@ -220,6 +220,8 @@
         'tests/test_device_context_2d.h',
         'tests/test_image_data.cc',
         'tests/test_image_data.h',
+        'tests/test_url_loader.cc',
+        'tests/test_url_loader.h',
       ],
       'dependencies': [
         'ppapi_cpp'

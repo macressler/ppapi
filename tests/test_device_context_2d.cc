@@ -17,6 +17,8 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/tests/test_instance.h"
 
+REGISTER_TEST_CASE(DeviceContext2D);
+
 namespace {
 
 // A NOP flush callback for use in various tests.
@@ -45,10 +47,6 @@ bool TestDeviceContext2D::Init() {
   }
   return device_context_interface_ && image_data_interface_ &&
          testing_interface_;
-}
-
-std::string TestDeviceContext2D::GetTestCaseName() const {
-  return std::string("DeviceContext");
 }
 
 void TestDeviceContext2D::RunTest() {

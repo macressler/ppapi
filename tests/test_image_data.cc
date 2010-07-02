@@ -10,14 +10,12 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/tests/test_instance.h"
 
+REGISTER_TEST_CASE(ImageData);
+
 bool TestImageData::Init() {
   image_data_interface_ = reinterpret_cast<PPB_ImageData const*>(
       pp::Module::Get()->GetBrowserInterface(PPB_IMAGEDATA_INTERFACE));
   return !!image_data_interface_;
-}
-
-std::string TestImageData::GetTestCaseName() const {
-  return std::string("ImageData");
 }
 
 void TestImageData::RunTest() {
