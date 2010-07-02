@@ -234,7 +234,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
     printf("ViewChanged %d,%d,%d,%d\n", position.point.x, position.point.y,
            position.size.width, position.size.height);
-    if (position.size.width == width_ || position.size.height == height_)
+    if (position.size.width == width_ && position.size.height == height_)
       return;  // We don't care about the position, only the size.
 
     width_ = position.size.width;
