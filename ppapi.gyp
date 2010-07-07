@@ -120,6 +120,14 @@
         ['use_fpic==1', {
           'cflags': ['-fPIC'],
         }],
+	['OS=="linux"', {
+          'cflags': ['-Wextra', '-pedantic'],
+        }],
+	['OS=="mac"', {
+	  'xcode_settings': {
+	    'WARNING_CFLAGS': ['-Wextra', '-pedantic'], 
+           },
+        }]
       ],
     },
     {
@@ -143,6 +151,14 @@
         ['use_fpic==1', {
           'cflags': ['-fPIC'],
         }],
+	['OS=="linux"', {
+          'cflags': ['-Wextra', '-pedantic'],
+        }],
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
+           },
+        }]
       ],
     },
     {

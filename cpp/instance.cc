@@ -35,7 +35,8 @@ Instance::Instance(PP_Instance instance) : pp_instance_(instance) {
 Instance::~Instance() {
 }
 
-bool Instance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
+bool Instance::Init(uint32_t /*argc*/, const char* /*argn*/[],
+                    const char* /*argv*/[]) {
   return true;
 }
 
@@ -43,8 +44,8 @@ Var Instance::GetInstanceObject() {
   return Var();
 }
 
-Resource Instance::PrintPages(const PP_PrintPageNumberRange* page_ranges,
-                              uint32_t page_range_count) {
+Resource Instance::PrintPages(const PP_PrintPageNumberRange* /*page_ranges*/,
+                              uint32_t /*page_range_count*/) {
   return Resource();
 }
 

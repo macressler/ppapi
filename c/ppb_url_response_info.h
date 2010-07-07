@@ -14,7 +14,7 @@ enum PP_URLResponseProperty {
   PP_URLResponseProperty_RedirectMethod,  // string
   PP_URLResponseProperty_StatusCode,      // int32
   PP_URLResponseProperty_StatusLine,      // string
-  PP_URLResponseProperty_Headers,         // string, \n-delim
+  PP_URLResponseProperty_Headers          // string, \n-delim
 };
 
 #define PPB_URLRESPONSEINFO_INTERFACE "PPB_URLResponseInfo;1"

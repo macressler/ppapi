@@ -76,7 +76,7 @@ bool DeviceContext2D::PaintImageData(const ImageData& image,
 bool DeviceContext2D::Scroll(const PP_Rect* clip, int32_t dx, int32_t dy) {
   if (!EnsureFuncs() || is_null())
     return false;
-  return device_context_2d_funcs->Scroll(pp_resource(), clip, dx, dx);
+  return device_context_2d_funcs->Scroll(pp_resource(), clip, dx, dy);
 }
 
 bool DeviceContext2D::ReplaceContents(ImageData* image) {

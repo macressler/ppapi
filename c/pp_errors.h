@@ -24,7 +24,7 @@ enum {
 
   // Indicates failure due to an invalid argument.
   PP_Error_BadArgument = -4,
- 
+
   // Indicates failure due to an invalid PP_Resource.
   PP_Error_BadResource = -5,
 
@@ -45,7 +45,7 @@ enum {
 
   // Indicates failure due to an action already being in progress.
   PP_Error_InProgress = -11,
- 
+
   // Indicates failure due to a file that does not exist.
   PP_Error_FileNotFound = -20,
 
@@ -57,9 +57,9 @@ enum {
 
   // Indicates failure due to a file having been modified unexpectedly.
   PP_Error_FileChanged = -23,
- 
+
   // Indicates failure due to a time limit being exceeded.
-  PP_Error_TimedOut = -30,
+  PP_Error_TimedOut = -30
 };
 
 #endif  // PPAPI_C_PP_ERRORS_H_

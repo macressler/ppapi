@@ -134,43 +134,43 @@ PPP_Class plugin_class = {
 
 }  // namespace
 
-bool ScriptableObject::HasProperty(const Var& name, Var* exception) {
+bool ScriptableObject::HasProperty(const Var& /*name*/, Var* /*exception*/) {
   return false;
 }
 
-bool ScriptableObject::HasMethod(const Var& name, Var* exception) {
+bool ScriptableObject::HasMethod(const Var& /*name*/, Var* /*exception*/) {
   return false;
 }
 
-Var ScriptableObject::GetProperty(const Var& name, Var* exception) {
+Var ScriptableObject::GetProperty(const Var& /*name*/, Var* exception) {
   *exception = Var("Property does not exist on ScriptableObject");
   return Var();
 }
 
-void ScriptableObject::GetAllPropertyNames(std::vector<Var>* properties,
-                                           Var* exception) {
+void ScriptableObject::GetAllPropertyNames(std::vector<Var>* /*properties*/,
+                                           Var* /*exception*/) {
 }
 
-void ScriptableObject::SetProperty(const Var& name,
-                                   const Var& value,
+void ScriptableObject::SetProperty(const Var& /*name*/,
+                                   const Var& /*value*/,
                                    Var* exception) {
   *exception = Var("Property can not be set on ScriptableObject");
 }
 
-void ScriptableObject::RemoveProperty(const Var& name,
+void ScriptableObject::RemoveProperty(const Var& /*name*/,
                                       Var* exception) {
   *exception = Var(
       "Property does does not exist to be removed in ScriptableObject");
 }
 
-Var ScriptableObject::Call(const Var& method_name,
-                           const std::vector<Var>& args,
+Var ScriptableObject::Call(const Var& /*method_name*/,
+                           const std::vector<Var>& /*args*/,
                            Var* exception) {
   *exception = Var("Method does not exist to call in ScriptableObject");
   return Var();
 }
 
-Var ScriptableObject::Construct(const std::vector<Var>& args,
+Var ScriptableObject::Construct(const std::vector<Var>& /*args*/,
                                 Var* exception) {
   *exception = Var("Constuct method does not exist in ScriptableObject");
   return Var();

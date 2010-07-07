@@ -21,7 +21,7 @@ enum PP_URLRequestProperty {
   PP_URLRequestProperty_RecordUploadProgress,  // bool
   PP_URLRequestProperty_AllowAuthentication,   // bool
   PP_URLRequestProperty_AllowCookies,          // bool
-  PP_URLRequestProperty_AllowReferrer,         // bool
+  PP_URLRequestProperty_AllowReferrer          // bool
   // TODO(darin): add an option to suppress the Origin header?  Consider
   // dropping support for CORS in favor of UMP.
 };
