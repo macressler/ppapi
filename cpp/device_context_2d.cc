@@ -24,28 +24,24 @@ static bool EnsureFuncs() {
   return true;
 }
 
-DeviceContext2D::DeviceContext2D() : Resource(), width_(0), height_(0) {
+DeviceContext2D::DeviceContext2D() : Resource() {
 }
 
 DeviceContext2D::DeviceContext2D(const DeviceContext2D& other)
     : Resource(other),
-      width_(other.width_),
-      height_(other.height_) {
+      size_(other.size_) {
 }
 
 DeviceContext2D::DeviceContext2D(int32_t width, int32_t height,
                                  bool is_always_opaque)
-    : Resource(),
-      width_(0),
-      height_(0) {
+    : Resource() {
   if (!EnsureFuncs())
     return;
   PassRefFromConstructor(device_context_2d_funcs->Create(
       Module::Get()->pp_module(), width, height, is_always_opaque));
   if (!is_null()) {
     // Only save the size if allocation succeeded.
-    width_ = width;
-    height_ = height;
+    size_.SetSize(width, height);
   }
 }
 
@@ -53,14 +49,14 @@ DeviceContext2D::~DeviceContext2D() {
 }
 
 DeviceContext2D& DeviceContext2D::operator=(const DeviceContext2D& other) {
-  Resource::operator=(other);
+  DeviceContext2D copy(other);
+  swap(copy);
   return *this;
 }
 
 void DeviceContext2D::swap(DeviceContext2D& other) {
   Resource::swap(other);
-  std::swap(width_, other.width_);
-  std::swap(height_, other.height_);
+  size_.swap(other.size_);
 }
 
 bool DeviceContext2D::PaintImageData(const ImageData& image,

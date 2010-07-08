@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PAPPI_TESTS_TEST_IMAGE_DATA_H_
-#define PAPPI_TESTS_TEST_IMAGE_DATA_H_
+#ifndef PPAPI_TESTS_TEST_IMAGE_DATA_H_
+#define PPAPI_TESTS_TEST_IMAGE_DATA_H_
 
 #include "ppapi/tests/test_case.h"
 
@@ -28,4 +28,4 @@ class TestImageData : public TestCase {
   const PPB_ImageData* image_data_interface_;
 };
 
-#endif  // PAPPI_TESTS_TEST_IMAGE_DATA_H_
+#endif  // PPAPI_TESTS_TEST_IMAGE_DATA_H_

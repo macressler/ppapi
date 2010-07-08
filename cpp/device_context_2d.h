@@ -7,6 +7,7 @@
 
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/cpp/resource.h"
+#include "ppapi/cpp/size.h"
 
 typedef struct _pp_Rect PP_Rect;
 
@@ -33,8 +34,9 @@ class DeviceContext2D : public Resource {
   DeviceContext2D& operator=(const DeviceContext2D& other);
   void swap(DeviceContext2D& other);
 
-  int32_t width() const { return width_; }
-  int32_t height() const { return height_; }
+  const Size& size() const { return size_; }
+  int32_t width() const { return size_.width(); }
+  int32_t height() const { return size_.height(); }
 
   // Enqueues paint or scroll commands. THIS COMMAND HAS NO EFFECT UNTIL YOU
   // CALL Flush().
@@ -62,8 +64,7 @@ class DeviceContext2D : public Resource {
   int32_t Flush(const CompletionCallback& cc);
 
  private:
-  int32_t width_;
-  int32_t height_;
+  Size size_;
 };
 
 }  // namespace pp

@@ -89,7 +89,6 @@ void TestInstance::LogTest(const std::string& test_name,
 }
 
 void TestInstance::AppendError(const std::string& message) {
-  //AppendHTML(std::string("<div><i>") + message + "</i></div>");
   if (!errors_.empty())
     errors_.append(", ");
   errors_.append(message);

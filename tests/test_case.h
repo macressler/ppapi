@@ -24,6 +24,8 @@ class TestCase {
   // first displayed.
   virtual void RunTest() = 0;
 
+  std::string MakeFailureMessage(const char* file, int line, const char* cmd);
+
   // Override to get scrollbar notifications.
   virtual void ScrollbarValueChanged(PP_Resource, uint32_t) {}
 
@@ -69,5 +71,19 @@ class TestCaseFactory {
   static TestCaseFactory g_Test##name_factory(                           \
     #name, &Test##name##_FactoryMethod                                   \
   )
+
+// Helper macro for calling functions implementing specific tests in the
+// RunTest function. This assumes the function name is TestFoo where Foo is the
+// test name,
+#define RUN_TEST(name) \
+  instance_->LogTest(#name, Test##name());
+
+// Helper macros for checking values in tests, and returning a location
+// description of the test fails.
+#define ASSERT_TRUE(cmd) \
+  if (!(cmd)) { \
+    return MakeFailureMessage(__FILE__, __LINE__, #cmd); \
+  }
+#define ASSERT_FALSE(cmd) ASSERT_TRUE(!(cmd))
 
 #endif  // PPAPI_TEST_TEST_CASE_H_
