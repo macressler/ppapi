@@ -30,39 +30,37 @@ class Instance {
 
   // Initializes this plugin with the given arguments. The argument count is in
   // |argc|, the argument names are in |argn|, and the argument values are in
-  // |argv|.
+  // |argv|. Returns true on success. Returning false will cause the plugin
+  // instance to be deleted and no other functions will be called.
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
 
-  virtual bool HandleDocumentLoad(const URLLoader& /*url_loader*/) {
-    return false;
-  }
-  virtual bool HandleEvent(const PP_Event& /*event*/) {
-    return false;
-  }
+  // PPP_Instance methods for the plugin to override.
+  // See ppp_instance.h for details.
+  virtual bool HandleDocumentLoad(const URLLoader& url_loader);
+  virtual bool HandleEvent(const PP_Event& event);
   virtual Var GetInstanceObject();
-  virtual void ViewChanged(const PP_Rect& /*position*/,
-                           const PP_Rect& /*clip*/) { }
+  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip);
 
-  // Print interfaces.
-  virtual int32_t PrintBegin(const PP_PrintSettings& /*print_settings*/) {
-    return 0;
-  }
+  // PPP_Printing methods for the plugin to override if it supports printing.
+  // See ppp_printing.h for details.
+  virtual int32_t PrintBegin(const PP_PrintSettings& print_settings);
   virtual Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
                               uint32_t page_range_count);
-  virtual void PrintEnd() {}
+  virtual void PrintEnd();
 
   // Widget interface.
-  virtual void InvalidateWidget(PP_Resource /* widget_id */,
-                                const PP_Rect& /* dirty */) { }
+  virtual void InvalidateWidget(PP_Resource widget_id,
+                                const PP_Rect& dirty);
 
   // Scrollbar interface.
-  virtual void ScrollbarValueChanged(PP_Resource /* scrollbar_id */,
-                                     uint32_t /* value */) { }
+  virtual void ScrollbarValueChanged(PP_Resource scrollbar_id,
+                                     uint32_t value);
 
+  // PPB_Instance methods for querying the browser.
+  // See ppb_instance.h for details.
   Var GetWindowObject();
   Var GetOwnerElementObject();
   bool BindGraphicsDeviceContext(const DeviceContext2D& context);
-  //bool BindGraphicsDeviceContext(const DeviceContext3D& context);
   bool IsFullFrame();
 
  private:

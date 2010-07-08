@@ -40,13 +40,40 @@ bool Instance::Init(uint32_t /*argc*/, const char* /*argn*/[],
   return true;
 }
 
+bool Instance::HandleDocumentLoad(const URLLoader& /*url_loader*/) {
+  return false;
+}
+
+bool Instance::HandleEvent(const PP_Event& /*event*/) {
+  return false;
+}
+
 Var Instance::GetInstanceObject() {
   return Var();
+}
+
+void Instance::ViewChanged(const PP_Rect& /*position*/,
+                           const PP_Rect& /*clip*/) {
+}
+
+int32_t Instance::PrintBegin(const PP_PrintSettings&) {
+  return 0;
 }
 
 Resource Instance::PrintPages(const PP_PrintPageNumberRange* /*page_ranges*/,
                               uint32_t /*page_range_count*/) {
   return Resource();
+}
+
+void Instance::PrintEnd() {
+}
+
+void Instance::InvalidateWidget(PP_Resource /*widget_id*/,
+                                const PP_Rect& /*dirty*/) {
+}
+
+void Instance::ScrollbarValueChanged(PP_Resource /*scrollbar_id*/,
+                                     uint32_t /*value*/) {
 }
 
 Var Instance::GetWindowObject() {
