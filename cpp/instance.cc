@@ -68,14 +68,6 @@ Resource Instance::PrintPages(const PP_PrintPageNumberRange* /*page_ranges*/,
 void Instance::PrintEnd() {
 }
 
-void Instance::InvalidateWidget(PP_Resource /*widget_id*/,
-                                const PP_Rect& /*dirty*/) {
-}
-
-void Instance::ScrollbarValueChanged(PP_Resource /*scrollbar_id*/,
-                                     uint32_t /*value*/) {
-}
-
 Var Instance::GetWindowObject() {
   if (!EnsureFuncs())
     return Var();
