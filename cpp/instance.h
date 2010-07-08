@@ -5,6 +5,7 @@
 #ifndef PPAPI_CPP_INSTANCE_H_
 #define PPAPI_CPP_INSTANCE_H_
 
+#include "ppapi/c/pp_cursor_type.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
@@ -17,11 +18,13 @@ typedef struct _pp_Rect PP_Rect;
 namespace pp {
 
 class DeviceContext2D;
-class Var;
+class ImageData;
+class Point;
 class Rect;
 class Resource;
 class Scrollbar;
 class URLLoader;
+class Var;
 class Widget;
 
 class Instance {
@@ -64,6 +67,9 @@ class Instance {
   Var GetOwnerElementObject();
   bool BindGraphicsDeviceContext(const DeviceContext2D& context);
   bool IsFullFrame();
+  bool SetCursor(PP_CursorType type,
+                 const ImageData& custom_image,
+                 const Point& hot_spot);
 
  private:
   PP_Instance pp_instance_;

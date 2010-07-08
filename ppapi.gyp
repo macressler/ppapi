@@ -30,6 +30,7 @@
       },
       'sources': [
         'c/pp_completion_callback.h',
+        'c/pp_cursor_type.h',
         'c/pp_errors.h',
         'c/pp_event.h',
         'c/pp_file_info.h',

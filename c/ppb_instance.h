@@ -5,6 +5,7 @@
 #ifndef PPAPI_C_PPB_INSTANCE_H_
 #define PPAPI_C_PPB_INSTANCE_H_
 
+#include "ppapi/c/pp_cursor_type.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/pp_resource.h"
@@ -48,6 +49,15 @@ typedef struct _ppb_Instance {
   // happen if the user does a top level navigation or the page specifies an
   // iframe to a resource with a MIME type registered by the plugin.
   bool (*IsFullFrame)(PP_Instance instance);
+
+  // Set a cursor.  If "type" is PP_CURSOR_TYPE_CUSTOM, then "custom_image"
+  // must be an ImageData resource containing the cursor and "hot_spot" must
+  // contain the offset within that image that refers to the cursor's position.
+  bool (*SetCursor)(PP_Instance instance,
+                    PP_CursorType type,
+                    PP_Resource custom_image,
+                    const PP_Point* hot_spot);
+                    
 } PPB_Instance;
 
 #endif  // PPAPI_C_PPB_INSTANCE_H_

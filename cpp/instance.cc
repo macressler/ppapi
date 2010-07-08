@@ -7,7 +7,9 @@
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/device_context_2d.h"
+#include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/point.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/var.h"
 
@@ -101,6 +103,15 @@ bool Instance::IsFullFrame() {
   if (!EnsureFuncs())
     return false;
   return ppb_instance_funcs->IsFullFrame(pp_instance());
+}
+
+bool Instance::SetCursor(PP_CursorType type,
+                         const ImageData& custom_image,
+                         const Point& hot_spot) {
+  if (!EnsureFuncs())
+    return false;
+  return ppb_instance_funcs->SetCursor(
+      pp_instance(), type, custom_image.pp_resource(), &hot_spot.pp_point());
 }
 
 }  // namespace pp
