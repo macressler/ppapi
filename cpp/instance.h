@@ -52,12 +52,12 @@ class Instance {
   virtual void PrintEnd() {}
 
   // Widget interface.
-  virtual void InvalidateWidget(PP_Resource widget_id, const PP_Rect& dirty) {
-  }
+  virtual void InvalidateWidget(PP_Resource /* widget_id */,
+                                const PP_Rect& /* dirty */) { }
 
   // Scrollbar interface.
-  virtual void ScrollbarValueChanged(PP_Resource scrollbar_id, uint32_t value) {
-  }
+  virtual void ScrollbarValueChanged(PP_Resource /* scrollbar_id */,
+                                     uint32_t /* value */) { }
 
   Var GetWindowObject();
   Var GetOwnerElementObject();
