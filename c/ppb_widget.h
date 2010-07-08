@@ -20,24 +20,20 @@ typedef struct _ppb_Widget {
 
   // Paint the given rectangle of the widget into the given image.
   // Returns true on success, false on failure
-  bool (*Paint)(
-      PP_Resource resource,
-      const PP_Rect* rect,
-      PP_Resource image);
+  bool (*Paint)(PP_Resource widget,
+                const PP_Rect* rect,
+                PP_Resource image);
 
   // Pass in an event to a widget.  It'll return true if the event was consumed.
-  bool (*HandleEvent)(
-      PP_Resource resource,
-      const PP_Event* event);
+  bool (*HandleEvent)(PP_Resource widget,
+                      const PP_Event* event);
 
   // Get/set the location of the widget.
-  bool (*GetLocation)(
-      PP_Resource resource,
-      PP_Rect* location);
+  bool (*GetLocation)(PP_Resource widget,
+                      PP_Rect* location);
 
-  void (*SetLocation)(
-      PP_Resource resource,
-      const PP_Rect* location);
+  void (*SetLocation)(PP_Resource widget,
+                      const PP_Rect* location);
 } PPB_Widget;
 
 #endif  // PPAPI_C_PPB_WIDGET_H_

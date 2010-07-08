@@ -23,7 +23,21 @@ static bool EnsureFuncs() {
   return true;
 }
 
-Widget::Widget() {
+Widget::Widget(PP_Resource resource) : Resource(resource) {
+}
+
+Widget::Widget(const Widget& other)
+    : Resource(other) {
+}
+
+Widget& Widget::operator=(const Widget& other) {
+  Widget copy(other);
+  swap(copy);
+  return *this;
+}
+
+void Widget::swap(Widget& other) {
+  Resource::swap(other);
 }
 
 bool Widget::Paint(const PP_Rect& rect, ImageData* image) {

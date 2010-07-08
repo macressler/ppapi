@@ -14,19 +14,26 @@ typedef struct _pp_Event PP_Event;
 namespace pp {
 
 class ImageData;
+class Instance;
 
 // This is the base class for widget elements.  As such, it can't be created
 // directly.
 class Widget : public Resource {
  public:
+  // Creates an is_null() Widget object.
+  Widget() {}
+
+  explicit Widget(PP_Resource resource);
+  Widget(const Widget& other);
+
+  Widget& operator=(const Widget& other);
+  void swap(Widget& other);
+
   // PPB_Widget methods:
   bool Paint(const PP_Rect& rect, ImageData* image);
   bool HandleEvent(const PP_Event& event);
   bool GetLocation(PP_Rect* location);
   void SetLocation(const PP_Rect& location);
-
- protected:
-  Widget();
 };
 
 }  // namespace pp

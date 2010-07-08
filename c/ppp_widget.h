@@ -14,9 +14,9 @@
 
 typedef struct _ppp_Widget {
   // Informs the instance that the given rectangle needs to be repainted.
-  void (*Invalidate)(PP_Instance instance_id,
-                     PP_Resource widget_id,
-                     const PP_Rect* dirty);
+  void (*Invalidate)(PP_Instance instance,
+                     PP_Resource widget,
+                     const PP_Rect* dirty_rect);
 } PPP_Widget;
 
 #endif  // PPAPI_C_PPP_WIDGET_H_

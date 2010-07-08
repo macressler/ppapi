@@ -10,12 +10,12 @@
 
 typedef struct _pp_Rect PP_Rect;
 
-enum PP_ScrollBy {
-  PP_WIDGET_SCROLL_BY_PIXEL = 0,
-  PP_WIDGET_SCROLL_BY_LINE = 1,
-  PP_WIDGET_SCROLL_BY_PAGE = 2,
-  PP_WIDGET_SCROLL_BY_DOCUMENT = 3
-};
+typedef enum _pp_ScrollBy {
+  PP_SCROLLBY_PIXEL = 0,
+  PP_SCROLLBY_LINE = 1,
+  PP_SCROLLBY_PAGE = 2,
+  PP_SCROLLBY_DOCUMENT = 3
+} PP_ScrollBy;
 
 #define PPB_SCROLLBAR_INTERFACE "PPB_Scrollbar;1"
 
@@ -34,32 +34,28 @@ typedef struct _ppb_Scrollbar {
   uint32_t (*GetThickness)();
 
   // Get/set the value of the scrollbar.
-  uint32_t (*GetValue)(PP_Resource resource);
+  uint32_t (*GetValue)(PP_Resource scrollbar);
 
-  void (*SetValue)(
-      PP_Resource resource,
-      uint32_t value);
+  void (*SetValue)(PP_Resource scrollbar,
+                   uint32_t value);
 
   // Set the document size (i.e. total length of the region that's being
   // scrolled).
-  void (*SetDocumentSize)(
-      PP_Resource resource,
-      uint32_t size);
+  void (*SetDocumentSize)(PP_Resource scrollbar,
+                          uint32_t size);
 
   // Updates the tickmarks.  Only valid for vertical scrollbars.  "tick_marks"
   // contains "count" PP_Rect objects.
-  void (*SetTickMarks)(
-      PP_Resource resource,
-      const PP_Rect* tick_marks,
-      uint32_t count);
+  void (*SetTickMarks)(PP_Resource scrollbar,
+                       const PP_Rect* tick_marks,
+                       uint32_t count);
 
   // Scroll by "multiplier" pixels/lines/pages units.  Positive values are
   // forward and negative are backward.  If "unit" is document then any positive
   // value goes to the end while any negative value goes to the beginning.
-  void (*ScrollBy)(
-      PP_Resource resource,
-      PP_ScrollBy unit,
-      int32_t multiplier);
+  void (*ScrollBy)(PP_Resource scrollbar,
+                   PP_ScrollBy unit,
+                   int32_t multiplier);
 } PPB_Scrollbar;
 
 #endif  // PPAPI_C_PPB_SCROLLBAR_H_

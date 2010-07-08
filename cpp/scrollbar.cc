@@ -4,6 +4,7 @@
 
 #include "ppapi/cpp/scrollbar.h"
 
+#include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 
 namespace pp {
@@ -20,10 +21,28 @@ static bool EnsureFuncs() {
   return true;
 }
 
-Scrollbar::Scrollbar(PP_Instance instance, bool vertical) {
+Scrollbar::Scrollbar(PP_Resource resource) : Widget(resource) {
+}
+
+Scrollbar::Scrollbar(const Instance& instance, bool vertical) {
   if (!EnsureFuncs())
     return;
-  PassRefFromConstructor(scrollbar_funcs->Create(instance, vertical));
+  PassRefFromConstructor(scrollbar_funcs->Create(
+      instance.pp_instance(), vertical));
+}
+
+Scrollbar::Scrollbar(const Scrollbar& other)
+    : Widget(other) {
+}
+
+Scrollbar& Scrollbar::operator=(const Scrollbar& other) {
+  Scrollbar copy(other);
+  swap(copy);
+  return *this;
+}
+
+void Scrollbar::swap(Scrollbar& other) {
+  Resource::swap(other);
 }
 
 uint32_t Scrollbar::GetThickness() {

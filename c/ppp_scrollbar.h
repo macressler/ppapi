@@ -13,8 +13,8 @@
 
 typedef struct _ppp_Scrollbar {
   // Informs the instance that the scrollbar's value has changed.
-  void (*ValueChanged)(PP_Instance instance_id,
-                       PP_Resource scrollbar_id,
+  void (*ValueChanged)(PP_Instance instance,
+                       PP_Resource scrollbar,
                        uint32_t value);
 } PPP_Scrollbar;
 

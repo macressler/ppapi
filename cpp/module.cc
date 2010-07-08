@@ -33,8 +33,10 @@
 #include "ppapi/c/ppp_widget.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/resource.h"
+#include "ppapi/cpp/scrollbar.h"
 #include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
+#include "ppapi/cpp/widget.h"
 
 namespace pp {
 
@@ -201,14 +203,17 @@ static PPP_Printing printing_interface = {
 
 void Widget_Invalidate(PP_Instance instance_id,
                        PP_Resource widget_id,
-                       const PP_Rect* dirty) {
+                       const PP_Rect* dirty_rect) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
     return;
   Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
   if (!instance)
     return;
-  return instance->InvalidateWidget(widget_id, *dirty);
+  Widget widget(widget_id);
+  if (widget.is_null())
+    return;
+  return instance->InvalidateWidget(&widget, *dirty_rect);
 }
 
 static PPP_Widget widget_interface = {
@@ -218,7 +223,7 @@ static PPP_Widget widget_interface = {
 // PPP_Scrollbar implementation ------------------------------------------------
 
 void Scrollbar_ValueChanged(PP_Instance instance_id,
-                            PP_Resource widget_id,
+                            PP_Resource scrollbar_id,
                             uint32_t value) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
@@ -226,7 +231,10 @@ void Scrollbar_ValueChanged(PP_Instance instance_id,
   Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
   if (!instance)
     return;
-  return instance->ScrollbarValueChanged(widget_id, value);
+  Scrollbar scrollbar(scrollbar_id);
+  if (scrollbar.is_null())
+    return;
+  return instance->ScrollbarValueChanged(&scrollbar, value);
 }
 
 static PPP_Scrollbar scrollbar_interface = {

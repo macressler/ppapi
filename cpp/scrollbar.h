@@ -15,7 +15,15 @@ class Instance;
 // This class allows a plugin to use the browser's scrollbar widget.
 class Scrollbar : public Widget {
  public:
-  Scrollbar(PP_Instance instance, bool vertical);
+  // Creates an is_null() Scrollbar object.
+  Scrollbar() {}
+
+  explicit Scrollbar(PP_Resource resource);
+  Scrollbar(const Instance& instance, bool vertical);
+  Scrollbar(const Scrollbar& other);
+
+  Scrollbar& operator=(const Scrollbar& other);
+  void swap(Scrollbar& other);
 
   // PPB_Scrollbar methods:
   static uint32_t GetThickness();
