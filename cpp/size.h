@@ -102,3 +102,4 @@ inline bool operator!=(const pp::Size& lhs, const pp::Size& rhs) {
 }
 
 #endif  // PPAPI_CPP_SIZE_H_
+

@@ -91,3 +91,4 @@ inline bool operator!=(const pp::Point& lhs, const pp::Point& rhs) {
 }
 
 #endif  // PPAPI_CPP_POINT_H_
+
