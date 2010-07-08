@@ -210,10 +210,7 @@ void Widget_Invalidate(PP_Instance instance_id,
   Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
   if (!instance)
     return;
-  Widget widget(widget_id);
-  if (widget.is_null())
-    return;
-  return instance->InvalidateWidget(&widget, *dirty_rect);
+  return instance->InvalidateWidget(widget_id, *dirty_rect);
 }
 
 static PPP_Widget widget_interface = {
@@ -231,10 +228,7 @@ void Scrollbar_ValueChanged(PP_Instance instance_id,
   Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
   if (!instance)
     return;
-  Scrollbar scrollbar(scrollbar_id);
-  if (scrollbar.is_null())
-    return;
-  return instance->ScrollbarValueChanged(&scrollbar, value);
+  return instance->ScrollbarValueChanged(scrollbar_id, value);
 }
 
 static PPP_Scrollbar scrollbar_interface = {
