@@ -18,7 +18,7 @@ class TestInstance : public pp::Instance {
   // pp::Instance override.
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip);
-  virtual void ScrollbarValueChanged(PP_Resource scrollbar_id, uint32_t value);
+  virtual void ScrollbarValueChanged(pp::Scrollbar* scrollbar, uint32_t value);
 
   // Outputs the information from one test run, using the format
   //   <test_name> [PASS|FAIL <error_message>]

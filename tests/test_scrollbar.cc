@@ -22,14 +22,14 @@ void TestScrollbar::RunTest() {
   instance_->LogTest("HandleEvent", TestHandleEvent());
 }
 
-void TestScrollbar::ScrollbarValueChanged(PP_Resource scrollbar_id,
+void TestScrollbar::ScrollbarValueChanged(pp::Scrollbar* scrollbar,
                                           uint32_t value) {
-  if (scrollbar_id == scrollbar_id_)
+  if (scrollbar->pp_resource() == scrollbar_id_)
     scrollbar_value_changed_ = true;
 }
 
 std::string TestScrollbar::TestHandleEvent() {
-  pp::Scrollbar scrollbar(instance_->pp_instance(), true);
+  pp::Scrollbar scrollbar(*instance_, true);
   scrollbar_id_ = scrollbar.pp_resource();
 
   PP_Rect location;

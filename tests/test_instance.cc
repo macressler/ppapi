@@ -62,9 +62,9 @@ void TestInstance::ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
   }
 }
 
-void TestInstance::ScrollbarValueChanged(PP_Resource scrollbar_id,
+void TestInstance::ScrollbarValueChanged(pp::Scrollbar* scrollbar,
                                          uint32_t value) {
-  current_case_->ScrollbarValueChanged(scrollbar_id, value);
+  current_case_->ScrollbarValueChanged(scrollbar, value);
 }
 
 void TestInstance::LogTest(const std::string& test_name,

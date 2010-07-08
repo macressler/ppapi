@@ -13,7 +13,7 @@ class TestScrollbar : public TestCase {
 
   // TestCase implementation.
   virtual void RunTest();
-  virtual void ScrollbarValueChanged(PP_Resource scrollbar_id, uint32_t value);
+  virtual void ScrollbarValueChanged(pp::Scrollbar* scrollbar, uint32_t value);
 
  private:
   std::string TestHandleEvent();
