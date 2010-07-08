@@ -32,6 +32,7 @@
 #include "ppapi/c/ppp_scrollbar.h"
 #include "ppapi/c/ppp_widget.h"
 #include "ppapi/cpp/instance.h"
+#include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/scrollbar.h"
 #include "ppapi/cpp/url_loader.h"
