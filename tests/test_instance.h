@@ -45,8 +45,14 @@ class TestInstance : public pp::Instance {
   // test. Ownership is passed to the caller.
   TestCase* CaseForTestName(const char* name);
 
+  // Appends a list of available tests to the console in the document.
+  void LogAvailableTests();
+
+  // Appends the given error test to the console in the document.
+  void LogError(const std::string& text);
+
   // Appends the given HTML string to the console in the document.
-  void AppendHTML(const std::string& html);
+  void LogHTML(const std::string& html);
 
   // Sets the given cookie in the current document.
   void SetCookie(const std::string& name, const std::string& value);

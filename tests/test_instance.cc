@@ -24,6 +24,8 @@ bool TestInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
   // Create the proper test case from the argument.
   for (uint32_t i = 0; i < argc; i++) {
     if (strcmp(argn[i], "testcase") == 0) {
+      if (argv[i][0] == '\0')
+        break;
       current_case_ = CaseForTestName(argv[i]);
       if (!current_case_)
         errors_.append(std::string("Unknown test case ") + argv[i]);
@@ -33,10 +35,7 @@ bool TestInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
     }
   }
 
-  // Always return true since ViewChanged will actually output the error
-  // message to the page (if possible) and to the cookie with what went wrong,
-  // and that will only work if the plugin actually runs.
-  errors_.append("No TestCase argument given in the page for this plugin");
+  // In ViewChanged, we'll dump out a list of all available tests.
   return true;
 }
 
@@ -52,7 +51,9 @@ void TestInstance::ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
     if (!errors_.empty()) {
       // Catch initialization errors and output the current error string to
       // the console.
-      AppendHTML("Plugin initialization failed: " + errors_);
+      LogError("Plugin initialization failed: " + errors_);
+    } else if (!current_case_) {
+      LogAvailableTests();
     } else {
       current_case_->RunTest();
     }
@@ -85,7 +86,7 @@ void TestInstance::LogTest(const std::string& test_name,
     errors_.append(test_name + " FAIL: " + error_message);
   }
   html.append("</div>");
-  AppendHTML(html);
+  LogHTML(html);
 }
 
 void TestInstance::AppendError(const std::string& message) {
@@ -104,7 +105,32 @@ TestCase* TestInstance::CaseForTestName(const char* name) {
   return NULL;
 }
 
-void TestInstance::AppendHTML(const std::string& html) {
+void TestInstance::LogAvailableTests() {
+  // Print out a listing of all tests.
+  std::string html;
+  html.append("Available test cases: <dl>");
+  TestCaseFactory* iter = TestCaseFactory::head_;
+  while (iter != NULL) {
+    html.append("<dd><a href='?");
+    html.append(iter->name_);
+    html.append("'>");
+    html.append(iter->name_);
+    html.append("</a></dd>");
+    iter = iter->next_;
+  }
+  html.append("</dl>");
+  LogHTML(html);  
+}
+
+void TestInstance::LogError(const std::string& text) {
+  std::string html;
+  html.append("<span class=\"fail\">FAIL</span>: <span class=\"err_msg\">");
+  html.append(text);
+  html.append("</span>");
+  LogHTML(html);
+}
+
+void TestInstance::LogHTML(const std::string& html) {
   // This does: window.document.getElementById("console").innerHTML += html
   pp::Var console = GetWindowObject().GetProperty("document").
       Call("getElementById", "console");

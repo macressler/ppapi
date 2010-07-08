@@ -1,14 +1,25 @@
 <html><head>
 <link rel="stylesheet" href="test_page.css">
-</head><body>
-
 <script>
-var testcase = location.search.substring(1);
-document.title = 'Test PPAPI ' + testcase;
-document.write('<h1>Test PPAPI ' + testcase + '</h1>');
-document.write('<object id="plugin" type="application/x-ppapi-tests" width="400" height="16" testcase="' + testcase + '"></object>');
+onload = function() {
+  var mimeType = "application/x-ppapi-tests";
+  if (mimeType in navigator.mimeTypes) {
+    var testcase = location.search.substring(1);
+    document.title = 'Test PPAPI ' + testcase;
+
+    var obj = document.createElement("OBJECT");
+    obj.setAttribute("id", "plugin");
+    obj.setAttribute("type", mimeType);
+    obj.setAttribute("testcase", testcase);
+    document.getElementById("container").appendChild(obj);
+  } else {
+    document.getElementById("console").innerHTML =
+        '<span class="fail">FAIL</span>: ' +
+        '<span class="err_msg">Test plug-in is not registered.</span>';
+  }
+}
 </script>
-
+</head><body>
+<div id="container"></div>
 <div id="console" /><span class="load_msg">loading...</span></div>
-
 </body></html>
