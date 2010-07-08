@@ -11,10 +11,6 @@
 
 class TestInstance;
 
-namespace pp {
-class Scrollbar;
-}
-
 // Individual classes of tests derive from this generic test case.
 class TestCase {
  public:
@@ -31,7 +27,7 @@ class TestCase {
   std::string MakeFailureMessage(const char* file, int line, const char* cmd);
 
   // Override to get scrollbar notifications.
-  virtual void ScrollbarValueChanged(pp::Scrollbar*, uint32_t) {}
+  virtual void ScrollbarValueChanged(PP_Resource, uint32_t) {}
 
  protected:
   // Pointer to the instance that owns us.

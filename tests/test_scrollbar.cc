@@ -22,9 +22,9 @@ void TestScrollbar::RunTest() {
   instance_->LogTest("HandleEvent", TestHandleEvent());
 }
 
-void TestScrollbar::ScrollbarValueChanged(pp::Scrollbar* scrollbar,
+void TestScrollbar::ScrollbarValueChanged(PP_Resource scrollbar,
                                           uint32_t value) {
-  if (scrollbar->pp_resource() == scrollbar_id_)
+  if (scrollbar == scrollbar_id_)
     scrollbar_value_changed_ = true;
 }
 
