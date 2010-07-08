@@ -13,6 +13,18 @@ namespace pp {
 
 class Var;
 
+// This class allows you to implement objects accessible by JavaScript. Derive
+// from this class and override the virtual functions you support. pp::Var has
+// a constructor that takes a pointer to a ScriptableObject for when you want
+// to convert your custom object to a var.
+//
+// Please see the PPB_Core C interface for more information on how to implement
+// these functions. These functions are the backend implementation for the
+// functions in PPB_Var, which contains further information.
+//
+// Please see:
+//   http://code.google.com/p/ppapi/wiki/InterfacingWithJavaScript
+// for a general overview of interfacing with JavaScript.
 class ScriptableObject {
  public:
   ScriptableObject() {}
