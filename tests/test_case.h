@@ -7,6 +7,8 @@
 
 #include <string>
 
+#include "ppapi/c/pp_resource.h"
+
 class TestInstance;
 
 // Individual classes of tests derive from this generic test case.
@@ -21,6 +23,9 @@ class TestCase {
   // Override to implement the test. It will be called after the plugin is
   // first displayed.
   virtual void RunTest() = 0;
+
+  // Override to get scrollbar notifications.
+  virtual void ScrollbarValueChanged(PP_Resource, uint32_t) {}
 
  protected:
   // Pointer to the instance that owns us.

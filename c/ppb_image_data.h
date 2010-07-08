@@ -9,9 +9,6 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-typedef struct _pp_ImageDataDesc PP_ImageDataDesc;
-typedef struct _pp_Rect PP_Rect;
-
 enum PP_ImageDataFormat {
   PP_IMAGEDATAFORMAT_BGRA_PREMUL
 };
@@ -20,6 +17,7 @@ typedef struct _pp_ImageDataDesc {
   PP_ImageDataFormat format;
 
   // Size of the bitmap in pixels.
+  // TODO: change this to PP_Size
   int32_t width;
   int32_t height;
 

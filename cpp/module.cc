@@ -29,6 +29,8 @@
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/c/ppp_printing.h"
+#include "ppapi/c/ppp_scrollbar.h"
+#include "ppapi/c/ppp_widget.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/url_loader.h"
@@ -195,6 +197,42 @@ static PPP_Printing printing_interface = {
   &Printing_End,
 };
 
+// PPP_Widget implementation ---------------------------------------------------
+
+void Widget_Invalidate(PP_Instance instance_id,
+                       PP_Resource widget_id,
+                       const PP_Rect* dirty) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
+  if (!instance)
+    return;
+  return instance->InvalidateWidget(widget_id, *dirty);
+}
+
+static PPP_Widget widget_interface = {
+  &Widget_Invalidate,
+};
+
+// PPP_Scrollbar implementation ------------------------------------------------
+
+void Scrollbar_ValueChanged(PP_Instance instance_id,
+                            PP_Resource widget_id,
+                            uint32_t value) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
+  if (!instance)
+    return;
+  return instance->ScrollbarValueChanged(widget_id, value);
+}
+
+static PPP_Scrollbar scrollbar_interface = {
+  &Scrollbar_ValueChanged,
+};
+
 // Module ----------------------------------------------------------------------
 
 Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
@@ -210,6 +248,10 @@ const void* Module::GetInstanceInterface(const char* interface_name) {
     return &instance_interface;
   if (strcmp(interface_name, PPP_PRINTING_INTERFACE) == 0)
     return &printing_interface;
+  if (strcmp(interface_name, PPP_WIDGET_INTERFACE) == 0)
+    return &widget_interface;
+  if (strcmp(interface_name, PPP_SCROLLBAR_INTERFACE) == 0)
+    return &scrollbar_interface;
 
   return NULL;
 }

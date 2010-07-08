@@ -6,6 +6,7 @@
 #define PPAPI_CPP_INSTANCE_H_
 
 #include "ppapi/c/pp_instance.h"
+#include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
 typedef struct _pp_Event PP_Event;
@@ -49,6 +50,14 @@ class Instance {
   virtual Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
                               uint32_t page_range_count);
   virtual void PrintEnd() {}
+
+  // Widget interface.
+  virtual void InvalidateWidget(PP_Resource widget_id, const PP_Rect& dirty) {
+  }
+
+  // Scrollbar interface.
+  virtual void ScrollbarValueChanged(PP_Resource scrollbar_id, uint32_t value) {
+  }
 
   Var GetWindowObject();
   Var GetOwnerElementObject();
