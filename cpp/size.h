@@ -36,6 +36,9 @@ class Size {
   const PP_Size& pp_size() const {
     return size_;
   }
+  PP_Size& pp_size() {
+    return size_;
+  }
 
   int width() const {
     return size_.width;

@@ -34,6 +34,9 @@ class Point {
   const PP_Point& pp_point() const {
     return point_;
   }
+  PP_Point& pp_point() {
+    return point_;
+  }
 
   int32_t x() const { return point_.x; }
   void set_x(int32_t in_x) {

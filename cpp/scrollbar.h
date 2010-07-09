@@ -30,7 +30,7 @@ class Scrollbar : public Widget {
   uint32_t GetValue();
   void SetValue(uint32_t value);
   void SetDocumentSize(uint32_t size);
-  void SetTickMarks(const PP_Rect* tick_marks, uint32_t count);
+  void SetTickMarks(const Rect* tick_marks, uint32_t count);
   void ScrollBy(PP_ScrollBy unit, int32_t multiplier);
 };
 

@@ -8,6 +8,7 @@
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/rect.h"
 
 namespace pp {
 
@@ -40,11 +41,12 @@ void Widget::swap(Widget& other) {
   Resource::swap(other);
 }
 
-bool Widget::Paint(const PP_Rect& rect, ImageData* image) {
+bool Widget::Paint(const Rect& rect, ImageData* image) {
   if (!EnsureFuncs())
     return false;
 
-  return widget_funcs->Paint(pp_resource(), &rect, image->pp_resource());
+  return widget_funcs->Paint(
+      pp_resource(), &rect.pp_rect(), image->pp_resource());
 }
 
 bool Widget::HandleEvent(const PP_Event& event) {
@@ -54,16 +56,16 @@ bool Widget::HandleEvent(const PP_Event& event) {
   return widget_funcs->HandleEvent(pp_resource(), &event);
 }
 
-bool Widget::GetLocation(PP_Rect* location) {
+bool Widget::GetLocation(Rect* location) {
   if (!EnsureFuncs())
     return false;
 
-  return widget_funcs->GetLocation(pp_resource(), location);
+  return widget_funcs->GetLocation(pp_resource(), &location->pp_rect());
 }
 
-void Widget::SetLocation(const PP_Rect& location) {
+void Widget::SetLocation(const Rect& location) {
   if (EnsureFuncs())
-    widget_funcs->SetLocation(pp_resource(), &location);
+    widget_funcs->SetLocation(pp_resource(), &location.pp_rect());
 }
 
 }  // namespace pp

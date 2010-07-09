@@ -8,6 +8,7 @@
 #include <string>
 
 #include "ppapi/c/pp_resource.h"
+#include "ppapi/cpp/scrollbar.h"
 
 class TestInstance;
 
@@ -27,7 +28,7 @@ class TestCase {
   std::string MakeFailureMessage(const char* file, int line, const char* cmd);
 
   // Override to get scrollbar notifications.
-  virtual void ScrollbarValueChanged(PP_Resource, uint32_t) {}
+  virtual void ScrollbarValueChanged(pp::Scrollbar, uint32_t) {}
 
  protected:
   // Pointer to the instance that owns us.

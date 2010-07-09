@@ -11,7 +11,9 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/point.h"
 #include "ppapi/cpp/resource.h"
+#include "ppapi/cpp/scrollbar.h"
 #include "ppapi/cpp/var.h"
+#include "ppapi/cpp/widget.h"
 
 namespace pp {
 
@@ -74,11 +76,11 @@ Resource Instance::PrintPages(const PP_PrintPageNumberRange* /*page_ranges*/,
 void Instance::PrintEnd() {
 }
 
-void Instance::InvalidateWidget(PP_Resource /* widget */,
+void Instance::InvalidateWidget(Widget /* widget */,
                                 const Rect& /* dirty_rect */) {
 }
 
-void Instance::ScrollbarValueChanged(PP_Resource /* scrollbar */,
+void Instance::ScrollbarValueChanged(Scrollbar /* scrollbar */,
                                      uint32_t /* value */) {
 }
 

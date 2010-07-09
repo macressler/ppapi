@@ -56,6 +56,9 @@ class Rect {
   const PP_Rect& pp_rect() const {
     return rect_;
   }
+  PP_Rect& pp_rect() {
+    return rect_;
+  }
 
   int32_t x() const {
     return rect_.point.x;

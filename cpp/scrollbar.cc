@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include <vector>
+
 #include "ppapi/cpp/scrollbar.h"
 
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/rect.h"
 
 namespace pp {
 
@@ -67,9 +70,16 @@ void Scrollbar::SetDocumentSize(uint32_t size) {
     scrollbar_funcs->SetDocumentSize(pp_resource(), size);
 }
 
-void Scrollbar::SetTickMarks(const PP_Rect* tick_marks, uint32_t count) {
-  if (EnsureFuncs())
-    scrollbar_funcs->SetTickMarks(pp_resource(), tick_marks, count);
+void Scrollbar::SetTickMarks(const Rect* tick_marks, uint32_t count) {
+  if (!EnsureFuncs())
+    return;
+
+  std::vector<PP_Rect> temp;
+  temp.resize(count);
+  for (uint32_t i = 0; i < count; ++i)
+    temp[i] = tick_marks[i];
+
+  scrollbar_funcs->SetTickMarks(pp_resource(), &temp[0], count);
 }
 
 void Scrollbar::ScrollBy(PP_ScrollBy unit, int32_t multiplier) {

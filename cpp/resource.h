@@ -46,4 +46,8 @@ class Resource {
 
 }  // namespace pp
 
+inline bool operator==(const pp::Resource& lhs, const pp::Resource& rhs) {
+  return lhs.pp_resource() == rhs.pp_resource();
+}
+
 #endif // PPAPI_CPP_RESOURCE_H_

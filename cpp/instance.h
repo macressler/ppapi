@@ -56,10 +56,10 @@ class Instance {
   virtual void PrintEnd();
 
   // Widget interface.
-  virtual void InvalidateWidget(PP_Resource widget, const Rect& dirty_rect);
+  virtual void InvalidateWidget(Widget widget, const Rect& dirty_rect);
 
   // Scrollbar interface.
-  virtual void ScrollbarValueChanged(PP_Resource scrollbar, uint32_t value);
+  virtual void ScrollbarValueChanged(Scrollbar scrollbar, uint32_t value);
 
 
   // PPB_Instance methods for querying the browser.

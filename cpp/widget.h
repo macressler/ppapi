@@ -8,13 +8,13 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/cpp/resource.h"
 
-typedef struct _pp_Rect PP_Rect;
 typedef struct _pp_Event PP_Event;
 
 namespace pp {
 
 class ImageData;
 class Instance;
+class Rect;
 
 // This is the base class for widget elements.  As such, it can't be created
 // directly.
@@ -30,10 +30,10 @@ class Widget : public Resource {
   void swap(Widget& other);
 
   // PPB_Widget methods:
-  bool Paint(const PP_Rect& rect, ImageData* image);
+  bool Paint(const Rect& rect, ImageData* image);
   bool HandleEvent(const PP_Event& event);
-  bool GetLocation(PP_Rect* location);
-  void SetLocation(const PP_Rect& location);
+  bool GetLocation(Rect* location);
+  void SetLocation(const Rect& location);
 };
 
 }  // namespace pp
