@@ -4,6 +4,7 @@
 
 #include "ppapi/tests/test_instance.h"
 
+#include <algorithm>
 #include <string.h>
 
 #include "ppapi/cpp/module.h"
@@ -107,18 +108,25 @@ TestCase* TestInstance::CaseForTestName(const char* name) {
 
 void TestInstance::LogAvailableTests() {
   // Print out a listing of all tests.
-  std::string html;
-  html.append("Available test cases: <dl>");
+  std::vector<std::string> test_cases;
   TestCaseFactory* iter = TestCaseFactory::head_;
   while (iter != NULL) {
-    html.append("<dd><a href='?");
-    html.append(iter->name_);
-    html.append("'>");
-    html.append(iter->name_);
-    html.append("</a></dd>");
+    test_cases.push_back(iter->name_);
     iter = iter->next_;
   }
+  std::sort(test_cases.begin(), test_cases.end());
+
+  std::string html;
+  html.append("Available test cases: <dl>");
+  for (size_t i = 0; i < test_cases.size(); ++i) {
+    html.append("<dd><a href='?");
+    html.append(test_cases[i]);
+    html.append("'>");
+    html.append(test_cases[i]);
+    html.append("</a></dd>");
+  }
   html.append("</dl>");
+  html.append("<button onclick='RunAll()'>Run All Tests</button>");
   LogHTML(html);  
 }
 

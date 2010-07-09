@@ -1,11 +1,53 @@
 <html><head>
 <link rel="stylesheet" href="test_page.css">
 <script>
+function AdjustHeight() {
+  // Called when a frame loads, so that we can adjust its height to the
+  // minimize size required to not have to show a scrollbar.  This works
+  // because tests run to completion during the ViewChanged notification.
+  var frame = event.target;
+  var div = frame.contentDocument.getElementsByTagName("div")[0];
+  var height = frame.contentWindow.getComputedStyle(div).height;
+  frame.style.height = height;
+}
+
+function AppendFrame(testcase, i) {
+  var p = document.createElement("P");
+  p.setAttribute("class", "frame-container");
+
+  var title = document.createElement("H2");
+  title.appendChild(document.createTextNode(testcase));
+  p.appendChild(title);
+
+  var frame = document.createElement("IFRAME");
+  frame.setAttribute("src", "?" + testcase);
+  frame.setAttribute("onload", "AdjustHeight(); LoadNext(" + (i + 1) + ")");
+  p.appendChild(frame);
+
+  document.body.appendChild(p);
+}
+
+function LoadNext(i) {
+  var links = document.links;
+  if (links.length > i)
+    AppendFrame(links[i].firstChild.nodeValue, i);
+}
+
+function RunAll() {
+  // Remove any existing frames.
+  var existing = document.getElementsByClassName("frame-container");
+  while (existing.length)
+    existing[0].parentNode.removeChild(existing[0]);
+
+  // Add new frames for each test, but do so one frame at a time.
+  LoadNext(0);
+}
+
 onload = function() {
   var mimeType = "application/x-ppapi-tests";
   if (mimeType in navigator.mimeTypes) {
     var testcase = location.search.substring(1);
-    document.title = 'Test PPAPI ' + testcase;
+    document.title = 'Test ' + testcase;
 
     var obj = document.createElement("OBJECT");
     obj.setAttribute("id", "plugin");
@@ -20,6 +62,8 @@ onload = function() {
 }
 </script>
 </head><body>
-<div id="container"></div>
-<div id="console" /><span class="load_msg">loading...</span></div>
+<div>
+  <div id="container"></div>
+  <div id="console" /><span class="load_msg">loading...</span></div>
+</div>
 </body></html>
