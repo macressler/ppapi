@@ -9,12 +9,12 @@
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/size.h"
 
-typedef struct _pp_Rect PP_Rect;
-
 namespace pp {
 
 class CompletionCallback;
 class ImageData;
+class Point;
+class Rect;
 
 class DeviceContext2D : public Resource {
  public:
@@ -27,7 +27,7 @@ class DeviceContext2D : public Resource {
 
   // Allocates a new 2D device context with the given size in the browser,
   // resulting object will be is_null() if the allocation failed.
-  DeviceContext2D(int32_t width, int32_t height, bool is_always_opaque);
+  DeviceContext2D(const Size& size, bool is_always_opaque);
 
   virtual ~DeviceContext2D();
 
@@ -35,17 +35,20 @@ class DeviceContext2D : public Resource {
   void swap(DeviceContext2D& other);
 
   const Size& size() const { return size_; }
-  int32_t width() const { return size_.width(); }
-  int32_t height() const { return size_.height(); }
 
   // Enqueues paint or scroll commands. THIS COMMAND HAS NO EFFECT UNTIL YOU
   // CALL Flush().
   //
+  // If you call the version with no source rect, the entire image will be
+  // painted.
+  //
   // Please see PPB_DeviceContext2D.PaintImageData / .Scroll for more details.
   bool PaintImageData(const ImageData& image,
-                      int32_t x, int32_t y,
-                      const PP_Rect* src_rect);
-  bool Scroll(const PP_Rect* clip, int32_t dx, int32_t dy);
+                      const Point& top_left);
+  bool PaintImageData(const ImageData& image,
+                      const Point& top_left,
+                      const Rect& src_rect);
+  bool Scroll(const Rect& clip, const Point& amount);
 
   // The browser will take ownership of the given image data. The object
   // pointed to by the parameter will be cleared. To avoid horrible artifacts,

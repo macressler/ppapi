@@ -54,8 +54,8 @@ Var Instance::GetInstanceObject() {
   return Var();
 }
 
-void Instance::ViewChanged(const PP_Rect& /*position*/,
-                           const PP_Rect& /*clip*/) {
+void Instance::ViewChanged(const pp::Rect& /*position*/,
+                           const pp::Rect& /*clip*/) {
 }
 
 Var Instance::GetSelectedText(bool /* html */) {

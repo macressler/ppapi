@@ -32,12 +32,12 @@ void FlushCallback(void* data, int32_t result);
 void FillRect(pp::ImageData* image, int left, int top, int width, int height,
               uint32_t color) {
   for (int y = std::max(0, top);
-       y < std::min(image->height() - 1, top + height);
+       y < std::min(image->size().height() - 1, top + height);
        y++) {
     for (int x = std::max(0, left);
-         x < std::min(image->width() - 1, left + width);
+         x < std::min(image->size().width() - 1, left + width);
          x++)
-      *image->GetAddr32(x, y) = color;
+      *image->GetAddr32(pp::Point(x, y)) = color;
   }
 }
 
@@ -197,16 +197,17 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   pp::ImageData PaintImage(int width, int height) {
-    pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, width, height, false);
+    pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                        pp::Size(width, height), false);
     if (image.is_null()) {
       printf("Couldn't allocate the image data\n");
       return image;
     }
 
     // Fill with semitransparent gradient.
-    for (int y = 0; y < image.height(); y++) {
+    for (int y = 0; y < image.size().height(); y++) {
       char* row = &static_cast<char*>(image.data())[y * image.stride()];
-      for (int x = 0; x < image.width(); x++) {
+      for (int x = 0; x < image.size().width(); x++) {
         row[x * 4 + 0] = y;
         row[x * 4 + 1] = y;
         row[x * 4 + 2] = 0;
@@ -242,7 +243,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     width_ = position.size.width;
     height_ = position.size.height;
 
-    device_context_ = pp::DeviceContext2D(width_, height_, false);
+    device_context_ = pp::DeviceContext2D(pp::Size(width_, height_), false);
     if (!BindGraphicsDeviceContext(device_context_)) {
       printf("Couldn't bind the device context\n");
       return;

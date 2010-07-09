@@ -17,7 +17,7 @@ class TestInstance : public pp::Instance {
 
   // pp::Instance override.
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
-  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip);
+  virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip);
   virtual void ScrollbarValueChanged(PP_Resource scrollbar, uint32_t value);
 
   // Outputs the information from one test run, using the format

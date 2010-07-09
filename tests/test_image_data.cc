@@ -27,11 +27,13 @@ void TestImageData::RunTest() {
 }
 
 std::string TestImageData::TestInvalidFormat() {
-  pp::ImageData a(static_cast<PP_ImageDataFormat>(1337), 16, 16, true);
+  pp::ImageData a(static_cast<PP_ImageDataFormat>(1337), pp::Size(16, 16),
+                  true);
   if (!a.is_null())
     return "Crazy image data format accepted";
 
-  pp::ImageData b(static_cast<PP_ImageDataFormat>(-1), 16, 16, true);
+  pp::ImageData b(static_cast<PP_ImageDataFormat>(-1), pp::Size(16, 16),
+                  true);
   if (!b.is_null())
     return "Negative image data format accepted";
 
@@ -39,23 +41,27 @@ std::string TestImageData::TestInvalidFormat() {
 }
 
 std::string TestImageData::TestInvalidSize() {
-  pp::ImageData zero_size(PP_IMAGEDATAFORMAT_BGRA_PREMUL, 0, 0, true);
+  pp::ImageData zero_size(PP_IMAGEDATAFORMAT_BGRA_PREMUL, pp::Size(0, 0), true);
   if (!zero_size.is_null())
     return "Zero width and height accepted";
 
-  pp::ImageData zero_height(PP_IMAGEDATAFORMAT_BGRA_PREMUL, 16, 0, true);
+  pp::ImageData zero_height(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                            pp::Size(16, 0), true);
   if (!zero_height.is_null())
     return "Zero height accepted";
 
-  pp::ImageData zero_width(PP_IMAGEDATAFORMAT_BGRA_PREMUL, 0, 16, true);
+  pp::ImageData zero_width(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                           pp::Size(0, 16), true);
   if (!zero_width.is_null())
     return "Zero width accepted";
 
-  pp::ImageData negative_height(PP_IMAGEDATAFORMAT_BGRA_PREMUL, 16, -2, true);
+  pp::ImageData negative_height(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                                pp::Size(16, -2), true);
   if (!negative_height.is_null())
     return "Negative height accepted";
 
-  pp::ImageData negative_width(PP_IMAGEDATAFORMAT_BGRA_PREMUL, -2, 16, true);
+  pp::ImageData negative_width(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                               pp::Size(-2, 16), true);
   if (!negative_width.is_null())
     return "Negative width accepted";
 
@@ -64,7 +70,7 @@ std::string TestImageData::TestInvalidSize() {
 
 std::string TestImageData::TestHugeSize() {
   pp::ImageData huge_size(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-                          100000000, 100000000, true);
+                          pp::Size(100000000, 100000000), true);
   if (!huge_size.is_null())
     return "31-bit overflow size accepted"; 
   return "";
@@ -73,13 +79,13 @@ std::string TestImageData::TestHugeSize() {
 std::string TestImageData::TestInitToZero() {
   const int w = 5;
   const int h = 6;
-  pp::ImageData img(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w, h, true);
+  pp::ImageData img(PP_IMAGEDATAFORMAT_BGRA_PREMUL, pp::Size(w, h), true);
   if (img.is_null())
     return "Could not create bitmap";
 
   // Basic validity checking of the bitmap. This also tests "describe" since
   // that's where the image data object got its imfo from.
-  if (img.width() != w || img.height() != h)
+  if (img.size().width() != w || img.size().height() != h)
     return "Wrong size";
   if (img.format() != PP_IMAGEDATAFORMAT_BGRA_PREMUL)
     return "Wrong format";
@@ -88,7 +94,7 @@ std::string TestImageData::TestInitToZero() {
 
   // Now check that everything is 0.
   for (int y = 0; y < h; y++) {
-    uint32_t* row = img.GetAddr32(0, y);
+    uint32_t* row = img.GetAddr32(pp::Point(0, y));
     for (int x = 0; x < w; x++) {
       if (row[x] != 0)
         return "Image data isn't entirely zero";
@@ -106,14 +112,14 @@ std::string TestImageData::TestIsImageData() {
 
   // Make another resource type and test it.
   const int w = 16, h = 16;
-  pp::DeviceContext2D device(w, h, true);
+  pp::DeviceContext2D device(pp::Size(w, h), true);
   if (device.is_null())
     return "Couldn't create device context";
   if (image_data_interface_->IsImageData(device.pp_resource()))
     return "Device context was reported as an image";
 
   // Make a valid image resource.
-  pp::ImageData img(PP_IMAGEDATAFORMAT_BGRA_PREMUL, w, h, true);
+  pp::ImageData img(PP_IMAGEDATAFORMAT_BGRA_PREMUL, pp::Size(w, h), true);
   if (img.is_null())
     return "Couldn't create image data";
   if (!image_data_interface_->IsImageData(img.pp_resource()))

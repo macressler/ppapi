@@ -11,11 +11,12 @@
 typedef struct _ppb_DeviceContext2D PPB_DeviceContext2D;
 typedef struct _ppb_ImageData PPB_ImageData;
 typedef struct _ppb_Testing PPB_Testing;
-typedef struct _pp_Rect PP_Rect;
 
 namespace pp {
 class DeviceContext2D;
 class ImageData;
+class Point;
+class Rect;
 }
 
 class TestDeviceContext2D : public TestCase {
@@ -31,22 +32,22 @@ class TestDeviceContext2D : public TestCase {
  private:
   bool ReadImageData(const pp::DeviceContext2D& dc,
                      pp::ImageData* image,
-                     int32_t x, int32_t y) const;
+                     const pp::Point& top_left) const;
 
   void FillRectInImage(pp::ImageData* image,
-                       const PP_Rect& rect,
+                       const pp::Rect& rect,
                        uint32_t color) const;
 
   // Validates that the given image is a single color with a square of another
   // color inside it.
   bool IsSquareInImage(const pp::ImageData& image_data,
                        uint32_t background_color,
-                       const PP_Rect& square, uint32_t square_color) const;
+                       const pp::Rect& square, uint32_t square_color) const;
 
   // Validates that the given device context is a single color with a square of
   // another color inside it.
   bool IsSquareInDC(const pp::DeviceContext2D& dc, uint32_t background_color,
-                    const PP_Rect& square, uint32_t square_color) const;
+                    const pp::Rect& square, uint32_t square_color) const;
 
   // Validates that the given device context is filled with the given color.
   bool IsDCUniformColor(const pp::DeviceContext2D& dc, uint32_t color) const;

@@ -45,26 +45,22 @@ class Point {
     point_.y = in_y;
   }
 
-  void SetPoint(int32_t in_x, int32_t in_y) {
-    point_.x = in_x;
-    point_.y = in_y;
+  Point operator+(const Point& other) const {
+    return Point(x() + other.x(), y() + other.y());
+  }
+  Point operator-(const Point& other) const {
+    return Point(x() - other.x(), y() - other.y());
   }
 
-  void Offset(int32_t delta_x, int32_t delta_y) {
-    point_.x += delta_x;
-    point_.y += delta_y;
+  Point& operator+=(const Point& other) {
+    point_.x += other.x();
+    point_.y += other.y();
+    return *this;
   }
-
-  Point Add(const Point& other) const{
-    Point copy = *this;
-    copy.Offset(other.x(), other.y());
-    return copy;
-  }
-
-  Point Subtract(const Point& other) const {
-    Point copy = *this;
-    copy.Offset(-other.x(), -other.y());
-    return copy;
+  Point& operator-=(const Point& other) {
+    point_.x -= other.x();
+    point_.y -= other.y();
+    return *this;
   }
 
   void swap(Point& other) {

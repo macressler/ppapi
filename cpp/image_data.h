@@ -6,6 +6,8 @@
 #define PPAPI_CPP_IMAGE_DATA_H_
 
 #include "ppapi/c/ppb_image_data.h"
+#include "ppapi/cpp/point.h"
+#include "ppapi/cpp/size.h"
 #include "ppapi/cpp/resource.h"
 
 namespace pp {
@@ -23,7 +25,7 @@ class ImageData : public Resource {
   // Allocates a new ImageData in the browser with the given parameters. The
   // resulting object will be is_null() if the allocation failed.
   ImageData(PP_ImageDataFormat format,
-            int32_t width, int32_t height,
+            const Size& size,
             bool init_to_zero);
 
   virtual ~ImageData();
@@ -37,17 +39,15 @@ class ImageData : public Resource {
 
   PP_ImageDataFormat format() const { return desc_.format; }
 
-  int32_t width() const { return desc_.width; }
-  int32_t height() const { return desc_.height; }
-
+  pp::Size size() const { return desc_.size; }
   int32_t stride() const { return desc_.stride; }
 
   void* data() const { return data_; }
 
   // Helper function to retrieve the address of the given pixel for 32-bit
   // pixel formats.
-  const uint32_t* GetAddr32(int x, int y) const;
-  uint32_t* GetAddr32(int x, int y);
+  const uint32_t* GetAddr32(const Point& coord) const;
+  uint32_t* GetAddr32(const Point& coord);
 
  private:
   PP_ImageDataDesc desc_;

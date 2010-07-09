@@ -40,7 +40,7 @@ bool TestInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
   return true;
 }
 
-void TestInstance::ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
+void TestInstance::ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
   if (!executed_tests_) {
     executed_tests_ = true;
 

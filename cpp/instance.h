@@ -13,13 +13,13 @@
 typedef struct _pp_Event PP_Event;
 typedef struct _pp_PrintPageNumberRange PP_PrintPageNumberRange;
 typedef struct _pp_PrintSettings PP_PrintSettings;
-typedef struct _pp_Rect PP_Rect;
 
 namespace pp {
 
 class DeviceContext2D;
 class ImageData;
 class Point;
+class Rect;
 class Rect;
 class Resource;
 class Scrollbar;
@@ -45,7 +45,7 @@ class Instance {
   virtual bool HandleDocumentLoad(const URLLoader& url_loader);
   virtual bool HandleEvent(const PP_Event& event);
   virtual Var GetInstanceObject();
-  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip);
+  virtual void ViewChanged(const Rect& position, const Rect& clip);
   virtual Var GetSelectedText(bool html);
 
   // PPP_Printing methods for the plugin to override if it supports printing.

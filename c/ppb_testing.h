@@ -8,6 +8,8 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
+typedef struct _pp_Point PP_Point;
+
 #define PPB_TESTING_INTERFACE "PPB_Testing;1"
 
 // This interface contains functions used for unit testing. Do not use in
@@ -26,11 +28,11 @@ typedef struct _ppb_Testing {
   // plugin slower. In some cases, this may be a very expensive operation (it
   // may require slow cross-process transitions or graphics card readbacks).
   //
-  // Data will be read into the image starting at (x, y) in the device context,
-  // and proceeding down and to the right for as many pixels as the image is
-  // large. If any part of the image bound would fall outside of the backing
-  // store of the device if positioned at (x, y), this function will fail and
-  // return false.
+  // Data will be read into the image starting at |top_left| in the device
+  // context, and proceeding down and to the right for as many pixels as the
+  // image is large. If any part of the image bound would fall outside of the
+  // backing store of the device if positioned at |top_left|, this function
+  // will fail and return false.
   //
   // The image format must be of the format
   // PPB_ImageData.GetNativeImageDataFormat() or this function will fail and
@@ -43,7 +45,7 @@ typedef struct _ppb_Testing {
   // operation has completed.
   bool (*ReadImageData)(PP_Resource device_context_2d,
                         PP_Resource image,
-                        int32_t x, int32_t y);
+                        const PP_Point* top_left);
 
   // Runs a nested message loop. The plugin will be reentered from this call.
   // This function is used for unit testing the API. The normal pattern is to

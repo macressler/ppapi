@@ -7,6 +7,7 @@
 
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
+#include "ppapi/c/pp_size.h"
 #include "ppapi/c/pp_stdint.h"
 
 enum PP_ImageDataFormat {
@@ -17,9 +18,7 @@ typedef struct _pp_ImageDataDesc {
   PP_ImageDataFormat format;
 
   // Size of the bitmap in pixels.
-  // TODO: change this to PP_Size
-  int32_t width;
-  int32_t height;
+  PP_Size size;
 
   // The row width in bytes. This may be different than width * 4 since there
   // may be padding at the end of the lines.
@@ -49,8 +48,7 @@ typedef struct _ppb_ImageData {
   // plugin if the bitmap was cached and re-used.
   PP_Resource (*Create)(PP_Module module,
                         PP_ImageDataFormat format,
-                        int32_t width,
-                        int32_t height,
+                        const PP_Size* size,
                         bool init_to_zero);
 
   // Returns true if the given resource is an image data. Returns false if the

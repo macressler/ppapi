@@ -8,12 +8,13 @@
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/paint_aggregator.h"
-#include "ppapi/cpp/rect.h"
 
 namespace pp {
 
 class DeviceContext2D;
 class Instance;
+class Point;
+class Rect;
 
 // This class converts the "plugin push" model of painting in PPAPI to a paint
 // request at a later time. Usage is that you call Invalidate and Scroll, and
@@ -141,7 +142,7 @@ class PaintManager {
   void InvalidateRect(const Rect& rect);
 
   // The given rect should be scrolled by the given amounts.
-  void ScrollRect(int dx, int dy, const Rect& clip_rect);
+  void ScrollRect(const Rect& clip_rect, const Point& amount);
 
  private:
   // Disallow copy and assign (these are unimplemented).

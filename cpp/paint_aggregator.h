@@ -71,7 +71,7 @@ class PaintAggregator {
   void InvalidateRect(const Rect& rect);
 
   // The given rect should be scrolled by the given amounts.
-  void ScrollRect(int dx, int dy, const Rect& clip_rect);
+  void ScrollRect(const Rect& clip_rect, const Point& amount);
 
  private:
   // This structure is an internal version of PaintUpdate. It's different in
@@ -103,7 +103,7 @@ class PaintAggregator {
     std::vector<Rect> paint_rects;
   };
 
-  Rect ScrollPaintRect(const Rect& paint_rect, int dx, int dy) const;
+  Rect ScrollPaintRect(const Rect& paint_rect, const Point& amount) const;
   bool ShouldInvalidateScrollRect(const Rect& rect) const;
   void InvalidateScrollRect();
   void CombinePaintRects();

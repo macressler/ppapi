@@ -9,6 +9,8 @@
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/point.h"
+#include "ppapi/cpp/rect.h"
 
 namespace pp {
 
@@ -32,16 +34,16 @@ DeviceContext2D::DeviceContext2D(const DeviceContext2D& other)
       size_(other.size_) {
 }
 
-DeviceContext2D::DeviceContext2D(int32_t width, int32_t height,
+DeviceContext2D::DeviceContext2D(const Size& size,
                                  bool is_always_opaque)
     : Resource() {
   if (!EnsureFuncs())
     return;
   PassRefFromConstructor(device_context_2d_funcs->Create(
-      Module::Get()->pp_module(), width, height, is_always_opaque));
+      Module::Get()->pp_module(), &size.pp_size(), is_always_opaque));
   if (!is_null()) {
     // Only save the size if allocation succeeded.
-    size_.SetSize(width, height);
+    size_ = size;
   }
 }
 
@@ -60,19 +62,31 @@ void DeviceContext2D::swap(DeviceContext2D& other) {
 }
 
 bool DeviceContext2D::PaintImageData(const ImageData& image,
-                                     int32_t x, int32_t y,
-                                     const PP_Rect* src_rect) {
+                                     const Point& top_left) {
   if (!EnsureFuncs() || is_null())
     return false;
   return device_context_2d_funcs->PaintImageData(pp_resource(),
                                                  image.pp_resource(),
-                                                 x, y, src_rect);
+                                                 &top_left.pp_point(),
+                                                 NULL);
 }
 
-bool DeviceContext2D::Scroll(const PP_Rect* clip, int32_t dx, int32_t dy) {
+bool DeviceContext2D::PaintImageData(const ImageData& image,
+                                     const Point& top_left,
+                                     const Rect& src_rect) {
   if (!EnsureFuncs() || is_null())
     return false;
-  return device_context_2d_funcs->Scroll(pp_resource(), clip, dx, dy);
+  return device_context_2d_funcs->PaintImageData(pp_resource(),
+                                                 image.pp_resource(),
+                                                 &top_left.pp_point(),
+                                                 &src_rect.pp_rect());
+}
+
+bool DeviceContext2D::Scroll(const Rect& clip, const Point& amount) {
+  if (!EnsureFuncs() || is_null())
+    return false;
+  return device_context_2d_funcs->Scroll(pp_resource(), &clip.pp_rect(),
+                                         &amount.pp_point());
 }
 
 bool DeviceContext2D::ReplaceContents(ImageData* image) {

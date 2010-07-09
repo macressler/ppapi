@@ -102,8 +102,8 @@ std::string TestPaintAggregator::TestDoubleOverlappingScroll() {
   pp::Rect rect(1, 2, 3, 4);
   pp::Point delta1(1, 0);
   pp::Point delta2(1, 0);
-  greg.ScrollRect(delta1.x(), delta1.y(), rect);
-  greg.ScrollRect(delta2.x(), delta2.y(), rect);
+  greg.ScrollRect(rect, delta1);
+  greg.ScrollRect(rect, delta2);
 
   ASSERT_TRUE(greg.HasPendingUpdate());
   ASSERT_TRUE(1U == greg.GetPendingUpdate().paint_rects.size());
@@ -131,8 +131,8 @@ std::string TestPaintAggregator::TestNegatingScroll() {
   pp::Rect rect(1, 2, 3, 4);
   pp::Point delta1(1, 0);
   pp::Point delta2(-1, 0);
-  greg.ScrollRect(delta1.x(), delta1.y(), rect);
-  greg.ScrollRect(delta2.x(), delta2.y(), rect);
+  greg.ScrollRect(rect, delta1);
+  greg.ScrollRect(rect, delta2);
 
   ASSERT_FALSE(greg.HasPendingUpdate());
   return std::string();
@@ -146,7 +146,7 @@ std::string TestPaintAggregator::TestDiagonalScroll() {
 
   pp::Rect rect(1, 2, 3, 4);
   pp::Point delta(1, 1);
-  greg.ScrollRect(delta.x(), delta.y(), rect);
+  greg.ScrollRect(rect, delta);
 
   ASSERT_TRUE(greg.HasPendingUpdate());
   ASSERT_TRUE(greg.GetPendingUpdate().scroll_rect.IsEmpty());
@@ -160,7 +160,7 @@ std::string TestPaintAggregator::TestContainedPaintAfterScroll() {
   pp::PaintAggregator greg;
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   pp::Rect paint_rect(4, 4, 2, 2);
   greg.InvalidateRect(paint_rect);
@@ -184,7 +184,7 @@ std::string TestPaintAggregator::TestContainedPaintBeforeScroll() {
   greg.InvalidateRect(paint_rect);
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   ASSERT_TRUE(greg.HasPendingUpdate());
 
@@ -207,7 +207,7 @@ std::string TestPaintAggregator::TestContainedPaintsBeforeAndAfterScroll() {
   greg.InvalidateRect(paint_rect1);
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   pp::Rect paint_rect2(6, 4, 2, 2);
   greg.InvalidateRect(paint_rect2);
@@ -229,7 +229,7 @@ std::string TestPaintAggregator::TestLargeContainedPaintAfterScroll() {
   pp::PaintAggregator greg;
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(0, 1, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(0, 1));
 
   pp::Rect paint_rect(0, 0, 10, 9);  // Repaint 90%
   greg.InvalidateRect(paint_rect);
@@ -250,7 +250,7 @@ std::string TestPaintAggregator::TestLargeContainedPaintBeforeScroll() {
   greg.InvalidateRect(paint_rect);
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(0, 1, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(0, 1));
 
   ASSERT_TRUE(greg.HasPendingUpdate());
 
@@ -268,7 +268,7 @@ std::string TestPaintAggregator::TestOverlappingPaintBeforeScroll() {
   greg.InvalidateRect(paint_rect);
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   pp::Rect expected_paint_rect = scroll_rect.Union(paint_rect);
 
@@ -285,7 +285,7 @@ std::string TestPaintAggregator::TestOverlappingPaintAfterScroll() {
   pp::PaintAggregator greg;
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   pp::Rect paint_rect(4, 4, 10, 2);
   greg.InvalidateRect(paint_rect);
@@ -308,7 +308,7 @@ std::string TestPaintAggregator::TestDisjointPaintBeforeScroll() {
   greg.InvalidateRect(paint_rect);
 
   pp::Rect scroll_rect(0, 0, 2, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   ASSERT_TRUE(greg.HasPendingUpdate());
 
@@ -324,7 +324,7 @@ std::string TestPaintAggregator::TestDisjointPaintAfterScroll() {
   pp::PaintAggregator greg;
 
   pp::Rect scroll_rect(0, 0, 2, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   pp::Rect paint_rect(4, 4, 10, 2);
   greg.InvalidateRect(paint_rect);
@@ -346,7 +346,7 @@ std::string TestPaintAggregator::TestContainedPaintTrimmedByScroll() {
   greg.InvalidateRect(paint_rect);
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(2, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(2, 0));
 
   // The paint rect should have become narrower.
   pp::Rect expected_paint_rect(6, 4, 4, 6);
@@ -368,7 +368,7 @@ std::string TestPaintAggregator::TestContainedPaintEliminatedByScroll() {
   greg.InvalidateRect(paint_rect);
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(6, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(6, 0));
 
   ASSERT_TRUE(greg.HasPendingUpdate());
 
@@ -384,7 +384,7 @@ TestPaintAggregator::TestContainedPaintAfterScrollTrimmedByScrollDamage() {
   pp::PaintAggregator greg;
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(4, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(4, 0));
 
   pp::Rect paint_rect(2, 0, 4, 10);
   greg.InvalidateRect(paint_rect);
@@ -408,7 +408,7 @@ TestPaintAggregator::TestContainedPaintAfterScrollEliminatedByScrollDamage() {
   pp::PaintAggregator greg;
 
   pp::Rect scroll_rect(0, 0, 10, 10);
-  greg.ScrollRect(4, 0, scroll_rect);
+  greg.ScrollRect(scroll_rect, pp::Point(4, 0));
 
   pp::Rect paint_rect(2, 0, 2, 10);
   greg.InvalidateRect(paint_rect);

@@ -52,8 +52,7 @@ void PaintManager::SetSize(const Size& new_size) {
   if (new_size == device_.size())
     return;
 
-  device_ = DeviceContext2D(new_size.width(), new_size.height(),
-                            is_always_opaque_);
+  device_ = DeviceContext2D(new_size, is_always_opaque_);
   if (device_.is_null())
     return;
   instance_->BindGraphicsDeviceContext(device_);
@@ -78,7 +77,7 @@ void PaintManager::InvalidateRect(const Rect& rect) {
   PP_DCHECK(!device_.is_null());
 
   // Clip the rect to the device area.
-  Rect clipped_rect = rect.Intersect(Rect(device_.width(), device_.height()));
+  Rect clipped_rect = rect.Intersect(Rect(device_.size()));
   if (clipped_rect.IsEmpty())
     return;  // Nothing to do.
 
@@ -86,12 +85,12 @@ void PaintManager::InvalidateRect(const Rect& rect) {
   aggregator_.InvalidateRect(clipped_rect);
 }
 
-void PaintManager::ScrollRect(int dx, int dy, const Rect& clip_rect) {
+void PaintManager::ScrollRect(const Rect& clip_rect, const Point& amount) {
   // You must call SetDevice before using.
   PP_DCHECK(!device_.is_null());
 
   EnsureCallbackPending();
-  aggregator_.ScrollRect(dx, dy, clip_rect);
+  aggregator_.ScrollRect(clip_rect, amount);
 }
 
 void PaintManager::EnsureCallbackPending() {

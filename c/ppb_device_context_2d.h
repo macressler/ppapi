@@ -10,7 +10,9 @@
 #include "ppapi/c/pp_stdint.h"
 
 typedef struct _pp_CompletionCallback PP_CompletionCallback;
+typedef struct _pp_Point PP_Point;
 typedef struct _pp_Rect PP_Rect;
+typedef struct _pp_Size PP_Size;
 
 #define PPB_DEVICECONTEXT2D_INTERFACE "PPB_DeviceContext2D;1"
 
@@ -24,7 +26,8 @@ typedef struct _ppb_DeviceContext2D {
   // opaque data to this device. This will disable blending when compositing
   // the plugin with the web page, which will give slightly higher performance.
   // If you aren't sure, it is always correct to specify that it it not opaque.
-  PP_Resource (*Create)(PP_Module module, int32_t width, int32_t height,
+  PP_Resource (*Create)(PP_Module module,
+                        const PP_Size* size,
                         bool is_always_opaque);
 
   // Returns true if the given resource is a valid DeviceContext2D, false if it
@@ -36,15 +39,16 @@ typedef struct _ppb_DeviceContext2D {
   // resource is invalid, the output parameters will be set to 0 and it will
   // return false.
   bool (*Describe)(PP_Resource device_context,
-                   int32_t* width, int32_t* height, bool* is_always_opqaue);
+                   PP_Size* size,
+                   bool* is_always_opqaue);
 
   // Enqueues a paint of the given image into the device. THIS HAS NO EFFECT
   // UNTIL YOU CALL Flush(). As a result, what counts is the contents of the
   // bitmap when you call Flush, not when you call this function.
   //
-  // The given image will be placed at (x, y) from the top left of the device's
-  // internal backing store. Then the src_rect will be copied into the
-  // backing store.
+  // The given image will be placed at |top_left| from the top left of the
+  // device's internal backing store. Then the src_rect will be copied into the
+  // backing store. This parameter may not be NULL.
   //
   // The src_rect is specified in the coordinate system of the image being
   // painted, not the device. For the common case of copying the entire image,
@@ -61,7 +65,7 @@ typedef struct _ppb_DeviceContext2D {
   // resources was invalid, or the coordinates were out of bounds.
   bool (*PaintImageData)(PP_Resource device_context,
                          PP_Resource image,
-                         int32_t x, int32_t y,
+                         const PP_Point* top_left,
                          const PP_Rect* src_rect);
 
   // Enqueues a scroll of the device's backing store. THIS HAS NO EFFECT UNTIL
@@ -80,7 +84,7 @@ typedef struct _ppb_DeviceContext2D {
   // devices was invalid, or the clip rect went out of bounds of the device.
   bool (*Scroll)(PP_Resource device_context,
                  const PP_Rect* clip_rect,
-                 int32_t dx, int32_t dy);
+                 const PP_Point* amount);
 
   // This function provides a slightly more efficient way to paint the entire
   // plugin's image. Normally, calling PaintImageData requires that the browser

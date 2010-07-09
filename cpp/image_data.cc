@@ -36,7 +36,7 @@ ImageData::ImageData(const ImageData& other)
 }
 
 ImageData::ImageData(PP_ImageDataFormat format,
-                     int32_t width, int32_t height,
+                     const Size& size,
                      bool init_to_zero)
     : data_(NULL) {
   memset(&desc_, 0, sizeof(PP_ImageDataDesc));
@@ -45,7 +45,7 @@ ImageData::ImageData(PP_ImageDataFormat format,
     return;
 
   PassRefFromConstructor(image_data_funcs->Create(Module::Get()->pp_module(),
-                                                  format, width, height,
+                                                  format, &size.pp_size(),
                                                   init_to_zero));
   if (is_null())
     return;
@@ -69,16 +69,16 @@ void ImageData::swap(ImageData& other) {
   std::swap(data_, other.data_);
 }
 
-const uint32_t* ImageData::GetAddr32(int x, int y) const {
+const uint32_t* ImageData::GetAddr32(const Point& coord) const {
   // Prefer evil const casts rather than evil code duplication.
-  return const_cast<ImageData*>(this)->GetAddr32(x, y);
+  return const_cast<ImageData*>(this)->GetAddr32(coord);
 }
 
-uint32_t* ImageData::GetAddr32(int x, int y) {
+uint32_t* ImageData::GetAddr32(const Point& coord) {
   // If we add more image format types that aren't 32-bit, we'd want to check
   // here and fail.
   return reinterpret_cast<uint32_t*>(
-      &static_cast<char*>(data())[y * stride() + x * 4]);
+      &static_cast<char*>(data())[coord.y() * stride() + coord.x() * 4]);
 }
 
 // static
