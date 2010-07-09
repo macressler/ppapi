@@ -34,22 +34,22 @@ class URLResponseInfo : public Resource {
 
   // Convenient helpers for getting properties:
   Var GetURL() const {
-    return GetProperty(PP_URLResponseProperty_URL);
+    return GetProperty(PP_URLRESPONSEPROPERTY_URL);
   }
   Var GetRedirectURL() const {
-    return GetProperty(PP_URLResponseProperty_RedirectURL);
+    return GetProperty(PP_URLRESPONSEPROPERTY_REDIRECTURL);
   }
   Var GetRedirectMethod() const {
-    return GetProperty(PP_URLResponseProperty_RedirectMethod);
+    return GetProperty(PP_URLRESPONSEPROPERTY_REDIRECTMETHOD);
   }
   int32_t GetStatusCode() const {
-    return GetProperty(PP_URLResponseProperty_StatusCode).AsInt();
+    return GetProperty(PP_URLRESPONSEPROPERTY_STATUSCODE).AsInt();
   }
   Var GetStatusLine() const {
-    return GetProperty(PP_URLResponseProperty_StatusLine);
+    return GetProperty(PP_URLRESPONSEPROPERTY_STATUSLINE);
   }
   Var GetHeaders() const {
-    return GetProperty(PP_URLResponseProperty_Headers);
+    return GetProperty(PP_URLRESPONSEPROPERTY_HEADERS);
   }
 };
 

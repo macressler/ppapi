@@ -60,7 +60,7 @@ int32_t FileIO::Open(const FileRef& file_ref,
                      int32_t open_flags,
                      const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->Open(pp_resource(),
                              file_ref.pp_resource(),
                              open_flags,
@@ -70,7 +70,7 @@ int32_t FileIO::Open(const FileRef& file_ref,
 int32_t FileIO::Query(PP_FileInfo* result_buf,
                       const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->Query(pp_resource(),
                               result_buf,
                               cc.pp_completion_callback());
@@ -80,7 +80,7 @@ int32_t FileIO::Touch(PP_Time last_access_time,
                       PP_Time last_modified_time,
                       const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->Touch(pp_resource(),
                               last_access_time,
                               last_modified_time,
@@ -92,7 +92,7 @@ int32_t FileIO::Read(int64_t offset,
                      int32_t bytes_to_read,
                      const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->Read(pp_resource(),
                              offset,
                              buffer,
@@ -105,7 +105,7 @@ int32_t FileIO::Write(int64_t offset,
                       int32_t bytes_to_write,
                       const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->Write(pp_resource(),
                               offset,
                               buffer,
@@ -116,7 +116,7 @@ int32_t FileIO::Write(int64_t offset,
 int32_t FileIO::SetLength(int64_t length,
                           const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->SetLength(pp_resource(),
                                   length,
                                   cc.pp_completion_callback());
@@ -124,7 +124,7 @@ int32_t FileIO::SetLength(int64_t length,
 
 int32_t FileIO::Flush(const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_funcs->Flush(pp_resource(), cc.pp_completion_callback());
 }
 
@@ -136,7 +136,7 @@ void FileIO::Close() {
 
 int32_t FileIO::GetOSFileDescriptor() {
   if (!EnsureTrustedFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_trusted_funcs->GetOSFileDescriptor(pp_resource());
 }
 
@@ -144,7 +144,7 @@ int32_t FileIO::WillWrite(int64_t offset,
                           int32_t bytes_to_write,
                           const CompletionCallback& cc) {
   if (!EnsureTrustedFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_trusted_funcs->WillWrite(pp_resource(),
                                           offset,
                                           bytes_to_write,
@@ -154,7 +154,7 @@ int32_t FileIO::WillWrite(int64_t offset,
 int32_t FileIO::WillSetLength(int64_t length,
                               const CompletionCallback& cc) {
   if (!EnsureTrustedFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_io_trusted_funcs->WillSetLength(pp_resource(),
                                               length,
                                               cc.pp_completion_callback());

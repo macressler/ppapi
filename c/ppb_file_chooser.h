@@ -11,9 +11,9 @@
 typedef struct _pp_CompletionCallback PP_CompletionCallback;
 
 typedef enum _pp_FileChooserMode {
-  PP_FileChooserMode_Open,
-  PP_FileChooserMode_OpenMultiple,
-  PP_FileChooserMode_Save
+  PP_FILECHOOSERMODE_OPEN,
+  PP_FILECHOOSERMODE_OPENMULTIPLE,
+  PP_FILECHOOSERMODE_SAVE
   // TODO(darin): Should there be a way to choose a directory?  We may need to
   // kill the save mode since that may get dropped from the web platform specs.
 } PP_FileChooserMode;

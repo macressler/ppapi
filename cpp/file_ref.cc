@@ -57,7 +57,7 @@ void FileRef::swap(FileRef& other) {
 
 PP_FileSystemType FileRef::GetFileSystemType() const {
   if (!EnsureFuncs())
-    return PP_FileSystemType_External;
+    return PP_FILESYSTEMTYPE_EXTERNAL;
   return file_ref_funcs->GetFileSystemType(pp_resource()); 
 }
 

@@ -8,13 +8,13 @@
 #include "ppapi/c/pp_stdint.h"
 
 enum PP_VarType {
-  PP_VarType_Void,
-  PP_VarType_Null,
-  PP_VarType_Bool,
-  PP_VarType_Int32,
-  PP_VarType_Double,
-  PP_VarType_String,
-  PP_VarType_Object
+  PP_VARTYPE_VOID,
+  PP_VARTYPE_NULL,
+  PP_VARTYPE_BOOL,
+  PP_VARTYPE_INT32,
+  PP_VARTYPE_DOUBLE,
+  PP_VARTYPE_STRING,
+  PP_VARTYPE_OBJECT
 };
 
 typedef struct _pp_Var {
@@ -42,29 +42,29 @@ typedef struct _pp_Var {
 } PP_Var;
 
 inline PP_Var PP_MakeVoid() {
-  PP_Var result = { PP_VarType_Void, {0} };
+  PP_Var result = { PP_VARTYPE_VOID, {0} };
   return result;
 }
 
 inline PP_Var PP_MakeNull() {
-  PP_Var result = { PP_VarType_Null, {0} };
+  PP_Var result = { PP_VARTYPE_NULL, {0} };
   return result;
 }
 
 inline PP_Var PP_MakeBool(bool value) {
-  PP_Var result = { PP_VarType_Bool, {0} };
+  PP_Var result = { PP_VARTYPE_BOOL, {0} };
   result.value.as_bool = value;
   return result;
 }
 
 inline PP_Var PP_MakeInt32(int32_t value) {
-  PP_Var result = { PP_VarType_Int32, {0} };
+  PP_Var result = { PP_VARTYPE_INT32, {0} };
   result.value.as_int = value;
   return result;
 }
 
 inline PP_Var PP_MakeDouble(double value) {
-  PP_Var result = { PP_VarType_Double, {0} };
+  PP_Var result = { PP_VARTYPE_DOUBLE, {0} };
   result.value.as_double = value;
   return result;
 }

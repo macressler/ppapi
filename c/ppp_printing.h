@@ -11,16 +11,16 @@
 #include "ppapi/c/pp_stdint.h"
 
 typedef enum _pp_PrintOrientation {
-  PP_PrintOrientation_Normal         = 0,
-  PP_PrintOrientation_Rotated_90_CW  = 1,
-  PP_PrintOrientation_Rotated_180    = 2,
-  PP_PrintOrientation_Rotated_90_CCW = 3
+  PP_PRINTORIENTATION_NORMAL         = 0,
+  PP_PRINTORIENTATION_ROTATED_90_CW  = 1,
+  PP_PRINTORIENTATION_ROTATED_180    = 2,
+  PP_PRINTORIENTATION_ROTATED_90_CCW = 3
 } PP_PrintOrientation;
 
 typedef enum _pp_PrintOutputFormat {
-  PP_PrintOutputFormat_Raster     = 0,
-  PP_PrintOutputFormat_PDF        = 1,
-  PP_PrintOutputFormat_PostScript = 2
+  PP_PRINTOUTPUTFORMAT_RASTER     = 0,
+  PP_PRINTOUTPUTFORMAT_PDF        = 1,
+  PP_PRINTOUTPUTFORMAT_POSTSCRIPT = 2
 } PP_PrintOutputFormat;
 
 typedef struct _pp_PrintSettings {

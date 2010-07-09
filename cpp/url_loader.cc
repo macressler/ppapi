@@ -53,7 +53,7 @@ void URLLoader::swap(URLLoader& other) {
 int32_t URLLoader::Open(const URLRequestInfo& request_info,
                         const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return url_loader_funcs->Open(pp_resource(),
                                 request_info.pp_resource(),
                                 cc.pp_completion_callback());
@@ -61,7 +61,7 @@ int32_t URLLoader::Open(const URLRequestInfo& request_info,
 
 int32_t URLLoader::FollowRedirect(const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return url_loader_funcs->FollowRedirect(pp_resource(),
                                           cc.pp_completion_callback());
 }
@@ -97,7 +97,7 @@ int32_t URLLoader::ReadResponseBody(char* buffer,
                                     int32_t bytes_to_read,
                                     const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return url_loader_funcs->ReadResponseBody(pp_resource(),
                                             buffer,
                                             bytes_to_read,

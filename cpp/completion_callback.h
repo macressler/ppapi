@@ -59,7 +59,7 @@ class CompletionCallback {
 //     void ProcessFile(const FileRef& file) {
 //       CompletionCallback cc = factory_.NewCallback(&MyHandler::DidOpen);
 //       int32_t rv = fio_.Open(file, PP_FileOpenFlag_Read, cc);
-//       if (rv != PP_Error_WouldBlock)
+//       if (rv != PP_ERROR_WOULDBLOCK)
 //         cc.Run(rv);
 //     }
 //
@@ -92,7 +92,7 @@ class CompletionCallback {
 //     void ReadMore() {
 //       CompletionCallback cc = factory_.NewCallback(&MyHandler::DidRead);
 //       int32_t rv = fio_.Read(offset_, buf_, sizeof(buf_), cc);
-//       if (rv != PP_Error_WouldBlock)
+//       if (rv != PP_ERROR_WOULDBLOCK)
 //         cc.Run(rv);
 //     }
 //
@@ -139,7 +139,7 @@ class CompletionCallbackFactory {
   // Allocates a new, single-use CompletionCallback.  The CompletionCallback
   // must be run in order for the memory allocated by NewCallback to be freed.
   // If after passing the CompletionCallback to a PPAPI method, the method does
-  // not return PP_Error_WouldBlock, then you should manually call the
+  // not return PP_ERROR_WOULDBLOCK, then you should manually call the
   // CompletionCallback's Run method otherwise memory will be leaked.
   CompletionCallback NewCallback(Method method) {
     PP_DCHECK(object_);  // Expects a non-null object!

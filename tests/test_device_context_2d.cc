@@ -90,7 +90,7 @@ bool TestDeviceContext2D::FlushAndWaitForDone(pp::DeviceContext2D* context) {
   int32_t rv = context->Flush(cc);
   if (rv == PP_OK)
     return true;
-  if (rv != PP_Error_WouldBlock)
+  if (rv != PP_ERROR_WOULDBLOCK)
     return false;
   testing_interface_->RunMessageLoop();
   return true;
@@ -436,7 +436,7 @@ std::string TestDeviceContext2D::TestFlush() {
     return "Couldn't paint the background.";
 
   int32_t rv = dc.Flush(pp::CompletionCallback::Block());
-  if (rv == PP_OK || rv == PP_Error_WouldBlock)
+  if (rv == PP_OK || rv == PP_ERROR_WOULDBLOCK)
     return "Flush succeeded from the main thread with no callback.";
 
   // Test flushing with no operations still issues a callback.
@@ -449,13 +449,13 @@ std::string TestDeviceContext2D::TestFlush() {
 
   // Test that multiple flushes fail if we don't get a callback in between.
   rv = dc_nopaints.Flush(pp::CompletionCallback(&FlushCallbackNOP, NULL));
-  if (rv != PP_OK && rv != PP_Error_WouldBlock)
+  if (rv != PP_OK && rv != PP_ERROR_WOULDBLOCK)
     return "Couldn't flush first time for multiple flush test.";
 
   if (rv != PP_OK) {
     // If the first flush would block, then a second should fail.
     rv = dc_nopaints.Flush(pp::CompletionCallback(&FlushCallbackNOP, NULL));
-    if (rv == PP_OK || rv == PP_Error_WouldBlock)
+    if (rv == PP_OK || rv == PP_ERROR_WOULDBLOCK)
       return "Second flush succeeded before callback ran.";
   }
 

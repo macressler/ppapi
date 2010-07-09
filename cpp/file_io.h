@@ -49,7 +49,7 @@ class FileIO : public Resource {
 
   // PPB_FileIOTrusted methods:
   // NOTE: These are only available to trusted plugins and will return
-  // PP_Error_NoInterface if called from an untrusted plugin.
+  // PP_ERROR_NOINTERFACE if called from an untrusted plugin.
   int32_t GetOSFileDescriptor();
   int32_t WillWrite(int64_t offset,
                     int32_t bytes_to_write,

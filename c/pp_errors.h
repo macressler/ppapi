@@ -13,53 +13,53 @@ enum {
   // complete synchronously.  This return value indicates that the given
   // callback will be asynchronously notified of the final result once it is
   // available.
-  PP_Error_WouldBlock = -1,
+  PP_ERROR_WOULDBLOCK = -1,
 
   // Indicates failure for unspecified reasons.
-  PP_Error_Failed = -2,
+  PP_ERROR_FAILED = -2,
 
   // Indicates failure due to an asynchronous operation being interupted,
   // typically as a result of user action.
-  PP_Error_Aborted = -3,
+  PP_ERROR_ABORTED = -3,
 
   // Indicates failure due to an invalid argument.
-  PP_Error_BadArgument = -4,
+  PP_ERROR_BADARGUMENT = -4,
 
   // Indicates failure due to an invalid PP_Resource.
-  PP_Error_BadResource = -5,
+  PP_ERROR_BADRESOURCE = -5,
 
   // Indicates failure due to an unavailable PPAPI interface.
-  PP_Error_NoInterface = -6,
+  PP_ERROR_NOINTERFACE = -6,
 
   // Indicates failure due to insufficient privileges.
-  PP_Error_NoAccess = -7,
+  PP_ERROR_NOACCESS = -7,
 
   // Indicates failure due to insufficient memory.
-  PP_Error_NoMemory = -8,
+  PP_ERROR_NOMEMORY = -8,
 
   // Indicates failure due to insufficient storage space.
-  PP_Error_NoSpace = -9,
+  PP_ERROR_NOSPACE = -9,
 
   // Indicates failure due to insufficient storage quota.
-  PP_Error_NoQuota = -10,
+  PP_ERROR_NOQUOTA = -10,
 
   // Indicates failure due to an action already being in progress.
-  PP_Error_InProgress = -11,
+  PP_ERROR_INPROGRESS = -11,
 
   // Indicates failure due to a file that does not exist.
-  PP_Error_FileNotFound = -20,
+  PP_ERROR_FILENOTFOUND = -20,
 
   // Indicates failure due to a file that already exists.
-  PP_Error_FileExists = -21,
+  PP_ERROR_FILEEXISTS = -21,
 
   // Indicates failure due to a file that is too big.
-  PP_Error_FileTooBig = -22,
+  PP_ERROR_FILETOOBIG = -22,
 
   // Indicates failure due to a file having been modified unexpectedly.
-  PP_Error_FileChanged = -23,
+  PP_ERROR_FILECHANGED = -23,
 
   // Indicates failure due to a time limit being exceeded.
-  PP_Error_TimedOut = -30
+  PP_ERROR_TIMEDOUT = -30
 };
 
 #endif  // PPAPI_C_PP_ERRORS_H_

@@ -48,7 +48,7 @@ void DirectoryReader::swap(DirectoryReader& other) {
 int32_t DirectoryReader::GetNextEntry(DirectoryEntry* entry,
                                       const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return directory_reader_funcs->GetNextEntry(pp_resource(),
                                               &entry->data_,
                                               cc.pp_completion_callback());

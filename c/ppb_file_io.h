@@ -15,25 +15,25 @@ typedef struct _pp_FileInfo PP_FileInfo;
 
 typedef enum _pp_FileOpenFlags {
   // Requests read access to a file.
-  PP_FileOpenFlag_Read      = 1 << 0,
+  PP_FILEOPENFLAG_READ      = 1 << 0,
   
   // Requests write access to a file.  May be combined with
-  // PP_FileOpenFlag_Read to request read and write access.
-  PP_FileOpenFlag_Write     = 1 << 1,
+  // PP_FILEOPENFLAG_READ to request read and write access.
+  PP_FILEOPENFLAG_WRITE     = 1 << 1,
 
   // Requests that the file be created if it does not exist.  If the file
-  // already exists, then this flag is ignored unless PP_FileOpenFlag_Exclusive
+  // already exists, then this flag is ignored unless PP_FILEOPENFLAG_EXCLUSIVE
   // was also specified, in which case FileIO::Open will fail.
-  PP_FileOpenFlag_Create    = 1 << 2,
+  PP_FILEOPENFLAG_CREATE    = 1 << 2,
 
   // Requests that the file be truncated to length 0 if it exists and is a
-  // regular file.  PP_FileOpenFlag_Write must also be specified.
-  PP_FileOpenFlag_Truncate  = 1 << 3,
+  // regular file.  PP_FILEOPENFLAG_WRITE must also be specified.
+  PP_FILEOPENFLAG_TRUNCATE  = 1 << 3,
 
   // Requests that the file is created when this flag is combined with
-  // PP_FileOpenFlag_Create.  If this flag is specified, and the file already
+  // PP_FILEOPENFLAG_CREATE.  If this flag is specified, and the file already
   // exists, then the FileIO::Open call will fail.
-  PP_FileOpenFlag_Exclusive = 1 << 4
+  PP_FILEOPENFLAG_EXCLUSIVE = 1 << 4
 } PP_FileOpenFlags;
 
 #define PPB_FILEIO_INTERFACE "PPB_FileIO;1"

@@ -24,7 +24,7 @@ const PPB_Testing* g_testing_interface;
 
 class TestCompletionCallback {
  public:
-  TestCompletionCallback() : result_(PP_Error_WouldBlock) {
+  TestCompletionCallback() : result_(PP_ERROR_WOULDBLOCK) {
   }
 
   operator pp::CompletionCallback() const {
@@ -33,7 +33,7 @@ class TestCompletionCallback {
   }
 
   int32_t WaitForResult() {
-    result_ = PP_Error_WouldBlock;  // Reset
+    result_ = PP_ERROR_WOULDBLOCK;  // Reset
     g_testing_interface->RunMessageLoop();
     return result_;
   }
@@ -81,14 +81,14 @@ std::string TestURLLoader::TestBasicGET() {
 
   pp::URLLoader loader(*instance_);
   int32_t rv = loader.Open(request, callback);
-  if (rv == PP_Error_WouldBlock)
+  if (rv == PP_ERROR_WOULDBLOCK)
     rv = callback.WaitForResult();
   if (rv != PP_OK)
     return ReportError("URLLoader::Open", rv);
 
   char buf[256];
   rv = loader.ReadResponseBody(buf, sizeof(buf), callback);
-  if (rv == PP_Error_WouldBlock)
+  if (rv == PP_ERROR_WOULDBLOCK)
     rv = callback.WaitForResult();
   if (rv < 0)
     return ReportError("URLLoader::ReadResponseBody", rv);

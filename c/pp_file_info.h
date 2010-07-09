@@ -9,15 +9,15 @@
 #include "ppapi/c/pp_time.h"
 
 typedef enum _pp_FileType {
-  PP_FileType_Regular,
-  PP_FileType_Directory,
-  PP_FileType_Other  // A catch-all for unidentified types.
+  PP_FILETYPE_REGULAR,
+  PP_FILETYPE_DIRECTORY,
+  PP_FILETYPE_OTHER  // A catch-all for unidentified types.
 } PP_FileType;
 
 typedef enum _pp_FileSystemType {
-  PP_FileSystemType_External,
-  PP_FileSystemType_LocalPersistent,
-  PP_FileSystemType_LocalTemporary
+  PP_FILESYSTEMTYPE_EXTERNAL,
+  PP_FILESYSTEMTYPE_LOCALPERSISTENT,
+  PP_FILESYSTEMTYPE_LOCALTEMPORARY
 } PP_FileSystemType;
 
 typedef struct _pp_FileInfo {

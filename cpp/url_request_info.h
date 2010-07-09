@@ -33,31 +33,31 @@ class URLRequestInfo : public Resource {
 
   // Convenient helpers for setting properties:
   bool SetURL(const Var& url_string) {
-    return SetProperty(PP_URLRequestProperty_URL, url_string);
+    return SetProperty(PP_URLREQUESTPROPERTY_URL, url_string);
   }
   bool SetMethod(const Var& method_string) {
-    return SetProperty(PP_URLRequestProperty_Method, method_string);
+    return SetProperty(PP_URLREQUESTPROPERTY_METHOD, method_string);
   }
   bool SetHeaders(const Var& headers_string) {
-    return SetProperty(PP_URLRequestProperty_Headers, headers_string);
+    return SetProperty(PP_URLREQUESTPROPERTY_HEADERS, headers_string);
   }
   bool SetStreamToFile(bool enable) {
-    return SetProperty(PP_URLRequestProperty_StreamToFile, enable);
+    return SetProperty(PP_URLREQUESTPROPERTY_STREAMTOFILE, enable);
   }
   bool SetFollowRedirects(bool enable) {
-    return SetProperty(PP_URLRequestProperty_FollowRedirects, enable);
+    return SetProperty(PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS, enable);
   }
   bool SetRecordUploadProgress(bool enable) {
-    return SetProperty(PP_URLRequestProperty_RecordUploadProgress, enable);
+    return SetProperty(PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS, enable);
   }
   bool SetAllowAuthentication(bool allow) {
-    return SetProperty(PP_URLRequestProperty_AllowAuthentication, allow);
+    return SetProperty(PP_URLREQUESTPROPERTY_ALLOWAUTHENTICATION, allow);
   }
   bool SetAllowCookies(bool allow) {
-    return SetProperty(PP_URLRequestProperty_AllowCookies, allow);
+    return SetProperty(PP_URLREQUESTPROPERTY_ALLOWCOOKIES, allow);
   }
   bool SetAllowReferrer(bool allow) {
-    return SetProperty(PP_URLRequestProperty_AllowReferrer, allow);
+    return SetProperty(PP_URLREQUESTPROPERTY_ALLOWREFERRER, allow);
   }
 };
 

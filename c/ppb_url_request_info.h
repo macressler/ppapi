@@ -13,15 +13,15 @@
 typedef struct _pp_Var PP_Var;
 
 enum PP_URLRequestProperty {
-  PP_URLRequestProperty_URL,                   // string
-  PP_URLRequestProperty_Method,                // string
-  PP_URLRequestProperty_Headers,               // string, \n-delim
-  PP_URLRequestProperty_StreamToFile,          // bool
-  PP_URLRequestProperty_FollowRedirects,       // bool
-  PP_URLRequestProperty_RecordUploadProgress,  // bool
-  PP_URLRequestProperty_AllowAuthentication,   // bool
-  PP_URLRequestProperty_AllowCookies,          // bool
-  PP_URLRequestProperty_AllowReferrer          // bool
+  PP_URLREQUESTPROPERTY_URL,                   // string
+  PP_URLREQUESTPROPERTY_METHOD,                // string
+  PP_URLREQUESTPROPERTY_HEADERS,               // string, \n-delim
+  PP_URLREQUESTPROPERTY_STREAMTOFILE,          // bool
+  PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS,       // bool
+  PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS,  // bool
+  PP_URLREQUESTPROPERTY_ALLOWAUTHENTICATION,   // bool
+  PP_URLREQUESTPROPERTY_ALLOWCOOKIES,          // bool
+  PP_URLREQUESTPROPERTY_ALLOWREFERRER          // bool
   // TODO(darin): add an option to suppress the Origin header?  Consider
   // dropping support for CORS in favor of UMP.
 };

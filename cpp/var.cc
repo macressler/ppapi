@@ -24,7 +24,7 @@ static PPB_Var const* ppb_var = NULL;
 // cross-process calls depending on the plugin. This is an optimization so we
 // only do refcounting on the necessary objects.
 inline bool NeedsRefcounting(const PP_Var& var) {
-  return var.type == PP_VarType_String || var.type == PP_VarType_Object;
+  return var.type == PP_VARTYPE_STRING || var.type == PP_VARTYPE_OBJECT;
 }
 
 void EnsureInit() {
@@ -38,29 +38,29 @@ void EnsureInit() {
 }  // namespace
 
 Var::Var() {
-  var_.type = PP_VarType_Void;
+  var_.type = PP_VARTYPE_VOID;
   needs_release_ = false;
 }
 
 Var::Var(Null) {
-  var_.type = PP_VarType_Null;
+  var_.type = PP_VARTYPE_NULL;
   needs_release_ = false;
 }
 
 Var::Var(bool b) {
-  var_.type = PP_VarType_Bool;
+  var_.type = PP_VARTYPE_BOOL;
   var_.value.as_bool = b;
   needs_release_ = false;
 }
 
 Var::Var(int32_t i) {
-  var_.type = PP_VarType_Int32;
+  var_.type = PP_VARTYPE_INT32;
   var_.value.as_int = i;
   needs_release_ = false;
 }
 
 Var::Var(double d) {
-  var_.type = PP_VarType_Double;
+  var_.type = PP_VARTYPE_DOUBLE;
   var_.value.as_double = d;
   needs_release_ = false;
 }

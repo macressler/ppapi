@@ -9,37 +9,37 @@
 #include "ppapi/c/pp_time.h"
 
 typedef enum {
-  PP_Event_MouseButton_None   = -1,
-  PP_Event_MouseButton_Left   = 0,
-  PP_Event_MouseButton_Middle = 1,
-  PP_Event_MouseButton_Right  = 2
+  PP_EVENT_MOUSEBUTTON_NONE   = -1,
+  PP_EVENT_MOUSEBUTTON_LEFT   = 0,
+  PP_EVENT_MOUSEBUTTON_MIDDLE = 1,
+  PP_EVENT_MOUSEBUTTON_RIGHT  = 2
 } PP_Event_MouseButton;
 
 typedef enum {
-  PP_Event_Type_Undefined  = -1,
-  PP_Event_Type_MouseDown  = 0,
-  PP_Event_Type_MouseUp    = 1,
-  PP_Event_Type_MouseMove  = 2,
-  PP_Event_Type_MouseEnter = 3,
-  PP_Event_Type_MouseLeave = 4,
-  PP_Event_Type_MouseWheel = 5,
-  PP_Event_Type_RawKeyDown = 6,
-  PP_Event_Type_KeyDown    = 7,
-  PP_Event_Type_KeyUp      = 8,
-  PP_Event_Type_Char       = 9,
-  PP_Event_Type_Focus      = 11,
+  PP_EVENT_TYPE_UNDEFINED  = -1,
+  PP_EVENT_TYPE_MOUSEDOWN  = 0,
+  PP_EVENT_TYPE_MOUSEUP    = 1,
+  PP_EVENT_TYPE_MOUSEMOVE  = 2,
+  PP_EVENT_TYPE_MOUSEENTER = 3,
+  PP_EVENT_TYPE_MOUSELEAVE = 4,
+  PP_EVENT_TYPE_MOUSEWHEEL = 5,
+  PP_EVENT_TYPE_RAWKEYDOWN = 6,
+  PP_EVENT_TYPE_KEYDOWN    = 7,
+  PP_EVENT_TYPE_KEYUP      = 8,
+  PP_EVENT_TYPE_CHAR       = 9,
+  PP_EVENT_TYPE_FOCUS      = 11,
 } PP_Event_Type;
 
 typedef enum {
-  PP_Event_Modifier_ShiftKey         = 1 << 0,
-  PP_Event_Modifier_ControlKey       = 1 << 1,
-  PP_Event_Modifier_AltKey           = 1 << 2,
-  PP_Event_Modifier_MetaKey          = 1 << 3,
-  PP_Event_Modifier_IsKeyPad         = 1 << 4,
-  PP_Event_Modifier_IsAutoRepeat     = 1 << 5,
-  PP_Event_Modifier_LeftButtonDown   = 1 << 6,
-  PP_Event_Modifier_MiddleButtonDown = 1 << 7,
-  PP_Event_Modifier_RightButtonDown  = 1 << 8
+  PP_EVENT_MODIFIER_SHIFTKEY         = 1 << 0,
+  PP_EVENT_MODIFIER_CONTROLKEY       = 1 << 1,
+  PP_EVENT_MODIFIER_ALTKEY           = 1 << 2,
+  PP_EVENT_MODIFIER_METAKEY          = 1 << 3,
+  PP_EVENT_MODIFIER_ISKEYPAD         = 1 << 4,
+  PP_EVENT_MODIFIER_ISAUTOREPEAT     = 1 << 5,
+  PP_EVENT_MODIFIER_LEFTBUTTONDOWN   = 1 << 6,
+  PP_EVENT_MODIFIER_MIDDLEBUTTONDOWN = 1 << 7,
+  PP_EVENT_MODIFIER_RIGHTBUTTONDOWN  = 1 << 8
 } PP_Event_Modifier;
 
 typedef struct _pp_Event_Key {

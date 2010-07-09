@@ -90,9 +90,9 @@ bool DeviceContext2D::ReplaceContents(ImageData* image) {
 
 int32_t DeviceContext2D::Flush(const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   if (is_null())
-    return PP_Error_BadResource;
+    return PP_ERROR_BADRESOURCE;
   return device_context_2d_funcs->Flush(pp_resource(),
                                         cc.pp_completion_callback());
 }

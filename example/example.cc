@@ -97,7 +97,7 @@ class MyFetcher {
     pp::CompletionCallback callback =
         callback_factory_.NewCallback(&MyFetcher::DidOpen);
     int rv = loader_.Open(request, callback);
-    if (rv != PP_Error_WouldBlock)
+    if (rv != PP_ERROR_WOULDBLOCK)
       callback.Run(rv);
   }
 
@@ -114,7 +114,7 @@ class MyFetcher {
     pp::CompletionCallback callback =
         callback_factory_.NewCallback(&MyFetcher::DidRead);
     int rv = loader_.ReadResponseBody(buf_, sizeof(buf_), callback);
-    if (rv != PP_Error_WouldBlock)
+    if (rv != PP_ERROR_WOULDBLOCK)
       callback.Run(rv);
   }
 
@@ -177,14 +177,14 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
 
   virtual bool HandleEvent(const PP_Event& event) {
     switch (event.type) {
-      case PP_Event_Type_MouseDown:
+      case PP_EVENT_TYPE_MOUSEDOWN:
         printf("Mouse down\n");
         SayHello();
         return true;
-      case PP_Event_Type_MouseMove:
+      case PP_EVENT_TYPE_MOUSEMOVE:
         printf("Mouse move\n");
         return true;
-      case PP_Event_Type_KeyDown:
+      case PP_EVENT_TYPE_KEYDOWN:
         printf("Key down\n");
         return true;
       default:
@@ -277,7 +277,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
 
   // Print interfaces.
   virtual int32_t PrintBegin(const PP_PrintSettings& print_settings) {
-    if (print_settings_.format != PP_PrintOutputFormat_Raster)
+    if (print_settings_.format != PP_PRINTOUTPUTFORMAT_RASTER)
       return 0;
 
     print_settings_ = print_settings;
@@ -397,7 +397,7 @@ void FlushCallback(void* data, int32_t result) {
 }
 
 PP_PrintOutputFormat supported_print_formats[] = {
-  PP_PrintOutputFormat_Raster,
+  PP_PRINTOUTPUTFORMAT_RASTER,
 };
 
 class MyModule : public pp::Module {

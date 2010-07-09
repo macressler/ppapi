@@ -9,12 +9,12 @@
 #include "ppapi/c/pp_var.h"
 
 enum PP_URLResponseProperty {
-  PP_URLResponseProperty_URL,             // string
-  PP_URLResponseProperty_RedirectURL,     // string
-  PP_URLResponseProperty_RedirectMethod,  // string
-  PP_URLResponseProperty_StatusCode,      // int32
-  PP_URLResponseProperty_StatusLine,      // string
-  PP_URLResponseProperty_Headers          // string, \n-delim
+  PP_URLRESPONSEPROPERTY_URL,             // string
+  PP_URLRESPONSEPROPERTY_REDIRECTURL,     // string
+  PP_URLRESPONSEPROPERTY_REDIRECTMETHOD,  // string
+  PP_URLRESPONSEPROPERTY_STATUSCODE,      // int32
+  PP_URLRESPONSEPROPERTY_STATUSLINE,      // string
+  PP_URLRESPONSEPROPERTY_HEADERS          // string, \n-delim
 };
 
 #define PPB_URLRESPONSEINFO_INTERFACE "PPB_URLResponseInfo;1"

@@ -49,7 +49,7 @@ void FileChooser::swap(FileChooser& other) {
 
 int32_t FileChooser::Show(const CompletionCallback& cc) {
   if (!EnsureFuncs())
-    return PP_Error_NoInterface;
+    return PP_ERROR_NOINTERFACE;
   return file_chooser_funcs->Show(pp_resource(), cc.pp_completion_callback());
 }
 

@@ -30,11 +30,11 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module module_id,
                                        PPB_GetInterface get_browser_interface) {
   pp::Module* module = pp::CreateModule();
   if (!module)
-    return PP_Error_Failed;
+    return PP_ERROR_FAILED;
 
   if (!module->InternalInit(module_id, get_browser_interface)) {
     delete module;
-    return PP_Error_Failed;
+    return PP_ERROR_FAILED;
   }
   g_module_singleton = module;
   return PP_OK;

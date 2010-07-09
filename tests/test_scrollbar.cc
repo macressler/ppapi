@@ -40,7 +40,7 @@ std::string TestScrollbar::TestHandleEvent() {
 
   PP_Event event;
   event.size = sizeof(event);
-  event.type = PP_Event_Type_KeyDown;
+  event.type = PP_EVENT_TYPE_KEYDOWN;
   event.u.key.normalizedKeyCode = 0x28; // VKEY_DOWN
   scrollbar.HandleEvent(event);
 

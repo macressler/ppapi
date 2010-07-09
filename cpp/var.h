@@ -56,21 +56,21 @@ class Var {
   Var& operator=(const Var& other);
   void swap(Var& other);
 
-  bool is_void() const { return var_.type == PP_VarType_Void; }
-  bool is_null() const { return var_.type == PP_VarType_Null; }
-  bool is_bool() const { return var_.type == PP_VarType_Bool; }
-  bool is_string() const { return var_.type == PP_VarType_String; }
-  bool is_object() const { return var_.type == PP_VarType_Object; }
+  bool is_void() const { return var_.type == PP_VARTYPE_VOID; }
+  bool is_null() const { return var_.type == PP_VARTYPE_NULL; }
+  bool is_bool() const { return var_.type == PP_VARTYPE_BOOL; }
+  bool is_string() const { return var_.type == PP_VARTYPE_STRING; }
+  bool is_object() const { return var_.type == PP_VARTYPE_OBJECT; }
 
   // IsInt and IsDouble return the internal representation. The JavaScript
   // runtime may convert between the two as needed, so the distinction may
   // not be relevant in all cases (int is really an optimization inside the
   // runtime). So most of the time, you will want to check IsNumber.
-  bool is_int() const { return var_.type == PP_VarType_Int32; }
-  bool is_double() const { return var_.type == PP_VarType_Double; }
+  bool is_int() const { return var_.type == PP_VARTYPE_INT32; }
+  bool is_double() const { return var_.type == PP_VARTYPE_DOUBLE; }
   bool is_number() const {
-    return var_.type == PP_VarType_Int32 ||
-           var_.type == PP_VarType_Double;
+    return var_.type == PP_VARTYPE_INT32 ||
+           var_.type == PP_VARTYPE_DOUBLE;
   }
 
   // Assumes the internal representation IsBool. If it's not, it will assert

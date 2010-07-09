@@ -137,9 +137,9 @@ void PaintManager::DoPaint() {
   // use one device, swap it with another, then swap it back, we won't know
   // that we've already scheduled a Flush on the first device. It's best to not
   // re-use devices in this way.
-  PP_DCHECK(result != PP_Error_InProgress);
+  PP_DCHECK(result != PP_ERROR_INPROGRESS);
 
-  if (result == PP_Error_WouldBlock) {
+  if (result == PP_ERROR_WOULDBLOCK) {
     flush_pending_ = true;
   } else {
     PP_DCHECK(result == PP_OK);  // Catch all other errors in debug mode.
