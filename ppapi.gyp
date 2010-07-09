@@ -134,12 +134,12 @@
         ['use_fpic==1', {
           'cflags': ['-fPIC'],
         }],
-	['OS=="linux"', {
+        ['OS=="linux"', {
           'cflags': ['-Wextra', '-pedantic'],
         }],
-	['OS=="mac"', {
-	  'xcode_settings': {
-	    'WARNING_CFLAGS': ['-Wextra', '-pedantic'], 
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'WARNING_CFLAGS': ['-Wextra', '-pedantic'], 
            },
         }]
       ],
@@ -165,7 +165,7 @@
         ['use_fpic==1', {
           'cflags': ['-fPIC'],
         }],
-	['OS=="linux"', {
+        ['OS=="linux"', {
           'cflags': ['-Wextra', '-pedantic'],
         }],
         ['OS=="mac"', {
@@ -262,6 +262,14 @@
         'ppapi_cpp'
       ],
       'conditions': [
+        ['OS=="win"', {
+          'defines': [
+            '_CRT_SECURE_NO_DEPRECATE',
+            '_CRT_NONSTDC_NO_WARNINGS',
+            '_CRT_NONSTDC_NO_DEPRECATE',
+            '_SCL_SECURE_NO_DEPRECATE',
+          ],
+        }],
         ['OS=="mac"', {
           'mac_bundle': 1,
           'product_name': 'ppapi_tests',
