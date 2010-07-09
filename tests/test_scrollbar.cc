@@ -5,16 +5,16 @@
 #include "ppapi/tests/test_scrollbar.h"
 
 #include "ppapi/c/pp_event.h"
-#include "ppapi/c/pp_rect.h"
 #include "ppapi/cpp/instance.h"
+#include "ppapi/cpp/rect.h"
 #include "ppapi/tests/test_instance.h"
 
 REGISTER_TEST_CASE(Scrollbar);
 
 TestScrollbar::TestScrollbar(TestInstance* instance)
     : TestCase(instance),
-      scrollbar_value_changed_(false),
-      scrollbar_(*instance, true) {
+      scrollbar_(*instance, true),
+      scrollbar_value_changed_(false) {
 }
 
 void TestScrollbar::RunTest() {
@@ -28,8 +28,9 @@ void TestScrollbar::ScrollbarValueChanged(pp::Scrollbar scrollbar,
 }
 
 std::string TestScrollbar::TestHandleEvent() {
-  PP_Rect location;
-  location.size.width = location.size.height  = 1000;
+  pp::Rect location;
+  location.set_width(1000);
+  location.set_height(1000);
   scrollbar_.SetLocation(location);
 
   scrollbar_.SetDocumentSize(10000);
