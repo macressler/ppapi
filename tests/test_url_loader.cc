@@ -5,6 +5,7 @@
 #include "ppapi/tests/test_url_loader.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/ppb_testing.h"
