@@ -127,6 +127,17 @@ void Instance_ViewChanged(PP_Instance pp_instance,
   instance->ViewChanged(*position, *clip);
 }
 
+PP_Var GetSelectedText(PP_Instance pp_instance,
+                       bool html) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return Var().Detach();
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return Var().Detach();
+  return instance->GetSelectedText(html).Detach();
+}
+
 static PPP_Instance instance_interface = {
   &Instance_New,
   &Instance_Delete,

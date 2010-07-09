@@ -75,6 +75,12 @@ typedef struct _ppp_Instance {
   void (*ViewChanged)(PP_Instance instance,
                       const PP_Rect* position,
                       const PP_Rect* clip);
+
+  // Returns the selection, either as plain text or as html depending on "html".
+  // If nothing is selected, or if the given format is unavailable, return a
+  // void string.
+  PP_Var (*GetSelectedText)(PP_Instance instance,
+                            bool html);
 } PPP_Instance;
 
 #endif  // PPAPI_C_PPP_INSTANCE_H_

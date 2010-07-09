@@ -58,6 +58,10 @@ void Instance::ViewChanged(const PP_Rect& /*position*/,
                            const PP_Rect& /*clip*/) {
 }
 
+Var Instance::GetSelectedText(bool /* html */) {
+  return Var();
+}
+
 int32_t Instance::PrintBegin(const PP_PrintSettings&) {
   return 0;
 }

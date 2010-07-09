@@ -46,6 +46,7 @@ class Instance {
   virtual bool HandleEvent(const PP_Event& event);
   virtual Var GetInstanceObject();
   virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip);
+  virtual Var GetSelectedText(bool html);
 
   // PPP_Printing methods for the plugin to override if it supports printing.
   // See ppp_printing.h for details.
