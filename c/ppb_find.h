@@ -15,13 +15,13 @@ typedef struct _ppb_Find {
   // there are no matches 0 should be passed in.  Only when the plugin has
   // finished searching should it pass in the final count with finalResult set
   // to true.
-  void NumberOfFindResultsChanged(PP_Instance instance,
-                                  int32_t total,
-                                  bool final_result);
+  void (*NumberOfFindResultsChanged)(PP_Instance instance,
+                                     int32_t total,
+                                     bool final_result);
 
   // Updates the index of the currently selected search item.
-  void SelectedFindResultChanged(PP_Instance instance,
-                                 int32_t index);
+  void (*SelectedFindResultChanged)(PP_Instance instance,
+                                    int32_t index);
 
 } PPB_Find;
 
