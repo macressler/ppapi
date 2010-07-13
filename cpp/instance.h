@@ -61,6 +61,13 @@ class Instance {
   // Scrollbar interface.
   virtual void ScrollbarValueChanged(Scrollbar scrollbar, uint32_t value);
 
+  // Zoom interface.
+  virtual void Zoom(float scale, bool text_only);
+
+  // Find interface.
+  virtual bool StartFind(const char* text, bool case_sensitive);
+  virtual void SelectFindResult(bool forward);
+  virtual void StopFind();
 
   // PPB_Instance methods for querying the browser.
   // See ppb_instance.h for details.
@@ -71,6 +78,10 @@ class Instance {
   bool SetCursor(PP_CursorType type,
                  const ImageData& custom_image,
                  const Point& hot_spot);
+
+  // PPB_Find methods
+  void NumberOfFindResultsChanged(int32_t total, bool final_result);
+  void SelectedFindResultChanged(int32_t index);
 
  private:
   PP_Instance pp_instance_;

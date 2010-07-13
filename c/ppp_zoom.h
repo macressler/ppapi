@@ -14,9 +14,9 @@ typedef struct _ppp_Zoom {
 
   // Instruct plug-in to zoom according to |scale| factor and whether the
   // zoom only applies to text only.
-  void Zoom(PP_Instance instance,
-            float scale,
-            bool text_only);
+  void (*Zoom)(PP_Instance instance,
+               float scale,
+               bool text_only);
 
 } PPP_Zoom;
 

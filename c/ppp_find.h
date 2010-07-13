@@ -19,7 +19,7 @@ typedef struct _ppp_Find {
   // call any callbacks.
   bool (*StartFind)(PP_Instance instance,
                     const char* text,
-                    bool caseSensitive);
+                    bool case_sensitive);
 
   // Go to the next/previous result.
   void (*SelectFindResult)(PP_Instance instance,

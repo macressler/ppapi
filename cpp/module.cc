@@ -27,10 +27,12 @@
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_var.h"
+#include "ppapi/c/ppp_find.h"
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/c/ppp_printing.h"
 #include "ppapi/c/ppp_scrollbar.h"
 #include "ppapi/c/ppp_widget.h"
+#include "ppapi/c/ppp_zoom.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/resource.h"
@@ -247,6 +249,60 @@ static PPP_Scrollbar scrollbar_interface = {
   &Scrollbar_ValueChanged,
 };
 
+// PPP_Zoom implementation ------------------------------------------------
+
+void Zoom(PP_Instance instance_id, float scale, bool text_only) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
+  if (!instance)
+    return;
+  return instance->Zoom(scale, text_only);
+}
+
+static PPP_Zoom zoom_interface = {
+  &Zoom,
+};
+
+// PPP_Find implementation ------------------------------------------------
+
+bool StartFind(PP_Instance instance_id, const char* text, bool case_sensitive) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return false;
+  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
+  if (!instance)
+    return false;
+  return instance->StartFind(text, case_sensitive);
+}
+
+void SelectFindResult(PP_Instance instance_id, bool forward) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
+  if (!instance)
+    return;
+  return instance->SelectFindResult(forward);
+}
+
+void StopFind(PP_Instance instance_id) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
+  if (!instance)
+    return;
+  return instance->StopFind();
+}
+
+static PPP_Find find_interface = {
+  &StartFind,
+  &SelectFindResult,
+  &StopFind,
+};
+
 // Module ----------------------------------------------------------------------
 
 Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
@@ -266,6 +322,10 @@ const void* Module::GetInstanceInterface(const char* interface_name) {
     return &widget_interface;
   if (strcmp(interface_name, PPP_SCROLLBAR_INTERFACE) == 0)
     return &scrollbar_interface;
+  if (strcmp(interface_name, PPP_ZOOM_INTERFACE) == 0)
+    return &zoom_interface;
+  if (strcmp(interface_name, PPP_FIND_INTERFACE) == 0)
+    return &find_interface;
 
   return NULL;
 }

@@ -4,6 +4,7 @@
 
 #include "ppapi/cpp/instance.h"
 
+#include "ppapi/c/ppb_find.h"
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/device_context_2d.h"
@@ -21,11 +22,23 @@ namespace {
 
 const PPB_Instance* ppb_instance_funcs = NULL;
 
-bool EnsureFuncs() {
+bool EnsureInstanceFuncs() {
   if (!ppb_instance_funcs) {
     ppb_instance_funcs = reinterpret_cast<PPB_Instance const*>(
         Module::Get()->GetBrowserInterface(PPB_INSTANCE_INTERFACE));
     if (!ppb_instance_funcs)
+      return false;
+  }
+  return true;
+}
+
+const PPB_Find* ppb_find_funcs = NULL;
+
+bool EnsureFindFuncs() {
+  if (!ppb_find_funcs) {
+    ppb_find_funcs = reinterpret_cast<PPB_Find const*>(
+        Module::Get()->GetBrowserInterface(PPB_FIND_INTERFACE));
+    if (!ppb_find_funcs)
       return false;
   }
   return true;
@@ -84,29 +97,42 @@ void Instance::ScrollbarValueChanged(Scrollbar /* scrollbar */,
                                      uint32_t /* value */) {
 }
 
+void Instance::Zoom(float /* scale */, bool /* text_only */) {
+}
+
+bool Instance::StartFind(const char* /* text */, bool /* case_sensitive */) {
+  return false;
+}
+
+void Instance::SelectFindResult(bool /* forward */) {
+}
+
+void Instance::StopFind() {
+}
+
 Var Instance::GetWindowObject() {
-  if (!EnsureFuncs())
+  if (!EnsureInstanceFuncs())
     return Var();
   return Var(Var::PassRef(),
              ppb_instance_funcs->GetWindowObject(pp_instance()));
 }
 
 Var Instance::GetOwnerElementObject() {
-  if (!EnsureFuncs())
+  if (!EnsureInstanceFuncs())
     return Var();
   return Var(Var::PassRef(),
              ppb_instance_funcs->GetOwnerElementObject(pp_instance()));
 }
 
 bool Instance::BindGraphicsDeviceContext(const DeviceContext2D& context) {
-  if (!EnsureFuncs())
+  if (!EnsureInstanceFuncs())
     return false;
   return ppb_instance_funcs->BindGraphicsDeviceContext(pp_instance(),
                                                        context.pp_resource());
 }
 
 bool Instance::IsFullFrame() {
-  if (!EnsureFuncs())
+  if (!EnsureInstanceFuncs())
     return false;
   return ppb_instance_funcs->IsFullFrame(pp_instance());
 }
@@ -114,10 +140,22 @@ bool Instance::IsFullFrame() {
 bool Instance::SetCursor(PP_CursorType type,
                          const ImageData& custom_image,
                          const Point& hot_spot) {
-  if (!EnsureFuncs())
+  if (!EnsureInstanceFuncs())
     return false;
   return ppb_instance_funcs->SetCursor(
       pp_instance(), type, custom_image.pp_resource(), &hot_spot.pp_point());
+}
+
+void Instance::NumberOfFindResultsChanged(int32_t total, bool final_result) {
+  if (!EnsureFindFuncs())
+    return;
+  ppb_find_funcs->NumberOfFindResultsChanged(
+      pp_instance(), total, final_result);
+}
+
+void Instance::SelectedFindResultChanged(int32_t index) {
+  if (EnsureFindFuncs())
+    ppb_find_funcs->SelectedFindResultChanged(pp_instance(), index);
 }
 
 }  // namespace pp
