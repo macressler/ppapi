@@ -67,13 +67,13 @@ Var::Var(double d) {
 
 Var::Var(const char* str) {
   EnsureInit();
-  var_ = ppb_var->VarFromUtf8(str, strlen(str));
+  var_ = ppb_var->VarFromUtf8(str, static_cast<uint32_t>(strlen(str)));
   needs_release_ = true;
 }
 
 Var::Var(const std::string& str) {
   EnsureInit();
-  var_ = ppb_var->VarFromUtf8(str.c_str(), str.size());
+  var_ = ppb_var->VarFromUtf8(str.c_str(), static_cast<uint32_t>(str.size()));
   needs_release_ = true;
 }
 
@@ -191,7 +191,7 @@ void Var::RemoveProperty(const Var& name, Var* exception) {
   ppb_var->RemoveProperty(var_, name.var_, OutException(exception));
 }
 
-Var Var::Call(const Var& method_name, size_t argc, Var* argv, Var* exception) {
+Var Var::Call(const Var& method_name, uint32_t argc, Var* argv, Var* exception) {
   EnsureInit();
   if (argc > 0) {
     std::vector<PP_Var> args;
@@ -207,7 +207,7 @@ Var Var::Call(const Var& method_name, size_t argc, Var* argv, Var* exception) {
   }
 }
 
-Var Var::Construct(size_t argc, Var* argv, Var* exception) const {
+Var Var::Construct(uint32_t argc, Var* argv, Var* exception) const {
   EnsureInit();
   if (argc > 0) {
     std::vector<PP_Var> args;

@@ -133,6 +133,11 @@
       'conditions': [
         ['OS=="win"', {
           'msvs_guid': 'AD371A1D-3459-4E2D-8E8A-881F4B83B908',
+          'msvs_settings': {
+            'VCCLCompilerTool': {
+              'AdditionalOptions': ['/we4244'],  # implicit conversion, possible loss of data
+            },
+          },
         }],
         ['use_fpic==1', {
           'cflags': ['-fPIC'],

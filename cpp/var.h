@@ -99,9 +99,9 @@ class Var {
                            Var* exception = NULL) const;
   void SetProperty(const Var& name, const Var& value, Var* exception = NULL);
   void RemoveProperty(const Var& name, Var* exception = NULL);
-  Var Call(const Var& method_name, size_t argc, Var* argv,
+  Var Call(const Var& method_name, uint32_t argc, Var* argv,
            Var* exception = NULL);
-  Var Construct(size_t argc, Var* argv, Var* exception = NULL) const;
+  Var Construct(uint32_t argc, Var* argv, Var* exception = NULL) const;
 
   // Convenience functions for calling functions with small # of args.
   Var Call(const Var& method_name, const Var& arg1, Var* exception = NULL);

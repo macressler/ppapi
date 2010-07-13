@@ -67,7 +67,7 @@ void GetAllPropertyNames(void* object,
   static_cast<ScriptableObject*>(object)->GetAllPropertyNames(&props, e.Get());
   if (props.empty())
     return;
-  *property_count = props.size();
+  *property_count = static_cast<uint32_t>(props.size());
   *properties = static_cast<PP_Var*>(
       Module::Get()->core()->MemAlloc(sizeof(PP_Var) * props.size()));
   for (size_t i = 0; i < props.size(); ++i)
