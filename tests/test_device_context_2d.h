@@ -38,6 +38,19 @@ class TestDeviceContext2D : public TestCase {
                        const pp::Rect& rect,
                        uint32_t color) const;
 
+  // Fill image with gradient colors.
+  void FillImageWithGradient(pp::ImageData* image) const;
+
+  // Return true if images are the same.
+  bool CompareImages(const pp::ImageData& image1,
+                     const pp::ImageData& image2);
+
+  // Return true if images within specified rectangles are the same.
+  bool CompareImageRect(const pp::ImageData& image1,
+                        const pp::Rect& rc1,
+                        const pp::ImageData& image2,
+                        const pp::Rect& rc2) const;
+
   // Validates that the given image is a single color with a square of another
   // color inside it.
   bool IsSquareInImage(const pp::ImageData& image_data,
@@ -62,7 +75,7 @@ class TestDeviceContext2D : public TestCase {
   std::string TestInitToZero();
   std::string TestDescribe();
   std::string TestPaint();
-  //std::string TestScroll();  // TODO(brettw) implement.
+  std::string TestScroll();
   std::string TestReplace();
   std::string TestFlush();
 

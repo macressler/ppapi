@@ -105,6 +105,42 @@ void TestDeviceContext2D::FillRectInImage(pp::ImageData* image,
   }
 }
 
+void TestDeviceContext2D::FillImageWithGradient(pp::ImageData* image) const {
+  for (int y = 0; y < image->size().height(); y++) {
+    uint32_t red = ((y * 256) / image->size().height()) & 0xFF;
+    for (int x = 0; x < image->size().width(); x++) {
+      uint32_t green = ((x * 256) / image->size().width()) & 0xFF;
+      uint32_t blue = ((red + green) / 2) & 0xFF;
+      uint32_t* pixel = image->GetAddr32(pp::Point(x, y));
+      *pixel = (blue << 24) | (green << 16) | (red << 8);
+    }
+  }
+}
+
+bool TestDeviceContext2D::CompareImages(const pp::ImageData& image1,
+                                        const pp::ImageData& image2) {
+  return CompareImageRect(
+      image1, pp::Rect(0, 0, image1.size().width(), image1.size().height()),
+      image2, pp::Rect(0, 0, image2.size().width(), image2.size().height()));
+}
+
+bool TestDeviceContext2D::CompareImageRect(const pp::ImageData& image1,
+                                           const pp::Rect& rc1,
+                                           const pp::ImageData& image2,
+                                           const pp::Rect& rc2) const {
+  if (rc1.width() != rc2.width() || rc1.height() != rc2.height())
+    return false;
+
+  for (int y = 0; y < rc1.height(); y++) {
+    for (int x = 0; x < rc1.width(); x++) {
+      if (*(image1.GetAddr32(pp::Point(rc1.x() + x, rc1.y() + y))) !=
+          *(image2.GetAddr32(pp::Point(rc2.x() + x, rc2.y() + y))))
+        return false;
+    }
+  }
+  return true;
+}
+
 bool TestDeviceContext2D::IsSquareInImage(const pp::ImageData& image_data,
                                           uint32_t background_color,
                                           const pp::Rect& square,
@@ -371,6 +407,86 @@ std::string TestDeviceContext2D::TestPaint() {
   if (!IsSquareInDC(dc, background_color, pp::Rect(0, 0, 1, 1),
                     subset_color))
     return "Subset paint failed.";
+
+  return "";
+}
+
+std::string TestDeviceContext2D::TestScroll() {
+  const int w = 115, h = 117;
+  pp::DeviceContext2D dc(pp::Size(w, h), false);
+  if (dc.is_null())
+    return "Failure creating a boring device.";
+
+  // Make sure the device background is 0.
+  if (!IsDCUniformColor(dc, 0))
+    return "Bad initial color.";
+
+  const int image_w = 15, image_h = 23;
+  pp::ImageData test_image(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                           pp::Size(image_w, image_h), false);
+  FillImageWithGradient(&test_image);
+
+  int image_x = 51, image_y = 72;
+  if (!dc.PaintImageData(test_image, pp::Point(image_x, image_y)))
+    return "Couldn't paint image.";
+  if (!FlushAndWaitForDone(&dc))
+    return "Couldn't flush to fill backing store.";
+
+  // TC1, Scroll image to a free space.
+  int dx = -40, dy = -48;
+  pp::Rect clip = pp::Rect(image_x, image_y, test_image.size().width(),
+                           test_image.size().height());
+  if (!dc.Scroll(clip, pp::Point(dx, dy)))
+    return "TC1, Couldn't scroll to a free space.";
+
+  if (!FlushAndWaitForDone(&dc))
+    return "TC1, Couldn't flush to scroll.";
+
+  image_x += dx;
+  image_y += dy;
+
+  pp::ImageData readback(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+                         pp::Size(image_w, image_h), false);
+  if (!ReadImageData(dc, &readback, pp::Point(image_x, image_y)))
+    return "TC1, Couldn't read back image data.";
+
+  if (!CompareImages(test_image, readback))
+    return "TC1, Read back image is not the same as test image.";
+
+  // TC2, Scroll image to an overlapping space.
+  dx = 6;
+  dy = 9;
+  clip = pp::Rect(image_x, image_y, test_image.size().width(),
+                  test_image.size().height());
+  if (!dc.Scroll(clip, pp::Point(dx, dy)))
+    return "TC2, Couldn't scroll to an overlapping space.";
+
+  if (!FlushAndWaitForDone(&dc))
+    return "TC2, Couldn't flush to scroll.";
+
+  image_x += dx;
+  image_y += dy;
+
+  if (!ReadImageData(dc, &readback, pp::Point(image_x, image_y)))
+    return "TC2, Couldn't read back image data.";
+
+  if (!CompareImages(test_image, readback))
+    return "TC2, Read back image is not the same as test image.";
+
+  // TC3, Scroll image partially outside of dc.
+  dx = -image_x - 5;
+  dy = -image_y - 7;
+  clip = pp::Rect(image_x, image_y, test_image.size().width(),
+                  test_image.size().height());
+
+  // This should fail. Check for false here.
+  if (dc.Scroll(clip, pp::Point(dx, dy)))
+    return "TC3, Scroll should fail scrolling partially outside of dc.";
+
+  // TC4, Scroll image completely outside of dc.
+  clip = pp::Rect(0, 0, -image_x - dx, -image_y - dy);
+  if (dc.Scroll(clip, pp::Point(dx, dy)))
+    return "TC4, Scroll should fail scrolling completely outside of dc.";
 
   return "";
 }
