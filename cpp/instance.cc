@@ -77,6 +77,12 @@ Var Instance::GetSelectedText(bool /* html */) {
   return Var();
 }
 
+PP_PrintOutputFormat* Instance::QuerySupportedPrintOutputFormats(
+    uint32_t* format_count) {
+  *format_count = 0;
+  return NULL;
+}
+
 int32_t Instance::PrintBegin(const PP_PrintSettings&) {
   return 0;
 }

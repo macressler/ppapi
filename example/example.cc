@@ -4,7 +4,7 @@
 
 #include <math.h>
 #include <stdio.h>  // FIXME(brettw) erase me.
-#ifndef WIN32
+#ifndef _WIN32
 #include <sys/time.h>
 #endif
 #include <time.h>
@@ -254,7 +254,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
 
   void UpdateFps() {
 // Time code doesn't currently compile on Windows, just skip FPS for now.
-#ifndef WIN32
+#ifndef _WIN32
     pp::Var window = GetWindowObject();
     pp::Var doc = window.GetProperty("document");
     pp::Var fps = doc.Call("getElementById", "fps");
@@ -277,6 +277,15 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   // Print interfaces.
+  virtual PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
+      uint32_t* format_count) {
+    PP_PrintOutputFormat* format = reinterpret_cast<PP_PrintOutputFormat*>(
+        pp::Module::Get()->core()->MemAlloc(sizeof(PP_PrintOutputFormat)));
+    *format = PP_PRINTOUTPUTFORMAT_RASTER;
+    *format_count = 1;
+    return format;
+  }
+
   virtual int32_t PrintBegin(const PP_PrintSettings& print_settings) {
     if (print_settings_.format != PP_PRINTOUTPUTFORMAT_RASTER)
       return 0;
@@ -397,10 +406,6 @@ void FlushCallback(void* data, int32_t result) {
   static_cast<MyInstance*>(data)->OnFlush();
 }
 
-PP_PrintOutputFormat supported_print_formats[] = {
-  PP_PRINTOUTPUTFORMAT_RASTER,
-};
-
 class MyModule : public pp::Module {
  public:
   MyModule() : pp::Module() {}
@@ -408,14 +413,6 @@ class MyModule : public pp::Module {
 
   virtual pp::Instance* CreateInstance(PP_Instance instance) {
     return new MyInstance(instance);
-  }
-
-  virtual const PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
-      uint32_t* format_count) {
-    // TODO(sanjeevr): Use arraysize.
-    *format_count =
-        sizeof(supported_print_formats)/sizeof(supported_print_formats[0]);
-    return supported_print_formats;
   }
 };
 

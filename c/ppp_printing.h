@@ -43,10 +43,12 @@ typedef struct _pp_PrintPageNumberRange {
 #define PPP_PRINTING_INTERFACE "PPP_Printing;1"
 
 typedef struct _ppp_Printing {
-  // Returns array of supported print output formats. The array is expected to
-  // be a static array so the caller does not have to free it.
+  // Returns array of supported print output formats. The array is allocated
+  // using PPB_Core.MemAlloc. The caller is responsible for freeing the array
+  // using PPB_Core.MemFree.
   // Sets |*format_count| to 0 returns NULL if printing is not supported at all.
-  const PP_PrintOutputFormat* (*QuerySupportedFormats)(uint32_t* format_count);
+  PP_PrintOutputFormat* (*QuerySupportedFormats)(PP_Instance instance,
+                                                 uint32_t* format_count);
 
   // Begins a print session with the given print settings. Calls to PrintPage
   // can only be made after a successful call to Begin. Returns the number of

@@ -152,14 +152,19 @@ static PPP_Instance instance_interface = {
 
 // PPP_Printing implementation -------------------------------------------------
 
-const PP_PrintOutputFormat* Printing_QuerySupportedFormats(
-    uint32_t* format_count) {
+PP_PrintOutputFormat* Printing_QuerySupportedFormats(
+    PP_Instance pp_instance, uint32_t* format_count) {
   Module* module_singleton = Module::Get();
   if (!module_singleton) {
     *format_count = 0;
     return NULL;
   }
-  return module_singleton->QuerySupportedPrintOutputFormats(format_count);
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance) {
+    *format_count = 0;
+    return NULL;
+  }
+  return instance->QuerySupportedPrintOutputFormats(format_count);
 }
 
 int32_t Printing_Begin(PP_Instance pp_instance,
@@ -174,7 +179,7 @@ int32_t Printing_Begin(PP_Instance pp_instance,
   // See if we support the specified print output format.
   uint32_t format_count = 0;
   const PP_PrintOutputFormat* formats =
-      module_singleton->QuerySupportedPrintOutputFormats(&format_count);
+      instance->QuerySupportedPrintOutputFormats(&format_count);
   if (!formats)
     return 0;
   for (uint32_t index = 0; index < format_count; index++) {

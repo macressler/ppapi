@@ -9,10 +9,9 @@
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
+#include "ppapi/c/ppp_printing.h"
 
 typedef struct _pp_Event PP_Event;
-typedef struct _pp_PrintPageNumberRange PP_PrintPageNumberRange;
-typedef struct _pp_PrintSettings PP_PrintSettings;
 
 namespace pp {
 
@@ -50,6 +49,8 @@ class Instance {
 
   // PPP_Printing methods for the plugin to override if it supports printing.
   // See ppp_printing.h for details.
+  virtual PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
+      uint32_t* format_count);
   virtual int32_t PrintBegin(const PP_PrintSettings& print_settings);
   virtual Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
                               uint32_t page_range_count);
