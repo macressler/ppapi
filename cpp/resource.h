@@ -25,6 +25,11 @@ class Resource {
 
   PP_Resource pp_resource() const { return pp_resource_; }
 
+  // Releases ownership of the PP_Resource and returns it to the caller.
+  // Note the the reference count on the resource is unchanged and the caller
+  // needs to release the resource.
+  PP_Resource detach();
+
  protected:
   // This constructor is used when we've gotten a PP_Resource as a return value
   // that we need to addref.

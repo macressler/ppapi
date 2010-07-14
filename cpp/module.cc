@@ -195,11 +195,11 @@ PP_Resource Printing_PrintPages(PP_Instance pp_instance,
                                 uint32_t page_range_count) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
-    return Resource().pp_resource();
+    return Resource().detach();
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
-    return Resource().pp_resource();
-  return instance->PrintPages(page_ranges, page_range_count).pp_resource();
+    return Resource().detach();
+  return instance->PrintPages(page_ranges, page_range_count).detach();
 }
 
 void Printing_End(PP_Instance pp_instance) {

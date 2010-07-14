@@ -34,6 +34,12 @@ void Resource::swap(Resource& other) {
   std::swap(pp_resource_, other.pp_resource_);
 }
 
+PP_Resource Resource::detach() {
+  PP_Resource ret = pp_resource_;
+  pp_resource_ = NULL;
+  return ret;
+}
+
 Resource::Resource(PP_Resource resource) : pp_resource_(resource) {
   if (!is_null())
     Module::Get()->core()->AddRefResource(pp_resource_);
