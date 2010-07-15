@@ -102,13 +102,13 @@ class PaintManager {
   // You will need to call SetSize before this class will do anything. Normally
   // you do this from the ViewChanged method of your plugin instance.
   PaintManager(Instance* instance, Client* client, bool is_always_opaque);
-  
+
   ~PaintManager();
-  
+
   // You must call this function before using if you use the 0-arg constructor.
   // See the constructor for what these arguments mean.
   void Initialize(Instance* instance, Client* client, bool is_always_opaque);
-  
+
   // Setters for the configuration settings in the paint aggregator.
   // See paint_aggregator.h for what these mean.
   void set_max_redundant_paint_to_scroll_area(float area) {
