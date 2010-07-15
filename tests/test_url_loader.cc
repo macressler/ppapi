@@ -70,14 +70,35 @@ bool TestURLLoader::Init() {
 }
 
 void TestURLLoader::RunTest() {
-  instance_->LogTest("BasicGET", TestBasicGET());
+  RUN_TEST(BasicGET);
+  RUN_TEST(BasicPOST);
+  RUN_TEST(CompoundBodyPOST);
+  RUN_TEST(CustomRequestHeader);
+  RUN_TEST(IgnoresBogusContentLength);
 }
 
-std::string TestURLLoader::TestBasicGET() {
-  pp::URLRequestInfo request;
-  request.SetURL("test_url_loader_data/hello.txt");
-  request.SetMethod("GET");
+std::string TestURLLoader::ReadEntireResponseBody(pp::URLLoader* loader,
+                                                  std::string* body) {
+  TestCompletionCallback callback;
+  char buf[256];
 
+  for (;;) {
+    int32_t rv = loader->ReadResponseBody(buf, sizeof(buf), callback);
+    if (rv == PP_ERROR_WOULDBLOCK)
+      rv = callback.WaitForResult();
+    if (rv < 0)
+      return ReportError("URLLoader::ReadResponseBody", rv);
+    if (rv == 0)
+      break;
+    body->append(buf, rv);
+  }
+
+  return "";
+}
+
+std::string TestURLLoader::LoadAndCompareBody(
+    const pp::URLRequestInfo& request,
+    const std::string& expected_body) {
   TestCompletionCallback callback;
 
   pp::URLLoader loader(*instance_);
@@ -87,20 +108,54 @@ std::string TestURLLoader::TestBasicGET() {
   if (rv != PP_OK)
     return ReportError("URLLoader::Open", rv);
 
-  char buf[256];
-  rv = loader.ReadResponseBody(buf, sizeof(buf), callback);
-  if (rv == PP_ERROR_WOULDBLOCK)
-    rv = callback.WaitForResult();
-  if (rv < 0)
-    return ReportError("URLLoader::ReadResponseBody", rv);
-  if (rv == 0)
-    return "URLLoader::ReadResponseBody returned end-of-file prematurely.";
+  std::string body;
+  std::string error = ReadEntireResponseBody(&loader, &body);
+  if (!error.empty())
+    return error;
   
-  char expected[] = "hello\n";
-  if (rv != sizeof(expected)-1)
+  if (body.size() != expected_body.size())
     return "URLLoader::ReadResponseBody returned unexpected content length";
-  if (memcmp(expected, buf, rv) != 0)
+  if (body != expected_body)
     return "URLLoader::ReadResponseBody returned unexpected content";
 
   return "";
+}
+
+std::string TestURLLoader::TestBasicGET() {
+  pp::URLRequestInfo request;
+  request.SetURL("test_url_loader_data/hello.txt");
+  return LoadAndCompareBody(request, "hello\n");
+}
+
+std::string TestURLLoader::TestBasicPOST() {
+  pp::URLRequestInfo request;
+  request.SetURL("/echo");
+  request.SetMethod("POST");
+  request.AppendDataToBody("postdata");
+  return LoadAndCompareBody(request, "postdata");
+}
+
+std::string TestURLLoader::TestCompoundBodyPOST() {
+  pp::URLRequestInfo request;
+  request.SetURL("/echo");
+  request.SetMethod("POST");
+  request.AppendDataToBody("post");
+  request.AppendDataToBody("data");
+  return LoadAndCompareBody(request, "postdata");
+}
+
+std::string TestURLLoader::TestCustomRequestHeader() {
+  pp::URLRequestInfo request;
+  request.SetURL("/echoheader?Foo");
+  request.SetHeaders("Foo: 1");
+  return LoadAndCompareBody(request, "1");
+}
+
+std::string TestURLLoader::TestIgnoresBogusContentLength() {
+  pp::URLRequestInfo request;
+  request.SetURL("/echo");
+  request.SetMethod("POST");
+  request.SetHeaders("Content-Length: 400");
+  request.AppendDataToBody("postdata");
+  return LoadAndCompareBody(request, "postdata");
 }

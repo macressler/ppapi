@@ -43,8 +43,12 @@ typedef struct _ppb_URLRequestInfo {
                       PP_URLRequestProperty property,
                       PP_Var value);
 
-  // Append data to the request body.  Returns false if any of the parameters
-  // are invalid.  The data parameter must be of type PP_VarType_String.
+  // Append data to the request body.  The data parameter must be of type
+  // PP_VarType_String.
+  //
+  // A Content-Length request header will be automatically generated.
+  //
+  // Returns false if any of the parameters are invalid.
   bool (*AppendDataToBody)(PP_Resource request, PP_Var data);
 
   // Append a file reference to be uploaded.
@@ -58,6 +62,8 @@ typedef struct _ppb_URLRequestInfo {
   // time before it is uploaded.  The upload will fail with an error code of
   // PP_Error_FileChanged if the file has been modified since the given time.
   // If expected_last_modified_time is 0, then no validation is performed.
+  //
+  // A Content-Length request header will be automatically generated.
   //
   // Returns false if any of the parameters are invalid.
   bool (*AppendFileToBody)(PP_Resource request,
