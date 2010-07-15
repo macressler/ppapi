@@ -6,6 +6,8 @@
 {
   'variables': {
     'chromium_code': 1,  # Use higher warning level.
+  },
+  'target_defaults': {
     'conditions': [
       # Linux shared libraries should always be built -fPIC.
       #
@@ -13,9 +15,12 @@
       # into chrome, do we want to build w/o -fPIC?  If so, how can we express
       # that in the build system?
       ['OS=="linux" or OS=="openbsd" or OS=="freebsd" or OS=="solaris"', {
-        'use_fpic': 1,
-      },{
-        'use_fpic': 0,
+        'cflags': ['-fPIC', '-fvisibility=hidden'],
+
+        # This is needed to make the Linux shlib build happy. Without this,
+        # -fvisibility=hidden gets stripped by the exclusion in common.gypi
+        # that is triggered when a shared library build is specified.
+        'cflags/': [['include', '^-fvisibility=hidden$']],
       }],
     ],
   },
@@ -139,9 +144,6 @@
             },
           },
         }],
-        ['use_fpic==1', {
-          'cflags': ['-fPIC'],
-        }],
         ['OS=="linux"', {
           'cflags': ['-Wextra', '-pedantic'],
         }],
@@ -169,9 +171,6 @@
       'conditions': [
         ['OS=="win"', {
           'msvs_guid': '057E7FA0-83C0-11DF-8395-0800200C9A66',
-        }],
-        ['use_fpic==1', {
-          'cflags': ['-fPIC'],
         }],
         ['OS=="linux"', {
           'cflags': ['-Wextra', '-pedantic'],
@@ -227,9 +226,6 @@
             'example/Info.plist'
           ],
         }],
-        ['use_fpic', {
-          'cflags': ['-fPIC'],
-        }],
       ],
       # See README for instructions on how to run and debug on the Mac.
       #'conditions' : [
@@ -282,9 +278,6 @@
           'mac_bundle': 1,
           'product_name': 'ppapi_tests',
           'product_extension': 'plugin',
-        }],
-        ['use_fpic', {
-          'cflags': ['-fPIC'],
         }],
       ],
     },
