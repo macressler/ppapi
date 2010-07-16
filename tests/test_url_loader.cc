@@ -13,6 +13,7 @@
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/url_request_info.h"
+#include "ppapi/cpp/url_response_info.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/tests/test_instance.h"
@@ -65,11 +66,23 @@ bool TestURLLoader::Init() {
     instance_->AppendError("This test needs the testing interface, which is "
         "not currently available. In Chrome, use --enable-pepper-testing when "
         "launching.");
+    return false;
   }
-  return !!g_testing_interface;
+
+  // Make sure we're running over HTTP.
+  pp::Var window = instance_->GetWindowObject();
+  pp::Var location = window.GetProperty("location");
+  pp::Var protocol = location.GetProperty("protocol");
+  if (!protocol.is_string() || protocol.AsString() != "http:") {
+    instance_->AppendError("This test needs to be run over HTTP.");
+    return false;
+  }
+
+  return true;
 }
 
 void TestURLLoader::RunTest() {
+
   RUN_TEST(BasicGET);
   RUN_TEST(BasicPOST);
   RUN_TEST(CompoundBodyPOST);
@@ -107,6 +120,13 @@ std::string TestURLLoader::LoadAndCompareBody(
     rv = callback.WaitForResult();
   if (rv != PP_OK)
     return ReportError("URLLoader::Open", rv);
+
+  pp::URLResponseInfo response_info(loader.GetResponseInfo());
+  if (response_info.is_null())
+    return "URLLoader::GetResponseInfo returned null";
+  int32_t status_code = response_info.GetStatusCode();
+  if (status_code != 200)
+    return "Unexpected HTTP status code";
 
   std::string body;
   std::string error = ReadEntireResponseBody(&loader, &body);
