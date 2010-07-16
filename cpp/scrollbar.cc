@@ -79,7 +79,7 @@ void Scrollbar::SetTickMarks(const Rect* tick_marks, uint32_t count) {
   for (uint32_t i = 0; i < count; ++i)
     temp[i] = tick_marks[i];
 
-  scrollbar_funcs->SetTickMarks(pp_resource(), &temp[0], count);
+  scrollbar_funcs->SetTickMarks(pp_resource(), count ? &temp[0] : NULL, count);
 }
 
 void Scrollbar::ScrollBy(PP_ScrollBy unit, int32_t multiplier) {
