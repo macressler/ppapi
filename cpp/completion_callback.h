@@ -109,8 +109,6 @@ class CompletionCallback {
 template <typename T>
 class CompletionCallbackFactory {
  public:
-  typedef void (T::*Method)(int32_t);
-
   explicit CompletionCallbackFactory(T* object = NULL)
       : object_(object) {
     InitBackPointer();
@@ -141,10 +139,32 @@ class CompletionCallbackFactory {
   // If after passing the CompletionCallback to a PPAPI method, the method does
   // not return PP_ERROR_WOULDBLOCK, then you should manually call the
   // CompletionCallback's Run method otherwise memory will be leaked.
+
+  template <typename Method>
   CompletionCallback NewCallback(Method method) {
-    PP_DCHECK(object_);  // Expects a non-null object!
-    return CompletionCallback(&CallbackData::Thunk,
-                              new CallbackData(back_pointer_, method));
+    return NewCallbackHelper(Dispatcher0<Method>(method));
+  }
+
+  // A copy of "a" will be passed to "method" when the completion callback
+  // runs.
+  //
+  // Method should be of type:
+  //   void (T::*)(int32_t result, const A& a)
+  //
+  template <typename Method, typename A>
+  CompletionCallback NewCallback(Method method, const A& a) {
+    return NewCallbackHelper(Dispatcher1<Method, A>(method, a));
+  }
+
+  // A copy of "a" and "b" will be passed to "method" when the completion
+  // callback runs.
+  // 
+  // Method should be of type:
+  //   void (T::*)(int32_t result, const A& a, const B& b)
+  //
+  template <typename Method, typename A, typename B>
+  CompletionCallback NewCallback(Method method, const A& a, const B& b) {
+    return NewCallbackHelper(Dispatcher2<Method, A, B>(method, a, b));
   }
 
  private:
@@ -179,11 +199,12 @@ class CompletionCallbackFactory {
     CompletionCallbackFactory<T>* factory_;
   };
 
+  template <typename Dispatcher>
   class CallbackData {
    public:
-    CallbackData(BackPointer* back_pointer, Method method)
+    CallbackData(BackPointer* back_pointer, const Dispatcher& dispatcher)
         : back_pointer_(back_pointer),
-          method_(method) {
+          dispatcher_(dispatcher) {
       back_pointer_->AddRef();
     }
 
@@ -192,16 +213,61 @@ class CompletionCallbackFactory {
     }
 
     static void Thunk(void* user_data, int32_t result) {
-      CallbackData* self = static_cast<CallbackData*>(user_data);
+      Self* self = static_cast<Self*>(user_data);
       T* object = self->back_pointer_->GetObject();
       if (object)
-        (object->*(self->method_))(result);
+        self->dispatcher_(object, result);
       delete self;
     }
 
    private:
+    typedef CallbackData<Dispatcher> Self;
     BackPointer* back_pointer_;
+    Dispatcher dispatcher_;
+  };
+
+  template <typename Method>
+  class Dispatcher0 {
+   public:
+    Dispatcher0(Method method) : method_(method) {
+    }
+    void operator()(T* object, int32_t result) {
+      (object->*method_)(result);
+    }
+   private:
     Method method_;
+  };
+
+  template <typename Method, typename A>
+  class Dispatcher1 {
+   public:
+    Dispatcher1(Method method, const A& a)
+        : method_(method),
+          a_(a) {
+    }
+    void operator()(T* object, int32_t result) {
+      (object->*method_)(result, a_);
+    }
+   private:
+    Method method_;
+    A a_;
+  };
+
+  template <typename Method, typename A, typename B>
+  class Dispatcher2 {
+   public:
+    Dispatcher2(Method method, const A& a, const B& b)
+        : method_(method),
+          a_(a),
+          b_(b) {
+    }
+    void operator()(T* object, int32_t result) {
+      (object->*method_)(result, a_, b_);
+    }
+   private:
+    Method method_;
+    A a_;
+    B b_;
   };
 
   void InitBackPointer() {
@@ -212,6 +278,14 @@ class CompletionCallbackFactory {
   void ResetBackPointer() {
     back_pointer_->DropFactory();
     back_pointer_->Release();
+  }
+
+  template <typename Dispatcher>
+  CompletionCallback NewCallbackHelper(const Dispatcher& dispatcher) {
+    PP_DCHECK(object_);  // Expects a non-null object!
+    return CompletionCallback(
+        &CallbackData<Dispatcher>::Thunk,
+        new CallbackData<Dispatcher>(back_pointer_, dispatcher));
   }
 
   // Disallowed:
