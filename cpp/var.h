@@ -128,6 +128,11 @@ class Var {
   }
 
  private:
+  // Prevent an arbitrary pointer argument from being implicitly converted to
+  // a bool at Var construction. If somebody makes such a mistake, (s)he will
+  // get a compilation error.
+  Var(void* non_scriptable_object_pointer);
+
   // For internal use, this will handle getting the address of the internal
   // value out if it's non-NULL for exception handling.
   static inline PP_Var* OutException(Var* v) {
@@ -141,4 +146,3 @@ class Var {
 }  // namespace pp
 
 #endif  // PPAPI_CPP_VAR_H_
-
