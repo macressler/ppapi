@@ -253,6 +253,8 @@
         'tests/test_buffer.h',
         'tests/test_device_context_2d.cc',
         'tests/test_device_context_2d.h',
+        'tests/test_file_ref.cc',
+        'tests/test_file_ref.h',
         'tests/test_image_data.cc',
         'tests/test_image_data.h',
         'tests/test_paint_aggregator.cc',
