@@ -30,6 +30,7 @@ class TestURLLoader : public TestCase {
   std::string TestBasicGET();
   std::string TestBasicPOST();
   std::string TestCompoundBodyPOST();
+  std::string TestEmptyDataPOST();
   std::string TestCustomRequestHeader();
   std::string TestIgnoresBogusContentLength();
 };

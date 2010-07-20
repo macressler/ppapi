@@ -86,6 +86,7 @@ void TestURLLoader::RunTest() {
   RUN_TEST(BasicGET);
   RUN_TEST(BasicPOST);
   RUN_TEST(CompoundBodyPOST);
+  RUN_TEST(EmptyDataPOST);
   RUN_TEST(CustomRequestHeader);
   RUN_TEST(IgnoresBogusContentLength);
 }
@@ -162,6 +163,14 @@ std::string TestURLLoader::TestCompoundBodyPOST() {
   request.AppendDataToBody("post");
   request.AppendDataToBody("data");
   return LoadAndCompareBody(request, "postdata");
+}
+
+std::string TestURLLoader::TestEmptyDataPOST() {
+  pp::URLRequestInfo request;
+  request.SetURL("/echo");
+  request.SetMethod("POST");
+  request.AppendDataToBody("");
+  return LoadAndCompareBody(request, "");
 }
 
 std::string TestURLLoader::TestCustomRequestHeader() {
