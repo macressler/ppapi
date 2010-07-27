@@ -25,24 +25,26 @@ typedef struct _pp_Var PP_Var;
 // for general information on using and implementing vars.
 typedef struct _ppp_Class {
   // |name| is guaranteed to be an integer or string type var. Exception is
-  // guaranteed non-NULL. This test should also return true for methods, a
-  // caller will have to call HasMethod() to distinguish between method
-  // properties and non-method properties.
+  // guaranteed non-NULL. An integer is used for |name| when implementing
+  // array access into the object. This test should only return true for
+  // properties that are not methods.  Use HasMethod() to handle methods.
   bool (*HasProperty)(void* object,
                       PP_Var name,
                       PP_Var* exception);
 
-  // |name| is guaranteed to be a string-type or integer-type var. Exception is
-  // guaranteed non-NULL. If the property does not exist, return false and
-  // don't set the exception. Errors in this function will probably not occur
-  // in general usage, but if you need to throw an exception, return false.
+  // |name| is guaranteed to be a string-type. Exception is guaranteed non-NULL.
+  // If the method does not exist, return false and don't set the exception.
+  // Errors in this function will probably not occur in general usage, but
+  // if you need to throw an exception, still return false.
   bool (*HasMethod)(void* object,
                     PP_Var name,
                     PP_Var* exception);
 
   // |name| is guaranteed to be a string-type or an integer-type var. Exception
-  // is gauaranteed non-NULL. If the property does not exist, set the exception
-  // and return a var of type Void.
+  // is guaranteed non-NULL. An integer is used for |name| when implementing
+  // array access into the object. If the property does not exist, set the
+  // exception and return a var of type Void. A property does not exist if
+  // a call HasProperty() for the same |name| would return false.
   PP_Var (*GetProperty)(void* object,
                         PP_Var name,
                         PP_Var* exception);
