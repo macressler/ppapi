@@ -45,8 +45,8 @@ class FontDescription {
   PP_FontFamily family() const { return pp_font_description_.family; }
   void set_family(PP_FontFamily f) { pp_font_description_.family = f; }
 
-  float size() const { return pp_font_description_.size; }
-  void set_size(float s) { pp_font_description_.size = s; }
+  int size() const { return pp_font_description_.size; }
+  void set_size(int s) { pp_font_description_.size = s; }
 
   PP_FontWeight weight() const { return pp_font_description_.weight; }
   void set_weight(PP_FontWeight w) { pp_font_description_.weight = w; }
