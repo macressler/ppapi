@@ -13,12 +13,12 @@
 typedef struct _pp_Var PP_Var;
 
 enum PP_URLRequestProperty {
-  PP_URLREQUESTPROPERTY_URL,                   // string
-  PP_URLREQUESTPROPERTY_METHOD,                // string
-  PP_URLREQUESTPROPERTY_HEADERS,               // string, \n-delim
-  PP_URLREQUESTPROPERTY_STREAMTOFILE,          // bool (default=false)
-  PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS,       // bool (default=true)
-  PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS,  // bool (default=false)
+  PP_URLREQUESTPROPERTY_URL,                  // string
+  PP_URLREQUESTPROPERTY_METHOD,               // string
+  PP_URLREQUESTPROPERTY_HEADERS,              // string, \n-delim
+  PP_URLREQUESTPROPERTY_STREAMTOFILE,         // bool (default=false)
+  PP_URLREQUESTPROPERTY_FOLLOWREDIRECTS,      // bool (default=true)
+  PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS  // bool (default=false)
   // TODO(darin): Add security/privacy options?
 };
 
