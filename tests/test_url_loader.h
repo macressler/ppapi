@@ -10,6 +10,7 @@
 #include "ppapi/tests/test_case.h"
 
 namespace pp {
+class FileIO;
 class URLLoader;
 class URLRequestInfo;
 }
@@ -23,6 +24,7 @@ class TestURLLoader : public TestCase {
   virtual void RunTest();
   
  private:
+  std::string ReadEntireFile(pp::FileIO* file_io, std::string* data);
   std::string ReadEntireResponseBody(pp::URLLoader* loader, std::string* body);
   std::string LoadAndCompareBody(const pp::URLRequestInfo& request,
                                  const std::string& expected_body);
@@ -33,6 +35,7 @@ class TestURLLoader : public TestCase {
   std::string TestEmptyDataPOST();
   std::string TestCustomRequestHeader();
   std::string TestIgnoresBogusContentLength();
+  std::string TestStreamToFile();
 };
 
 #endif  // PAPPI_TESTS_TEST_URL_LOADER_H_

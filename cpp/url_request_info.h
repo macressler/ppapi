@@ -50,15 +50,6 @@ class URLRequestInfo : public Resource {
   bool SetRecordUploadProgress(bool enable) {
     return SetProperty(PP_URLREQUESTPROPERTY_RECORDUPLOADPROGRESS, enable);
   }
-  bool SetAllowAuthentication(bool allow) {
-    return SetProperty(PP_URLREQUESTPROPERTY_ALLOWAUTHENTICATION, allow);
-  }
-  bool SetAllowCookies(bool allow) {
-    return SetProperty(PP_URLREQUESTPROPERTY_ALLOWCOOKIES, allow);
-  }
-  bool SetAllowReferrer(bool allow) {
-    return SetProperty(PP_URLREQUESTPROPERTY_ALLOWREFERRER, allow);
-  }
 };
 
 }  // namespace pp

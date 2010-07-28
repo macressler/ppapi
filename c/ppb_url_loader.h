@@ -19,15 +19,14 @@ typedef struct _pp_CompletionCallback PP_CompletionCallback;
 // 1- Create an URLLoader object.
 // 2- Create an URLRequestInfo object and set properties on it.
 // 3- Call URLLoader's Open method passing the URLRequestInfo.
-// 4- When Open completes, call GetResponse and examine the status code.
-// 5- If the status code indicates a redirect, call FollowRedirect to continue
-//    loading using the new URL.
-// 6- If the status code is 200, then call ReadResponseBody to stream the data
-//    for the response.
+// 4- When Open completes, call GetResponseInfo to examine the response headers.
+// 5- Then call ReadResponseBody to stream the data for the response.
 //
-// Alternatively, if StreamToFile is specified in the URLRequestInfo, then Open
-// will complete once the file is fully downloaded.  The downloaded file may be
-// accessed from the URLResponseInfo.
+// Alternatively, if PP_URLREQUESTPROPERTY_STREAMTOFILE was set on the
+// URLRequestInfo, then call FinishStreamingToFile at step #5 to wait for the
+// downloaded file to be complete.  The downloaded file may be accessed via the
+// GetBody method of the URLResponseInfo returned in step #4.
+//
 typedef struct _ppb_URLLoader {
   // Create a new URLLoader object.  Returns 0 if the instance is invalid.  The
   // URLLoader is associated with a particular instance, so that any UI dialogs
@@ -54,10 +53,11 @@ typedef struct _ppb_URLLoader {
 
   // Returns the current upload progress, which is meaningful after Open has
   // been called, and the request given to Open must have been configured with
-  // the ReportUploadProgress property set to true.  Progress only refers to
-  // the request body.  This data is only available if the RecordUploadProgress
-  // was set to true on the URLRequestInfo.  This method returns false if
-  // upload progress is not available.
+  // PP_URLREQUESTPROPERTY_REPORTUPLOADPROGRESS set to true.  Progress only
+  // refers to the request body.  This data is only available if the
+  // PP_URLREQUESTPROPERTY_REPORTUPLOADPROGRESS was set to true on the
+  // URLRequestInfo.  This method returns false if upload progress is not
+  // available.
   bool (*GetUploadProgress)(PP_Resource loader,
                             int64_t* bytes_sent,
                             int64_t* total_bytes_to_be_sent);
@@ -82,8 +82,15 @@ typedef struct _ppb_URLLoader {
                               int32_t bytes_to_read,
                               PP_CompletionCallback callback);
 
+  // If PP_URLREQUESTPROPERTY_STREAMTOFILE was set on the URLRequestInfo passed
+  // to the Open method, then this method may be used to wait for the response
+  // body to be completely downloaded to the file provided by URLResponseInfo's
+  // GetBody method.
+  int32_t (*FinishStreamingToFile)(PP_Resource loader,
+                                   PP_CompletionCallback callback);
+
   // Cancels any IO that may be pending, and closes the URLLoader object.  Any
-  // pending callbacks will still run, reporting PP_Error_Aborted if pending IO
+  // pending callbacks will still run, reporting PP_ERROR_ABORTED if pending IO
   // was interrupted.  It is NOT valid to call Open again after a call to this
   // method.  Note: If the URLLoader object is destroyed, and it is still open,
   // then it will be implicitly closed, so you are not required to call the

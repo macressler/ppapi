@@ -49,7 +49,8 @@ Var URLResponseInfo::GetProperty(PP_URLResponseProperty property) const {
 FileRef URLResponseInfo::GetBody() const {
   if (!EnsureFuncs())
     return FileRef();
-  return FileRef(); //FileRef::PassRef(), 
+  return FileRef(FileRef::PassRef(),
+                 url_response_info_funcs->GetBody(pp_resource()));
 }
 
 }  // namespace pp

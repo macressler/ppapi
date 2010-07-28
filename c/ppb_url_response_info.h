@@ -29,11 +29,12 @@ typedef struct _ppb_URLResponseInfo {
   PP_Var (*GetProperty)(PP_Resource response,
                         PP_URLResponseProperty property);
 
-  // Returns the FileRef pointing to the file containing the response body.
-  // This is only valid if StreamToFile was specified in the URLRequestInfo
-  // used to produce this response.  This file remains valid for the lifetime
-  // of this URLResponseInfo object.  Returns 0 if StreamToFile was not
-  // requested.
+  // Returns a FileRef pointing to the file containing the response body.  This
+  // is only valid if PP_URLREQUESTPROPERTY_STREAMTOFILE was set on the
+  // URLRequestInfo used to produce this response.  This file remains valid
+  // until the URLLoader associated with this URLResponseInfo is closed or
+  // destroyed.  Returns 0 if PP_URLREQUESTPROPERTY_STREAMTOFILE was not
+  // requested or if the URLLoader has not been opened yet.
   PP_Resource (*GetBody)(PP_Resource response);
 } PPB_URLResponseInfo;
 

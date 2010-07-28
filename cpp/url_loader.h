@@ -101,6 +101,7 @@ class URLLoader : public Resource {
   int32_t ReadResponseBody(char* buffer,
                            int32_t bytes_to_read,
                            const CompletionCallback& cc);
+  int32_t FinishStreamingToFile(const CompletionCallback& cc);
   void Close();
 };
 

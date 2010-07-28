@@ -104,6 +104,13 @@ int32_t URLLoader::ReadResponseBody(char* buffer,
                                             cc.pp_completion_callback());
 }
 
+int32_t URLLoader::FinishStreamingToFile(const CompletionCallback& cc) {
+  if (!EnsureFuncs())
+    return PP_ERROR_NOINTERFACE;
+  return url_loader_funcs->FinishStreamingToFile(pp_resource(),
+                                                 cc.pp_completion_callback());
+}
+
 void URLLoader::Close() {
   if (!EnsureFuncs())
     return;
