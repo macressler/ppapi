@@ -20,6 +20,7 @@
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/scriptable_object.h"
 #include "ppapi/cpp/url_request_info.h"
 #include "ppapi/cpp/url_loader.h"
@@ -178,14 +179,11 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   virtual bool HandleEvent(const PP_Event& event) {
     switch (event.type) {
       case PP_EVENT_TYPE_MOUSEDOWN:
-        printf("Mouse down\n");
         SayHello();
         return true;
       case PP_EVENT_TYPE_MOUSEMOVE:
-        printf("Mouse move\n");
         return true;
       case PP_EVENT_TYPE_KEYDOWN:
-        printf("Key down\n");
         return true;
       default:
         return false;
@@ -234,14 +232,13 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     }
   }
 
-  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
-    printf("ViewChanged %d,%d,%d,%d\n", position.point.x, position.point.y,
-           position.size.width, position.size.height);
-    if (position.size.width == width_ && position.size.height == height_)
+  virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
+    if (position.size().width() == width_ &&
+        position.size().height() == height_)
       return;  // We don't care about the position, only the size.
 
-    width_ = position.size.width;
-    height_ = position.size.height;
+    width_ = position.size().width();
+    height_ = position.size().height();
 
     device_context_ = pp::DeviceContext2D(pp::Size(width_, height_), false);
     if (!BindGraphicsDeviceContext(device_context_)) {
