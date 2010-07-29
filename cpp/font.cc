@@ -39,7 +39,14 @@ FontDescription::FontDescription() {
 }
 
 FontDescription::FontDescription(const FontDescription& other) {
-  *this = other;
+  set_face(other.face());
+  set_family(other.family());
+  set_size(other.size());
+  set_weight(other.weight());
+  set_italic(other.italic());
+  set_small_caps(other.small_caps());
+  set_letter_spacing(other.letter_spacing());
+  set_word_spacing(other.word_spacing());
 }
 
 FontDescription::~FontDescription() {
