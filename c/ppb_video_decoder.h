@@ -60,20 +60,16 @@ typedef struct _ppb_VideoDecoder {
   PP_Resource (*Create)(PP_Instance instance,
                         const PP_VideoDecoderConfig* decoder_config);
 
-  // Sends bit stream in |input_buffer| to the decoder. |frame_info| contains
-  // associated information about the frame.
+  // Sends bit stream in |input_buffer| to the decoder.
   // This is a non-blocking call.
   // The decoded frame will be returned by decoder calling |output_callback|
   // provided by plugin during creation of decoder.
   // The input data buffer is returned to plugin by decoder only when plugin
   // provides |input_callback|.
-  // Decoder shall retain frame info and return them to plugin when it returns
-  // decoded frame.
   // Returns true on decoder successfully accepting buffer, false otherwise.
   //
   bool (*Decode)(PP_Resource decoder,
-                 PP_VideoCompressedDataBuffer* input_buffer,
-                 PP_VideoFrameInfo* frame_info);
+                 PP_VideoCompressedDataBuffer* input_buffer);
 
   // Requests the decoder to flush its input and output buffers. Once done with
   // flushing, the decode will call the |callback|.

@@ -36,7 +36,7 @@ enum PP_VideoKey {
   PP_VIDEOKEY_H264FEATURE_ASO,
   PP_VIDEOKEY_H264FEATURE_INTERLACE,
   PP_VIDEOKEY_H264FEATURE_CABAC,
-  PP_VIDEOKEY_H264FEATURE_WEIGHTEDPREDICTION,
+  PP_VIDEOKEY_H264FEATURE_WEIGHTEDPREDICTION
 };
 
 enum PP_VideoDecoderEvent {
@@ -46,7 +46,7 @@ enum PP_VideoDecoderEvent {
   // Signaling new width/height of video frame
   PP_VIDEODECODEREVENT_NEWDIMENSION,
   // Signaling new cropping rectangle
-  PP_VIDEODECODEREVENT_NEWCROP,
+  PP_VIDEODECODEREVENT_NEWCROP
 };
 
 enum PP_VideoDecodeError {
@@ -55,7 +55,7 @@ enum PP_VideoDecodeError {
   PP_VIDEODECODEERROR_INSUFFICIENTRESOURCES,
   PP_VIDEODECODEERROR_UNDEFINED,
   PP_VIDEODECODEERROR_BADINPUT,
-  PP_VIDEODECODEERROR_HARDWARE,
+  PP_VIDEODECODEERROR_HARDWARE
 };
 
 enum PP_VideoCodecId {
@@ -63,13 +63,13 @@ enum PP_VideoCodecId {
   PP_VIDEODECODECID_H264,
   PP_VIDEODECODECID_VC1,
   PP_VIDEODECODECID_MPEG2,
-  PP_VIDEODECODECID_VP8,
+  PP_VIDEODECODECID_VP8
 };
 
 enum PP_VideoOperation {
   PP_VIDEOOPERATION_NONE = 0,
   PP_VIDEOOPERATION_DECODE,
-  PP_VIDEOOPERATION_ENCODE,
+  PP_VIDEOOPERATION_ENCODE
 };
 
 enum PP_VideoCodecProfile {
@@ -91,7 +91,7 @@ enum PP_VideoCodecProfile {
   PP_VIDEOCODECPROFILE_MPEG2_MAIN,
   PP_VIDEOCODECPROFILE_MPEG2_SNR,
   PP_VIDEOCODECPROFILE_MPEG2_SPATIAL,
-  PP_VIDEOCODECPROFILE_MPEG2_HIGH,
+  PP_VIDEOCODECPROFILE_MPEG2_HIGH
 };
 
 enum PP_VideoCodecLevel {
@@ -125,13 +125,13 @@ enum PP_VideoCodecLevel {
   PP_VIDEOCODECLEVEL_MPEG2_LOW = 0x80,
   PP_VIDEOCODECLEVEL_MPEG2_MAIN,
   PP_VIDEOCODECLEVEL_MPEG2_HIGH1440,
-  PP_VIDEOCODECLEVEL_MPEG2_HIGH,
+  PP_VIDEOCODECLEVEL_MPEG2_HIGH
 };
 
 enum PP_VideoPayloadFormat {
   PP_VIDEOPAYLOADFORMAT_NONE = 0,
   PP_VIDEOPAYLOADFORMAT_BYTESTREAM,
-  PP_VIDEOPAYLOADFORMAT_RTPPAYLOAD,
+  PP_VIDEOPAYLOADFORMAT_RTPPAYLOAD
 };
 
 enum PP_VideoFrameColorType {
@@ -142,14 +142,14 @@ enum PP_VideoFrameColorType {
   PP_VIDEOFRAMECOLORTYPE_Monochrome,
   PP_VIDEOFRAMECOLORTYPE_YUV420PLANAR,
   PP_VIDEOFRAMECOLORTYPE_YUV422PLANAR,
-  PP_VIDEOFRAMECOLORTYPE_YUV444PLANAR,
+  PP_VIDEOFRAMECOLORTYPE_YUV444PLANAR
 };
 
 enum PP_VideoFrameSurfaceType {
   PP_VIDEOFRAMESURFACETYPE_NONE = 0,
   PP_VIDEOFRAMESURFACETYPE_SYSTEMMEMORY,
   PP_VIDEOFRAMESURFACETYPE_GLTEXTURE,
-  PP_VIDEOFRAMESURFACETYPE_PIXMAP,
+  PP_VIDEOFRAMESURFACETYPE_PIXMAP
 };
 
 enum PP_VideoFrameInfoFlag {
@@ -161,7 +161,7 @@ enum PP_VideoFrameInfoFlag {
   // Indicate this is an anchor frame. Used by plugin.
   PP_VIDEOFRAMEINFOFLAG_SYNCFRAME = 1 << 2,
   // Indicate the decoded frame has data corruption. Used by browser.
-  PP_VIDEOFRAMEINFOFLAG_DATACORRUPT = 1 << 3,
+  PP_VIDEOFRAMEINFOFLAG_DATACORRUPT = 1 << 3
 };
 
 enum PP_VideoFrameBufferConst {
@@ -175,7 +175,7 @@ enum PP_VideoFrameBufferConst {
   PP_VIDEOFRAMEBUFFER_RGBAPLANE = 0,
   PP_VIDEOFRAMEBUFFER_NUMBERRGBAPLANES = 1,
 
-  PP_VIDEOFRAMEBUFFER_MAXNUMBERPLANES = 4,
+  PP_VIDEOFRAMEBUFFER_MAXNUMBERPLANES = 4
 };
 
 typedef int64_t PP_VideoDecodeData;
@@ -202,21 +202,13 @@ typedef struct _pp_VideoCompressedDataBuffer {
   PP_Resource buffer;
   // number of bytes with real data in the buffer.
   int32_t filled_size;
-} PP_VideoCompressedDataBuffer;
 
-typedef struct _pp_VideoFrameInfo {
   // Time stamp of the frame in microsecond.
   uint64_t time_stamp_us;
 
   // Bit mask of PP_VideoFrameInfoFlag.
   uint32_t flags;
-
-  // Output from decoder, indicating the decoded frame has error pixels. This
-  // could be resulted from corrupted input bit stream and error concealment
-  // in decoding.
-  // TODO(wjia): add more info about error pixels, such as error MB map, etc.
-  bool has_error;
-} PP_VideoFrameInfo;
+} PP_VideoCompressedDataBuffer;
 
 typedef struct _pp_VideoFrameBuffer {
   union {
@@ -244,14 +236,26 @@ typedef struct _pp_VideoFrameBuffer {
 typedef struct _pp_VideoUncompressedDataBuffer {
   PP_VideoConfig format;
   PP_VideoFrameBuffer buffer;
+
+  // Time stamp of the frame in microsecond.
+  uint64_t time_stamp_us;
+
+  // Bit mask of PP_VideoFrameInfoFlag.
+  uint32_t flags;
+
+  // Output from decoder, indicating the decoded frame has error pixels. This
+  // could be resulted from corrupted input bit stream and error concealment
+  // in decoding.
+  // TODO(wjia): add more info about error pixels, such as error MB map, etc.
+  bool has_error;
 } PP_VideoUncompressedDataBuffer;
 
 // Plugin callback for decoder to deliver decoded frame buffers.
 // |format| in |buffer| specifies the format of decoded frame, with
 // PP_VIDEOKEY_COLORTYPE and PP_VIDEOKEY_SURFACETYPE required.
-typedef void (*PP_VideoDecodeOutputCallback_Func)(PP_Instance instance,
-    PP_VideoUncompressedDataBuffer* buffer,
-    PP_VideoFrameInfo* frame_info);
+typedef void (*PP_VideoDecodeOutputCallback_Func)(
+    PP_Instance instance,
+    PP_VideoUncompressedDataBuffer* buffer);
 
 // Plugin callback for decoder to return input data buffers.
 // Plugin can optionally provide this callback only when it wants to recycle
