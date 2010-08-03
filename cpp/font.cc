@@ -148,7 +148,7 @@ void Font::swap(Font& other) {
 }
 
 bool Font::Describe(FontDescription* description,
-                    PP_FontMetrics* metrics) {
+                    PP_FontMetrics* metrics) const {
   if (is_null())
     return false;
 
@@ -168,7 +168,7 @@ bool Font::DrawTextAt(ImageData* dest,
                       const Point& position,
                       uint32_t color,
                       const Rect& clip,
-                      bool image_data_is_opaque) {
+                      bool image_data_is_opaque) const {
   if (is_null())
     return false;
   return font_funcs->DrawTextAt(pp_resource(), dest->pp_resource(),
@@ -176,14 +176,14 @@ bool Font::DrawTextAt(ImageData* dest,
                                 color, &clip.pp_rect(), image_data_is_opaque);
 }
 
-int32_t Font::MeasureText(const TextRun& text) {
+int32_t Font::MeasureText(const TextRun& text) const {
   if (is_null())
     return -1;
   return font_funcs->MeasureText(pp_resource(), &text.pp_text_run());
 }
 
 uint32_t Font::CharacterOffsetForPixel(const TextRun& text,
-                                       int32_t pixel_position) {
+                                       int32_t pixel_position) const {
   if (is_null())
     return 0;
   return font_funcs->CharacterOffsetForPixel(pp_resource(), &text.pp_text_run(),
@@ -192,7 +192,7 @@ uint32_t Font::CharacterOffsetForPixel(const TextRun& text,
 }
 
 int32_t Font::PixelOffsetForCharacter(const TextRun& text,
-                                      uint32_t char_offset) {
+                                      uint32_t char_offset) const {
   if (is_null())
     return 0;
   return font_funcs->PixelOffsetForCharacter(pp_resource(), &text.pp_text_run(),
@@ -203,12 +203,12 @@ bool Font::DrawSimpleText(ImageData* dest,
                           const std::string& text,
                           const Point& position,
                           uint32_t color,
-                          bool image_data_is_opaque) {
+                          bool image_data_is_opaque) const {
   return DrawTextAt(dest, TextRun(text), position, color,
                     Rect(dest->size()), image_data_is_opaque);
 }
 
-int32_t Font::MeasureSimpleText(const std::string& text) {
+int32_t Font::MeasureSimpleText(const std::string& text) const {
   return MeasureText(TextRun(text));
 }
 

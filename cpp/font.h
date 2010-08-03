@@ -45,8 +45,8 @@ class FontDescription {
   PP_FontFamily family() const { return pp_font_description_.family; }
   void set_family(PP_FontFamily f) { pp_font_description_.family = f; }
 
-  int size() const { return pp_font_description_.size; }
-  void set_size(int s) { pp_font_description_.size = s; }
+  uint32_t size() const { return pp_font_description_.size; }
+  void set_size(uint32_t s) { pp_font_description_.size = s; }
 
   PP_FontWeight weight() const { return pp_font_description_.weight; }
   void set_weight(PP_FontWeight w) { pp_font_description_.weight = w; }
@@ -110,28 +110,28 @@ class Font : public Resource {
 
   // PPB_Font methods:
   bool Describe(FontDescription* description,
-                PP_FontMetrics* metrics);
+                PP_FontMetrics* metrics) const;
   bool DrawTextAt(ImageData* dest,
                   const TextRun& text,
                   const Point& position,
                   uint32_t color,
                   const Rect& clip,
-                  bool image_data_is_opaque);
-  int32_t MeasureText(const TextRun& text);
+                  bool image_data_is_opaque) const;
+  int32_t MeasureText(const TextRun& text) const;
   uint32_t CharacterOffsetForPixel(const TextRun& text,
-                                   int32_t pixel_position);
+                                   int32_t pixel_position) const;
   int32_t PixelOffsetForCharacter(const TextRun& text,
-                                  uint32_t char_offset);
+                                  uint32_t char_offset) const;
 
   // Convenience function that assumes a left-to-right string with no clipping.
   bool DrawSimpleText(ImageData* dest,
                       const std::string& text,
                       const Point& position,
                       uint32_t color,
-                      bool image_data_is_opaque = false);
+                      bool image_data_is_opaque = false) const;
 
   // Convenience function that assumes a left-to-right string.
-  int32_t MeasureSimpleText(const std::string& text);
+  int32_t MeasureSimpleText(const std::string& text) const;
 };
 
 }  // namespace pp
