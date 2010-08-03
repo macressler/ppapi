@@ -71,7 +71,6 @@ typedef struct _pp_FontMetrics {
   int32_t descent;
   int32_t line_spacing;
   int32_t x_height;
-  int32_t average_char_width;
 } PP_FontMetrics;
 
 typedef struct _pp_TextRun {
