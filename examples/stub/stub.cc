@@ -10,10 +10,7 @@
 // This object represents one time the page says <embed>.
 class MyInstance : public pp::Instance {
  public:
-  MyInstance(PP_Instance instance)
-      : pp::Instance(instance),
-        width_(0),
-        height_(0) {}
+  explicit MyInstance(PP_Instance instance) : pp::Instance(instance) {}
   virtual ~MyInstance() {}
 
   virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
