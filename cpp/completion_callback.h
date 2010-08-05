@@ -142,6 +142,7 @@ class CompletionCallbackFactory {
 
   template <typename Method>
   CompletionCallback NewCallback(Method method) {
+    PP_DCHECK(object_);
     return NewCallbackHelper(Dispatcher0<Method>(method));
   }
 
@@ -153,6 +154,7 @@ class CompletionCallbackFactory {
   //
   template <typename Method, typename A>
   CompletionCallback NewCallback(Method method, const A& a) {
+    PP_DCHECK(object_);
     return NewCallbackHelper(Dispatcher1<Method, A>(method, a));
   }
 
@@ -164,6 +166,7 @@ class CompletionCallbackFactory {
   //
   template <typename Method, typename A, typename B>
   CompletionCallback NewCallback(Method method, const A& a, const B& b) {
+    PP_DCHECK(object_);
     return NewCallbackHelper(Dispatcher2<Method, A, B>(method, a, b));
   }
 

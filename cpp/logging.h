@@ -5,10 +5,10 @@
 #ifndef PPAPI_CPP_LOGGING_H_
 #define PPAPI_CPP_LOGGING_H_
 
-// TODO(brettw) make this do something.
+#include <cassert>
 
-#define PP_DCHECK(a)
+#define PP_DCHECK(a) assert(a)
 
-#define PP_NOTREACHED()
+#define PP_NOTREACHED() assert(false)
 
 #endif  // PPAPI_CPP_LOGGING_H_
