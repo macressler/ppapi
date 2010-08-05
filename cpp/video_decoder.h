@@ -37,7 +37,7 @@ class VideoDecoder : public Resource {
 
   bool Decode(PP_VideoCompressedDataBuffer& input_buffer);
 
-  void Flush(PP_CompletionCallback callback);
+  int32_t Flush(PP_CompletionCallback callback);
 
   bool ReturnUncompressedDataBuffer(PP_VideoUncompressedDataBuffer& buffer);
 };

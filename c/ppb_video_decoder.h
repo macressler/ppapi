@@ -73,8 +73,8 @@ typedef struct _ppb_VideoDecoder {
 
   // Requests the decoder to flush its input and output buffers. Once done with
   // flushing, the decode will call the |callback|.
-  void (*Flush)(PP_Resource decoder,
-                PP_CompletionCallback callback);
+  int32_t (*Flush)(PP_Resource decoder,
+                   PP_CompletionCallback callback);
 
   // Plugin sends uncompressed data buffers to the decoder.
   // Returns true on decoder successfully accepting the buffer, false otherwise.

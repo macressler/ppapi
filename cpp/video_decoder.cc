@@ -4,6 +4,7 @@
 
 #include "ppapi/cpp/video_decoder.h"
 
+#include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_video.h"
 #include "ppapi/c/ppb_video_decoder.h"
 #include "ppapi/cpp/instance.h"
@@ -70,9 +71,12 @@ bool VideoDecoder::Decode(PP_VideoCompressedDataBuffer& input_buffer) {
                                      &input_buffer);
 }
 
-void VideoDecoder::Flush(PP_CompletionCallback callback) {
-  if (!EnsureFuncs() || !pp_resource())
-    return;
+int32_t VideoDecoder::Flush(PP_CompletionCallback callback) {
+  if (!EnsureFuncs())
+    return PP_ERROR_NOINTERFACE;
+  if (!pp_resource())
+    return PP_ERROR_BADRESOURCE;
+
   return video_decoder_funcs->Flush(pp_resource(), callback);
 }
 
