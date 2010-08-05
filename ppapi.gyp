@@ -69,6 +69,7 @@
         'c/ppb_url_loader.h',
         'c/ppb_url_request_info.h',
         'c/ppb_url_response_info.h',
+        'c/ppb_url_util.h',
         'c/ppb_var.h',
         'c/ppb_video_decoder.h',
         'c/ppp.h',
@@ -143,6 +144,8 @@
         'cpp/url_request_info.h',
         'cpp/url_response_info.cc',
         'cpp/url_response_info.h',
+        'cpp/url_util.cc',
+        'cpp/url_util.h',
         'cpp/var.cc',
         'cpp/var.h',
         'cpp/video_decoder.cc',
@@ -278,6 +281,8 @@
         'tests/test_scrollbar.h',
         'tests/test_url_loader.cc',
         'tests/test_url_loader.h',
+        'tests/test_url_util.cc',
+        'tests/test_url_util.h',
       ],
       'dependencies': [
         'ppapi_cpp'
