@@ -53,16 +53,14 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
   virtual bool HandleEvent(const PP_Event& event) {
     switch (event.type) {
       case PP_EVENT_TYPE_MOUSEDOWN: {
-        const PP_Event_Mouse& mouse_event = 
-            reinterpret_cast<const PP_Event_Mouse&>(event);
+        const PP_Event_Mouse& mouse_event = event.u.mouse;
         // Update the square on a mouse down.
         if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT)
           UpdateSquare(mouse_event.x, mouse_event.y);
         return true;
       }
       case PP_EVENT_TYPE_MOUSEMOVE: {
-        const PP_Event_Mouse& mouse_event =
-            reinterpret_cast<const PP_Event_Mouse&>(event);
+        const PP_Event_Mouse& mouse_event = event.u.mouse;
         // Update the square on a drag.
         if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT)
           UpdateSquare(mouse_event.x, mouse_event.y);
