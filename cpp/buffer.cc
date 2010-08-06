@@ -7,20 +7,15 @@
 #include "ppapi/c/ppb_buffer.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
+
+namespace {
+
+DeviceFuncs<PPB_Buffer> buffer_f(PPB_BUFFER_INTERFACE);
+
+}  // namespace
 
 namespace pp {
-
-static PPB_Buffer const* buffer_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!buffer_funcs) {
-    buffer_funcs = reinterpret_cast<PPB_Buffer const*>(
-        Module::Get()->GetBrowserInterface(PPB_BUFFER_INTERFACE));
-    if (!buffer_funcs)
-      return false;
-  }
-  return true;
-}
 
 Buffer::Buffer() : data_(NULL), size_(0) {
 }
@@ -32,15 +27,12 @@ Buffer::Buffer(const Buffer& other)
 }
 
 Buffer::Buffer(int32_t size) : data_(NULL), size_(0) {
-  if (!EnsureFuncs())
+  if (!buffer_f)
     return;
 
-  PassRefFromConstructor(buffer_funcs->Create(Module::Get()->pp_module(),
-                         size));
-  if (is_null())
-    return;
-  if (!buffer_funcs->Describe(pp_resource(), &size_) ||
-      !(data_ = buffer_funcs->Map(pp_resource())))
+  PassRefFromConstructor(buffer_f->Create(Module::Get()->pp_module(), size));
+  if (!buffer_f->Describe(pp_resource(), &size_) ||
+      !(data_ = buffer_f->Map(pp_resource())))
     *this = Buffer();
 }
 

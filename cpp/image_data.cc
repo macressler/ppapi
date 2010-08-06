@@ -10,20 +10,15 @@
 
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
+
+namespace {
+
+DeviceFuncs<PPB_ImageData> image_data_f(PPB_IMAGEDATA_INTERFACE);
+
+}  // namespace
 
 namespace pp {
-
-static PPB_ImageData const* image_data_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!image_data_funcs) {
-    image_data_funcs = reinterpret_cast<PPB_ImageData const*>(
-        Module::Get()->GetBrowserInterface(PPB_IMAGEDATA_INTERFACE));
-    if (!image_data_funcs)
-      return false;
-  }
-  return true;
-}
 
 ImageData::ImageData() : data_(NULL) {
   memset(&desc_, 0, sizeof(PP_ImageDataDesc));
@@ -41,16 +36,14 @@ ImageData::ImageData(PP_ImageDataFormat format,
     : data_(NULL) {
   memset(&desc_, 0, sizeof(PP_ImageDataDesc));
 
-  if (!EnsureFuncs())
+  if (!image_data_f)
     return;
 
-  PassRefFromConstructor(image_data_funcs->Create(Module::Get()->pp_module(),
-                                                  format, &size.pp_size(),
-                                                  init_to_zero));
-  if (is_null())
-    return;
-  if (!image_data_funcs->Describe(pp_resource(), &desc_) ||
-      !(data_ = image_data_funcs->Map(pp_resource())))
+  PassRefFromConstructor(image_data_f->Create(Module::Get()->pp_module(),
+                                              format, &size.pp_size(),
+                                              init_to_zero));
+  if (!image_data_f->Describe(pp_resource(), &desc_) ||
+      !(data_ = image_data_f->Map(pp_resource())))
     *this = ImageData();
 }
 
@@ -83,9 +76,9 @@ uint32_t* ImageData::GetAddr32(const Point& coord) {
 
 // static
 PP_ImageDataFormat ImageData::GetNativeImageDataFormat() {
-  if (!EnsureFuncs())
+  if (!image_data_f)
     return PP_IMAGEDATAFORMAT_BGRA_PREMUL;  // Default to something on failure.
-  return image_data_funcs->GetNativeImageDataFormat();
+  return image_data_f->GetNativeImageDataFormat();
 }
 
 }  // namespace pp

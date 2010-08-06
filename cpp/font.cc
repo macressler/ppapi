@@ -10,20 +10,15 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/point.h"
 #include "ppapi/cpp/rect.h"
+#include "ppapi/cpp/module_impl.h"
+
+namespace {
+
+DeviceFuncs<PPB_Font> font_f(PPB_FONT_INTERFACE);
+
+}  // namespace
 
 namespace pp {
-
-static PPB_Font const* font_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!font_funcs) {
-    font_funcs = reinterpret_cast<PPB_Font const*>(
-        Module::Get()->GetBrowserInterface(PPB_FONT_INTERFACE));
-    if (!font_funcs)
-      return false;
-  }
-  return true;
-}
 
 // FontDescription -------------------------------------------------------------
 
@@ -128,9 +123,9 @@ Font::Font(PP_Resource resource) : Resource(resource) {
 }
 
 Font::Font(const FontDescription& description) {
-  if (!EnsureFuncs())
+  if (!font_f)
     return;
-  PassRefFromConstructor(font_funcs->Create(
+  PassRefFromConstructor(font_f->Create(
       Module::Get()->pp_module(), &description.pp_font_description()));
 }
 
@@ -149,13 +144,13 @@ void Font::swap(Font& other) {
 
 bool Font::Describe(FontDescription* description,
                     PP_FontMetrics* metrics) const {
-  if (is_null())
+  if (!font_f)
     return false;
 
   // Be careful with ownership of the |face| string. It will come back with
   // a ref of 1, which we want to assign to the |face_| member of the C++ class.
-  if (!font_funcs->Describe(pp_resource(), &description->pp_font_description_,
-                           metrics))
+  if (!font_f->Describe(pp_resource(), &description->pp_font_description_,
+                        metrics))
     return false;
   description->face_ = Var(Var::PassRef(),
                            description->pp_font_description_.face);
@@ -169,34 +164,34 @@ bool Font::DrawTextAt(ImageData* dest,
                       uint32_t color,
                       const Rect& clip,
                       bool image_data_is_opaque) const {
-  if (is_null())
+  if (!font_f)
     return false;
-  return font_funcs->DrawTextAt(pp_resource(), dest->pp_resource(),
-                                &text.pp_text_run(), &position.pp_point(),
-                                color, &clip.pp_rect(), image_data_is_opaque);
+  return font_f->DrawTextAt(pp_resource(), dest->pp_resource(),
+                            &text.pp_text_run(), &position.pp_point(),
+                            color, &clip.pp_rect(), image_data_is_opaque);
 }
 
 int32_t Font::MeasureText(const TextRun& text) const {
-  if (is_null())
+  if (!font_f)
     return -1;
-  return font_funcs->MeasureText(pp_resource(), &text.pp_text_run());
+  return font_f->MeasureText(pp_resource(), &text.pp_text_run());
 }
 
 uint32_t Font::CharacterOffsetForPixel(const TextRun& text,
                                        int32_t pixel_position) const {
-  if (is_null())
+  if (!font_f)
     return 0;
-  return font_funcs->CharacterOffsetForPixel(pp_resource(), &text.pp_text_run(),
-                                             pixel_position);
+  return font_f->CharacterOffsetForPixel(pp_resource(), &text.pp_text_run(),
+                                         pixel_position);
 
 }
 
 int32_t Font::PixelOffsetForCharacter(const TextRun& text,
                                       uint32_t char_offset) const {
-  if (is_null())
+  if (!font_f)
     return 0;
-  return font_funcs->PixelOffsetForCharacter(pp_resource(), &text.pp_text_run(),
-                                             char_offset);
+  return font_f->PixelOffsetForCharacter(pp_resource(), &text.pp_text_run(),
+                                         char_offset);
 }
 
 bool Font::DrawSimpleText(ImageData* dest,

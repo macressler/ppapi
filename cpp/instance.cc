@@ -10,41 +10,21 @@
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
 #include "ppapi/cpp/point.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/scrollbar.h"
 #include "ppapi/cpp/var.h"
 #include "ppapi/cpp/widget.h"
 
-namespace pp {
-
 namespace {
 
-const PPB_Instance* ppb_instance_funcs = NULL;
-
-bool EnsureInstanceFuncs() {
-  if (!ppb_instance_funcs) {
-    ppb_instance_funcs = reinterpret_cast<PPB_Instance const*>(
-        Module::Get()->GetBrowserInterface(PPB_INSTANCE_INTERFACE));
-    if (!ppb_instance_funcs)
-      return false;
-  }
-  return true;
-}
-
-const PPB_Find* ppb_find_funcs = NULL;
-
-bool EnsureFindFuncs() {
-  if (!ppb_find_funcs) {
-    ppb_find_funcs = reinterpret_cast<PPB_Find const*>(
-        Module::Get()->GetBrowserInterface(PPB_FIND_INTERFACE));
-    if (!ppb_find_funcs)
-      return false;
-  }
-  return true;
-}
+DeviceFuncs<PPB_Instance> ppb_instance_f(PPB_INSTANCE_INTERFACE);
+DeviceFuncs<PPB_Find> ppb_find_f(PPB_FIND_INTERFACE);
 
 }  // namespace
+
+namespace pp {
 
 Instance::Instance(PP_Instance instance) : pp_instance_(instance) {
 }
@@ -117,51 +97,50 @@ void Instance::StopFind() {
 }
 
 Var Instance::GetWindowObject() {
-  if (!EnsureInstanceFuncs())
+  if (!ppb_instance_f)
     return Var();
-  return Var(Var::PassRef(),
-             ppb_instance_funcs->GetWindowObject(pp_instance()));
+  return Var(Var::PassRef(), ppb_instance_f->GetWindowObject(pp_instance()));
 }
 
 Var Instance::GetOwnerElementObject() {
-  if (!EnsureInstanceFuncs())
+  if (!ppb_instance_f)
     return Var();
   return Var(Var::PassRef(),
-             ppb_instance_funcs->GetOwnerElementObject(pp_instance()));
+             ppb_instance_f->GetOwnerElementObject(pp_instance()));
 }
 
 bool Instance::BindGraphicsDeviceContext(const DeviceContext2D& context) {
-  if (!EnsureInstanceFuncs())
+  if (!ppb_instance_f)
     return false;
-  return ppb_instance_funcs->BindGraphicsDeviceContext(pp_instance(),
-                                                       context.pp_resource());
+  return ppb_instance_f->BindGraphicsDeviceContext(pp_instance(),
+                                                   context.pp_resource());
 }
 
 bool Instance::IsFullFrame() {
-  if (!EnsureInstanceFuncs())
+  if (!ppb_instance_f)
     return false;
-  return ppb_instance_funcs->IsFullFrame(pp_instance());
+  return ppb_instance_f->IsFullFrame(pp_instance());
 }
 
 bool Instance::SetCursor(PP_CursorType type,
                          const ImageData& custom_image,
                          const Point& hot_spot) {
-  if (!EnsureInstanceFuncs())
+  if (!ppb_instance_f)
     return false;
-  return ppb_instance_funcs->SetCursor(
-      pp_instance(), type, custom_image.pp_resource(), &hot_spot.pp_point());
+  return ppb_instance_f->SetCursor(pp_instance(), type,
+                                   custom_image.pp_resource(),
+                                   &hot_spot.pp_point());
 }
 
 void Instance::NumberOfFindResultsChanged(int32_t total, bool final_result) {
-  if (!EnsureFindFuncs())
+  if (!ppb_find_f)
     return;
-  ppb_find_funcs->NumberOfFindResultsChanged(
-      pp_instance(), total, final_result);
+  ppb_find_f->NumberOfFindResultsChanged(pp_instance(), total, final_result);
 }
 
 void Instance::SelectedFindResultChanged(int32_t index) {
-  if (EnsureFindFuncs())
-    ppb_find_funcs->SelectedFindResultChanged(pp_instance(), index);
+  if (ppb_find_f)
+    ppb_find_f->SelectedFindResultChanged(pp_instance(), index);
 }
 
 }  // namespace pp

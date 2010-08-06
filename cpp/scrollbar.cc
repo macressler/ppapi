@@ -8,30 +8,24 @@
 
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
 #include "ppapi/cpp/rect.h"
 
+namespace {
+
+DeviceFuncs<PPB_Scrollbar> scrollbar_f(PPB_SCROLLBAR_INTERFACE);
+
+}  // namespace
+
 namespace pp {
-
-static PPB_Scrollbar const* scrollbar_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!scrollbar_funcs) {
-    scrollbar_funcs = reinterpret_cast<PPB_Scrollbar const*>(
-        Module::Get()->GetBrowserInterface(PPB_SCROLLBAR_INTERFACE));
-    if (!scrollbar_funcs)
-      return false;
-  }
-  return true;
-}
 
 Scrollbar::Scrollbar(PP_Resource resource) : Widget(resource) {
 }
 
 Scrollbar::Scrollbar(const Instance& instance, bool vertical) {
-  if (!EnsureFuncs())
+  if (!scrollbar_f)
     return;
-  PassRefFromConstructor(scrollbar_funcs->Create(
-      instance.pp_instance(), vertical));
+  PassRefFromConstructor(scrollbar_f->Create(instance.pp_instance(), vertical));
 }
 
 Scrollbar::Scrollbar(const Scrollbar& other)
@@ -49,29 +43,29 @@ void Scrollbar::swap(Scrollbar& other) {
 }
 
 uint32_t Scrollbar::GetThickness() {
-  if (!EnsureFuncs())
+  if (!scrollbar_f)
     return 0;
-  return scrollbar_funcs->GetThickness();
+  return scrollbar_f->GetThickness();
 }
 
 uint32_t Scrollbar::GetValue() {
-  if (!EnsureFuncs())
+  if (!scrollbar_f)
     return 0;
-  return scrollbar_funcs->GetValue(pp_resource());
+  return scrollbar_f->GetValue(pp_resource());
 }
 
 void Scrollbar::SetValue(uint32_t value) {
-  if (EnsureFuncs())
-    scrollbar_funcs->SetValue(pp_resource(), value);
+  if (scrollbar_f)
+    scrollbar_f->SetValue(pp_resource(), value);
 }
 
 void Scrollbar::SetDocumentSize(uint32_t size) {
-  if (EnsureFuncs())
-    scrollbar_funcs->SetDocumentSize(pp_resource(), size);
+  if (scrollbar_f)
+    scrollbar_f->SetDocumentSize(pp_resource(), size);
 }
 
 void Scrollbar::SetTickMarks(const Rect* tick_marks, uint32_t count) {
-  if (!EnsureFuncs())
+  if (!scrollbar_f)
     return;
 
   std::vector<PP_Rect> temp;
@@ -79,12 +73,12 @@ void Scrollbar::SetTickMarks(const Rect* tick_marks, uint32_t count) {
   for (uint32_t i = 0; i < count; ++i)
     temp[i] = tick_marks[i];
 
-  scrollbar_funcs->SetTickMarks(pp_resource(), count ? &temp[0] : NULL, count);
+  scrollbar_f->SetTickMarks(pp_resource(), count ? &temp[0] : NULL, count);
 }
 
 void Scrollbar::ScrollBy(PP_ScrollBy unit, int32_t multiplier) {
-  if (EnsureFuncs())
-    scrollbar_funcs->ScrollBy(pp_resource(), unit, multiplier);
+  if (scrollbar_f)
+    scrollbar_f->ScrollBy(pp_resource(), unit, multiplier);
 }
 
 }  // namespace pp

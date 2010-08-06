@@ -6,20 +6,16 @@
 
 #include "ppapi/cpp/file_ref.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
+
+namespace {
+
+DeviceFuncs<PPB_URLResponseInfo> url_response_info_f(
+    PPB_URLRESPONSEINFO_INTERFACE);
+
+}  // namespace
 
 namespace pp {
-
-static PPB_URLResponseInfo const* url_response_info_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!url_response_info_funcs) {
-    url_response_info_funcs = reinterpret_cast<PPB_URLResponseInfo const*>(
-        Module::Get()->GetBrowserInterface(PPB_URLRESPONSEINFO_INTERFACE));
-    if (!url_response_info_funcs)
-      return false;
-  }
-  return true;
-}
 
 URLResponseInfo::URLResponseInfo(const URLResponseInfo& other)
     : Resource(other) {
@@ -40,17 +36,17 @@ void URLResponseInfo::swap(URLResponseInfo& other) {
 }
 
 Var URLResponseInfo::GetProperty(PP_URLResponseProperty property) const {
-  if (!EnsureFuncs())
+  if (!url_response_info_f)
     return Var();
   return Var(Var::PassRef(),
-             url_response_info_funcs->GetProperty(pp_resource(), property));
+             url_response_info_f->GetProperty(pp_resource(), property));
 }
 
 FileRef URLResponseInfo::GetBody() const {
-  if (!EnsureFuncs())
+  if (!url_response_info_f)
     return FileRef();
   return FileRef(FileRef::PassRef(),
-                 url_response_info_funcs->GetBody(pp_resource()));
+                 url_response_info_f->GetBody(pp_resource()));
 }
 
 }  // namespace pp

@@ -6,7 +6,11 @@
 
 #include "ppapi/cpp/module_impl.h"
 
+namespace {
+
 DeviceFuncs<PPB_Audio> audio_f(PPB_AUDIO_INTERFACE);
+
+}  // namespace
 
 namespace pp {
 

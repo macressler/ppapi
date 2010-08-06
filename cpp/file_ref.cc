@@ -5,20 +5,15 @@
 #include "ppapi/cpp/file_ref.h"
 
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
+
+namespace {
+
+DeviceFuncs<PPB_FileRef> file_ref_f(PPB_FILEREF_INTERFACE);
+
+}  // namespace
 
 namespace pp {
-
-static PPB_FileRef const* file_ref_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!file_ref_funcs) {
-    file_ref_funcs = reinterpret_cast<PPB_FileRef const*>(
-        Module::Get()->GetBrowserInterface(PPB_FILEREF_INTERFACE));
-    if (!file_ref_funcs)
-      return false;
-  }
-  return true;
-}
 
 FileRef::FileRef(PP_Resource resource) : Resource(resource) {
 }
@@ -28,17 +23,17 @@ FileRef::FileRef(PassRef, PP_Resource resource) {
 }
 
 FileRef::FileRef(InPersistentFS, const char* path) {
-  if (!EnsureFuncs())
+  if (!file_ref_f)
     return;
   PP_Module module = Module::Get()->pp_module();
-  PassRefFromConstructor(file_ref_funcs->CreatePersistentFileRef(module, path));
+  PassRefFromConstructor(file_ref_f->CreatePersistentFileRef(module, path));
 }
 
 FileRef::FileRef(InTemporaryFS, const char* path) {
-  if (!EnsureFuncs())
+  if (!file_ref_f)
     return;
   PP_Module module = Module::Get()->pp_module();
-  PassRefFromConstructor(file_ref_funcs->CreateTemporaryFileRef(module, path));
+  PassRefFromConstructor(file_ref_f->CreateTemporaryFileRef(module, path));
 }
 
 FileRef::FileRef(const FileRef& other)
@@ -56,27 +51,27 @@ void FileRef::swap(FileRef& other) {
 }
 
 PP_FileSystemType FileRef::GetFileSystemType() const {
-  if (!EnsureFuncs())
+  if (!file_ref_f)
     return PP_FILESYSTEMTYPE_EXTERNAL;
-  return file_ref_funcs->GetFileSystemType(pp_resource()); 
+  return file_ref_f->GetFileSystemType(pp_resource());
 }
 
 Var FileRef::GetName() const {
-  if (!EnsureFuncs())
+  if (!file_ref_f)
     return Var();
-  return Var(Var::PassRef(), file_ref_funcs->GetName(pp_resource()));
+  return Var(Var::PassRef(), file_ref_f->GetName(pp_resource()));
 }
 
 Var FileRef::GetPath() const {
-  if (!EnsureFuncs())
+  if (!file_ref_f)
     return Var();
-  return Var(Var::PassRef(), file_ref_funcs->GetPath(pp_resource()));
+  return Var(Var::PassRef(), file_ref_f->GetPath(pp_resource()));
 }
 
 FileRef FileRef::GetParent() const {
-  if (!EnsureFuncs())
+  if (!file_ref_f)
     return FileRef();
-  return FileRef(PassRef(), file_ref_funcs->GetParent(pp_resource()));
+  return FileRef(PassRef(), file_ref_f->GetParent(pp_resource()));
 }
 
 }  // namespace pp

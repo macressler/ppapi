@@ -12,13 +12,12 @@
 #include "ppapi/c/ppb_var.h"
 #include "ppapi/cpp/logging.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
 #include "ppapi/cpp/scriptable_object.h"
-
-namespace pp {
 
 namespace {
 
-static PPB_Var const* ppb_var = NULL;
+DeviceFuncs<PPB_Var> ppb_var_f(PPB_VAR_INTERFACE);
 
 // Technically you can call AddRef and Release on any Var, but it may involve
 // cross-process calls depending on the plugin. This is an optimization so we
@@ -27,15 +26,9 @@ inline bool NeedsRefcounting(const PP_Var& var) {
   return var.type == PP_VARTYPE_STRING || var.type == PP_VARTYPE_OBJECT;
 }
 
-void EnsureInit() {
-  // We assume the Var interface is always available.
-  if (!ppb_var) {
-    ppb_var = reinterpret_cast<PPB_Var const*>(
-        Module::Get()->GetBrowserInterface(PPB_VAR_INTERFACE));
-  }
-}
-
 }  // namespace
+
+namespace pp {
 
 Var::Var() {
   var_.type = PP_VARTYPE_VOID;
@@ -66,39 +59,54 @@ Var::Var(double d) {
 }
 
 Var::Var(const char* str) {
-  EnsureInit();
-  var_ = ppb_var->VarFromUtf8(str, static_cast<uint32_t>(strlen(str)));
-  needs_release_ = true;
+  if (ppb_var_f) {
+    var_ = ppb_var_f->VarFromUtf8(str, static_cast<uint32_t>(strlen(str)));
+    needs_release_ = true;
+  } else {
+    var_.type = PP_VARTYPE_VOID;
+    needs_release_ = false;
+  }
 }
 
 Var::Var(const std::string& str) {
-  EnsureInit();
-  var_ = ppb_var->VarFromUtf8(str.c_str(), static_cast<uint32_t>(str.size()));
-  needs_release_ = true;
+  if (ppb_var_f) {
+    var_ = ppb_var_f->VarFromUtf8(str.c_str(),
+                                  static_cast<uint32_t>(str.size()));
+    needs_release_ = true;
+  } else {
+    var_.type = PP_VARTYPE_VOID;
+    needs_release_ = false;
+  }
 }
 
 Var::Var(ScriptableObject* object) {
-  EnsureInit();
-  var_ = ppb_var->CreateObject(object->GetClass(), object);
-  needs_release_ = true;
+  if (ppb_var_f) {
+    var_ = ppb_var_f->CreateObject(object->GetClass(), object);
+    needs_release_ = true;
+  } else {
+    var_.type = PP_VARTYPE_VOID;
+    needs_release_ = false;
+  }
 }
 
 Var::Var(const Var& other) {
   var_ = other.var_;
   if (NeedsRefcounting(var_)) {
-    needs_release_ = true;
-    EnsureInit();
-    ppb_var->AddRef(var_);
+    if (ppb_var_f) {
+      needs_release_ = true;
+      ppb_var_f->AddRef(var_);
+    } else {
+      var_.type = PP_VARTYPE_VOID;
+      needs_release_ = false;
+    }
   } else {
     needs_release_ = false;
   }
 }
 
 Var::~Var() {
-  if (needs_release_) {
-    EnsureInit();
-    ppb_var->Release(var_);
-  }
+  if (needs_release_ && ppb_var_f)
+    ppb_var_f->Release(var_);
 }
 
 Var& Var::operator=(const Var& other) {
@@ -147,30 +155,34 @@ std::string Var::AsString() const {
     return std::string();
   }
 
-  EnsureInit();
+  if (!ppb_var_f)
+    return std::string();
   uint32_t len;
-  const char* str = ppb_var->VarToUtf8(var_, &len);
+  const char* str = ppb_var_f->VarToUtf8(var_, &len);
   return std::string(str, len);
 }
 
 bool Var::HasProperty(const Var& name, Var* exception) const {
-  EnsureInit();
-  return ppb_var->HasProperty(var_, name.var_, OutException(exception));
+  if (!ppb_var_f)
+    return false;
+  return ppb_var_f->HasProperty(var_, name.var_, OutException(exception));
 }
 
 Var Var::GetProperty(const Var& name, Var* exception) const {
-  EnsureInit();
-  return Var(PassRef(), ppb_var->GetProperty(var_, name.var_,
-                                             OutException(exception)));
+  if (!ppb_var_f)
+    return Var();
+  return Var(PassRef(), ppb_var_f->GetProperty(var_, name.var_,
+                                               OutException(exception)));
 }
 
 void Var::GetAllPropertyNames(std::vector<Var>* properties,
                               Var* exception) const {
-  EnsureInit();
+  if (!ppb_var_f)
+    return;
   PP_Var* props = NULL;
   uint32_t prop_count = 0;
-  ppb_var->GetAllPropertyNames(var_, &prop_count, &props,
-                               OutException(exception));
+  ppb_var_f->GetAllPropertyNames(var_, &prop_count, &props,
+                                 OutException(exception));
   if (!prop_count)
     return;
   properties->resize(prop_count);
@@ -182,76 +194,86 @@ void Var::GetAllPropertyNames(std::vector<Var>* properties,
 }
 
 void Var::SetProperty(const Var& name, const Var& value, Var* exception) {
-  EnsureInit();
-  ppb_var->SetProperty(var_, name.var_, value.var_, OutException(exception));
+  if (!ppb_var_f)
+    return;
+  ppb_var_f->SetProperty(var_, name.var_, value.var_, OutException(exception));
 }
 
 void Var::RemoveProperty(const Var& name, Var* exception) {
-  EnsureInit();
-  ppb_var->RemoveProperty(var_, name.var_, OutException(exception));
+  if (!ppb_var_f)
+    return;
+  ppb_var_f->RemoveProperty(var_, name.var_, OutException(exception));
 }
 
-Var Var::Call(const Var& method_name, uint32_t argc, Var* argv, Var* exception) {
-  EnsureInit();
+Var Var::Call(const Var& method_name, uint32_t argc, Var* argv,
+              Var* exception) {
+  if (!ppb_var_f)
+    return Var();
   if (argc > 0) {
     std::vector<PP_Var> args;
     args.reserve(argc);
     for (size_t i = 0; i < argc; i++)
       args.push_back(argv[i].var_);
-    return Var(PassRef(), ppb_var->Call(var_, method_name.var_, argc, &args[0],
-                                        OutException(exception)));
+    return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_,
+                                          argc, &args[0],
+                                          OutException(exception)));
   } else {
     // Don't try to get the address of a vector if it's empty.
-    return Var(PassRef(), ppb_var->Call(var_, method_name.var_, 0, NULL,
-                                        OutException(exception)));
+    return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 0, NULL,
+                                          OutException(exception)));
   }
 }
 
 Var Var::Construct(uint32_t argc, Var* argv, Var* exception) const {
-  EnsureInit();
+  if (!ppb_var_f)
+    return Var();
   if (argc > 0) {
     std::vector<PP_Var> args;
     args.reserve(argc);
     for (size_t i = 0; i < argc; i++)
       args.push_back(argv[i].var_);
-    return Var(PassRef(), ppb_var->Construct(var_, argc, &args[0],
-                                             OutException(exception)));
+    return Var(PassRef(), ppb_var_f->Construct(var_, argc, &args[0],
+                                               OutException(exception)));
   } else {
     // Don't try to get the address of a vector if it's empty.
-    return Var(PassRef(), ppb_var->Construct(var_, 0, NULL,
-                                             OutException(exception)));
+    return Var(PassRef(), ppb_var_f->Construct(var_, 0, NULL,
+                                               OutException(exception)));
   }
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, Var* exception) {
-  EnsureInit();
+  if (!ppb_var_f)
+    return Var();
   PP_Var args[1] = {arg1.var_};
-  return Var(PassRef(), ppb_var->Call(var_, method_name.var_, 1, args,
-                                      OutException(exception)));
+  return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 1, args,
+                                        OutException(exception)));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
               Var* exception) {
-  EnsureInit();
+  if (!ppb_var_f)
+    return Var();
   PP_Var args[2] = {arg1.var_, arg2.var_};
-  return Var(PassRef(), ppb_var->Call(var_, method_name.var_, 2, args,
-                                      OutException(exception)));
+  return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 2, args,
+                                        OutException(exception)));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
               const Var& arg3, Var* exception) {
-  EnsureInit();
+  if (!ppb_var_f)
+    return Var();
   PP_Var args[3] = {arg1.var_, arg2.var_, arg3.var_};
-  return Var(PassRef(), ppb_var->Call(var_, method_name.var_, 3, args,
-                                      OutException(exception)));
+  return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 3, args,
+                                        OutException(exception)));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
               const Var& arg3, const Var& arg4, Var* exception) {
-  EnsureInit();
+  if (!ppb_var_f)
+    return Var();
   PP_Var args[4] = {arg1.var_, arg2.var_, arg3.var_, arg4.var_};
-  return Var(PassRef(), ppb_var->Call(var_, method_name.var_, 4, args,
-                                      OutException(exception)));
+  return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 4, args,
+                                        OutException(exception)));
 }
 
 }  // namespace pp

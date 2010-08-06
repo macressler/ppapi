@@ -10,27 +10,22 @@
 #include "ppapi/cpp/file_ref.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
+
+namespace {
+
+DeviceFuncs<PPB_FileChooser> file_chooser_f(PPB_FILECHOOSER_INTERFACE);
+
+}  // namespace
 
 namespace pp {
 
-static PPB_FileChooser const* file_chooser_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!file_chooser_funcs) {
-    file_chooser_funcs = reinterpret_cast<PPB_FileChooser const*>(
-        Module::Get()->GetBrowserInterface(PPB_FILECHOOSER_INTERFACE));
-    if (!file_chooser_funcs)
-      return false;
-  }
-  return true;
-}
-
 FileChooser::FileChooser(const Instance& instance,
                          const PP_FileChooserOptions* options) {
-  if (!EnsureFuncs())
+  if (!file_chooser_f)
     return;
-  PassRefFromConstructor(file_chooser_funcs->Create(instance.pp_instance(),
-                                                    options));
+  PassRefFromConstructor(file_chooser_f->Create(instance.pp_instance(),
+                                                options));
 }
 
 FileChooser::FileChooser(const FileChooser& other)
@@ -48,16 +43,16 @@ void FileChooser::swap(FileChooser& other) {
 }
 
 int32_t FileChooser::Show(const CompletionCallback& cc) {
-  if (!EnsureFuncs())
+  if (!file_chooser_f)
     return PP_ERROR_NOINTERFACE;
-  return file_chooser_funcs->Show(pp_resource(), cc.pp_completion_callback());
+  return file_chooser_f->Show(pp_resource(), cc.pp_completion_callback());
 }
 
 FileRef FileChooser::GetNextChosenFile() const {
-  if (!EnsureFuncs())
+  if (!file_chooser_f)
     return FileRef();
   return FileRef(FileRef::PassRef(),
-                 file_chooser_funcs->GetNextChosenFile(pp_resource()));
+                 file_chooser_f->GetNextChosenFile(pp_resource()));
 }
 
 }  // namespace pp

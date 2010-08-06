@@ -9,22 +9,18 @@
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
+#include "ppapi/cpp/module_impl.h"
 #include "ppapi/cpp/point.h"
 #include "ppapi/cpp/rect.h"
 
+namespace {
+
+DeviceFuncs<PPB_DeviceContext2D> device_context_2d_f(
+    PPB_DEVICECONTEXT2D_INTERFACE);
+
+}  // namespace
+
 namespace pp {
-
-static PPB_DeviceContext2D const* device_context_2d_funcs = NULL;
-
-static bool EnsureFuncs() {
-  if (!device_context_2d_funcs) {
-    device_context_2d_funcs = reinterpret_cast<PPB_DeviceContext2D const*>(
-        Module::Get()->GetBrowserInterface(PPB_DEVICECONTEXT2D_INTERFACE));
-    if (!device_context_2d_funcs)
-      return false;
-  }
-  return true;
-}
 
 DeviceContext2D::DeviceContext2D() : Resource() {
 }
@@ -37,10 +33,11 @@ DeviceContext2D::DeviceContext2D(const DeviceContext2D& other)
 DeviceContext2D::DeviceContext2D(const Size& size,
                                  bool is_always_opaque)
     : Resource() {
-  if (!EnsureFuncs())
+  if (!device_context_2d_f)
     return;
-  PassRefFromConstructor(device_context_2d_funcs->Create(
-      Module::Get()->pp_module(), &size.pp_size(), is_always_opaque));
+  PassRefFromConstructor(device_context_2d_f->Create(Module::Get()->pp_module(),
+                                                     &size.pp_size(),
+                                                     is_always_opaque));
   if (!is_null()) {
     // Only save the size if allocation succeeded.
     size_ = size;
@@ -63,37 +60,34 @@ void DeviceContext2D::swap(DeviceContext2D& other) {
 
 bool DeviceContext2D::PaintImageData(const ImageData& image,
                                      const Point& top_left) {
-  if (!EnsureFuncs() || is_null())
+  if (!device_context_2d_f)
     return false;
-  return device_context_2d_funcs->PaintImageData(pp_resource(),
-                                                 image.pp_resource(),
-                                                 &top_left.pp_point(),
-                                                 NULL);
+  return device_context_2d_f->PaintImageData(pp_resource(), image.pp_resource(),
+                                             &top_left.pp_point(), NULL);
 }
 
 bool DeviceContext2D::PaintImageData(const ImageData& image,
                                      const Point& top_left,
                                      const Rect& src_rect) {
-  if (!EnsureFuncs() || is_null())
+  if (!device_context_2d_f)
     return false;
-  return device_context_2d_funcs->PaintImageData(pp_resource(),
-                                                 image.pp_resource(),
-                                                 &top_left.pp_point(),
-                                                 &src_rect.pp_rect());
+  return device_context_2d_f->PaintImageData(pp_resource(), image.pp_resource(),
+                                             &top_left.pp_point(),
+                                             &src_rect.pp_rect());
 }
 
 bool DeviceContext2D::Scroll(const Rect& clip, const Point& amount) {
-  if (!EnsureFuncs() || is_null())
+  if (!device_context_2d_f)
     return false;
-  return device_context_2d_funcs->Scroll(pp_resource(), &clip.pp_rect(),
-                                         &amount.pp_point());
+  return device_context_2d_f->Scroll(pp_resource(), &clip.pp_rect(),
+                                     &amount.pp_point());
 }
 
 bool DeviceContext2D::ReplaceContents(ImageData* image) {
-  if (!EnsureFuncs() || is_null())
+  if (!device_context_2d_f)
     return false;
-  if (device_context_2d_funcs->ReplaceContents(pp_resource(),
-                                               image->pp_resource())) {
+  if (device_context_2d_f->ReplaceContents(pp_resource(),
+                                           image->pp_resource())) {
     // On success, reset the image data. This is to help prevent people
     // from continuing to use the resource which will result in artifacts.
     *image = ImageData();
@@ -103,12 +97,9 @@ bool DeviceContext2D::ReplaceContents(ImageData* image) {
 }
 
 int32_t DeviceContext2D::Flush(const CompletionCallback& cc) {
-  if (!EnsureFuncs())
+  if (!device_context_2d_f)
     return PP_ERROR_NOINTERFACE;
-  if (is_null())
-    return PP_ERROR_BADRESOURCE;
-  return device_context_2d_funcs->Flush(pp_resource(),
-                                        cc.pp_completion_callback());
+  return device_context_2d_f->Flush(pp_resource(), cc.pp_completion_callback());
 }
 
 }  // namespace pp
