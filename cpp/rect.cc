@@ -25,8 +25,8 @@ namespace pp {
 
 void Rect::Inset(int32_t left, int32_t top, int32_t right, int32_t bottom) {
   Offset(left, top);
-  set_width(std::max(width() - left - right, 0));
-  set_height(std::max(height() - top - bottom, 0));
+  set_width(std::max<int32_t>(width() - left - right, 0));
+  set_height(std::max<int32_t>(height() - top - bottom, 0));
 }
 
 void Rect::Offset(int32_t horizontal, int32_t vertical) {
