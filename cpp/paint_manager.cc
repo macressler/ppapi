@@ -42,7 +42,7 @@ PaintManager::~PaintManager() {
 void PaintManager::Initialize(Instance* instance,
                               Client* client,
                               bool is_always_opaque) {
-  PP_DCHECK(!instance && !client);  // Can't initialize twice.
+  PP_DCHECK(!instance_ && !client_);  // Can't initialize twice.
   instance_ = instance;
   client_ = client;
   is_always_opaque_ = is_always_opaque;
@@ -118,10 +118,14 @@ void PaintManager::DoPaint() {
   // Make a copy of the pending update and clear the pending update flag before
   // actually painting. A plugin might cause invalidates in its Paint code, and
   // we want those to go to the *next* paint.
-  PaintUpdate update = aggregator_.GetPendingUpdate();
+  PaintAggregator::PaintUpdate update = aggregator_.GetPendingUpdate();
   aggregator_.ClearPendingUpdate();
 
-  if (!client_->OnPaint(device_, update))
+  // Apply any scroll before asking the client to paint.
+  if (update.has_scroll)
+    device_.Scroll(update.scroll_rect, update.scroll_delta);
+
+  if (!client_->OnPaint(device_, update.paint_rects, update.paint_bounds))
     return;  // Nothing was painted, don't schedule a flush.
 
   int32_t result = device_.Flush(

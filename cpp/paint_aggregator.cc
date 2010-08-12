@@ -84,7 +84,7 @@ void PaintAggregator::ClearPendingUpdate() {
   update_ = InternalPaintUpdate();
 }
 
-PaintUpdate PaintAggregator::GetPendingUpdate() const {
+PaintAggregator::PaintUpdate PaintAggregator::GetPendingUpdate() const {
   // Convert the internal paint update to the external one, which includes a
   // bit more precomputed info for the caller.
   PaintUpdate ret;

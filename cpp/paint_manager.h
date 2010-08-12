@@ -5,6 +5,8 @@
 #ifndef PPAPI_CPP_PAINT_MANAGER_H_
 #define PPAPI_CPP_PAINT_MANAGER_H_
 
+#include <vector>
+
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/device_context_2d.h"
 #include "ppapi/cpp/paint_aggregator.h"
@@ -62,6 +64,11 @@ class PaintManager {
     // Paints the given invalid area of the plugin to the given device. Returns
     // true if anything was painted.
     //
+    // You are given the list of rects to paint in |paint_rects|, and the
+    // union of all of these rects in |paint_bounds|. You only have to paint
+    // the area inside each of the |paint_rects|, but can paint more if you
+    // want (some apps may just want to paint the union).
+    //
     // Do not call Flush() on the device, this will be done automatically if
     // you return true from this function since the PaintManager needs to
     // handle the callback.
@@ -73,13 +80,14 @@ class PaintManager {
     // 1/60 second timer to do an invalidate instead. This will limit your
     // animation to the slower of 60Hz or "however fast Flush can complete."
     virtual bool OnPaint(DeviceContext2D& device,
-                         const pp::PaintUpdate& update) = 0;
+                         const std::vector<Rect>& paint_rects,
+                         const Rect& paint_bounds) = 0;
 
    protected:
     // You shouldn't be doing deleting through this interface.
     virtual ~Client() {}
   };
-  
+
   // If you use this version of the constructor, you must call Initialize()
   // below.
   PaintManager();
