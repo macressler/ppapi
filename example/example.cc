@@ -166,7 +166,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     }
   }
 
-  virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
+  virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     return true;
   }
 
