@@ -96,6 +96,9 @@ void Instance::SelectFindResult(bool /* forward */) {
 void Instance::StopFind() {
 }
 
+void Instance::Graphics3DContextLost() {
+}
+
 Var Instance::GetWindowObject() {
   if (!ppb_instance_f)
     return Var();

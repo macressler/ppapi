@@ -28,6 +28,7 @@
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_find.h"
+#include "ppapi/c/ppp_graphics_3d.h"
 #include "ppapi/c/ppp_instance.h"
 #include "ppapi/c/ppp_printing.h"
 #include "ppapi/c/ppp_scrollbar.h"
@@ -309,6 +310,22 @@ static PPP_Find find_interface = {
   &StopFind,
 };
 
+// PPP_Graphics3D implementation -----------------------------------------------
+
+void Graphics3D_ContextLost(PP_Instance pp_instance) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return;
+  return instance->Graphics3DContextLost();
+}
+
+static PPP_Graphics3D graphics_3d_interface = {
+  &Graphics3D_ContextLost,
+};
+
 // Module ----------------------------------------------------------------------
 
 Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
@@ -332,6 +349,8 @@ const void* Module::GetInstanceInterface(const char* interface_name) {
     return &zoom_interface;
   if (strcmp(interface_name, PPP_FIND_INTERFACE) == 0)
     return &find_interface;
+  if (strcmp(interface_name, PPP_GRAPHICS_3D_INTERFACE) == 0)
+    return &graphics_3d_interface;
 
   return NULL;
 }

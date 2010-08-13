@@ -70,6 +70,9 @@ class Instance {
   virtual void SelectFindResult(bool forward);
   virtual void StopFind();
 
+  // Graphics3D interface.
+  virtual void Graphics3DContextLost();
+
   // PPB_Instance methods for querying the browser.
   // See ppb_instance.h for details.
   Var GetWindowObject();
