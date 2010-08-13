@@ -36,6 +36,8 @@ class Var {
     needs_release_ = true;
   }
 
+  // TODO(brettw): remove DontManage when this bug is fixed
+  //               http://code.google.com/p/chromium/issues/detail?id=52105
   // This magic constructor is used when we've given a PP_Var as an input
   // argument from somewhere and that reference is managing the reference
   // count for us. The object will not be AddRef'ed or Release'd by this
