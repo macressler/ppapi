@@ -47,7 +47,7 @@ class Core {
   friend class Module;
 
   // Only module should make this class so this constructor is private.
-  Core(const PPB_Core* interface) : interface_(interface) {}
+  Core(const PPB_Core* inter) : interface_(inter) {}
 
   // Copy and assignment are disallowed.
   Core(const Core& other);
