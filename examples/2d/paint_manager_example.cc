@@ -55,15 +55,19 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
       case PP_EVENT_TYPE_MOUSEDOWN: {
         const PP_Event_Mouse& mouse_event = event.u.mouse;
         // Update the square on a mouse down.
-        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT)
-          UpdateSquare(mouse_event.x, mouse_event.y);
+        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT) {
+          UpdateSquare(static_cast<int>(mouse_event.x),
+                       static_cast<int>(mouse_event.y));
+        }
         return true;
       }
       case PP_EVENT_TYPE_MOUSEMOVE: {
         const PP_Event_Mouse& mouse_event = event.u.mouse;
         // Update the square on a drag.
-        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT)
-          UpdateSquare(mouse_event.x, mouse_event.y);
+        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT) {
+          UpdateSquare(static_cast<int>(mouse_event.x),
+                       static_cast<int>(mouse_event.y));
+        }
         return true;
       }
       default:
@@ -77,19 +81,14 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
 
   // PaintManager::Client implementation.
   virtual bool OnPaint(pp::DeviceContext2D& device,
-                       const pp::PaintUpdate& update) {
-    // Although we don't actually do any scroll operations, for completeness
-    // of this example, this is how you would apply it.
-    if (update.has_scroll) {
-      device.Scroll(update.scroll_rect, update.scroll_delta);
-    }
-
+                       const std::vector<pp::Rect>& paint_rects,
+                       const pp::Rect& paint_bounds) {
     // Make an image just large enough to hold all dirty rects. We won't
     // actually paint all of these pixels below, but rather just the dirty
     // ones. Since image allocation can be somewhat heavyweight, we wouldn't
     // want to allocate separate images in the case of multiple dirty rects.
     pp::ImageData updated_image(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-                                update.paint_bounds.size(), false);
+                                paint_bounds.size(), false);
 
     // We could repaint everything inside the image we made above. For this
     // example, that would probably be the easiest thing since updates are
@@ -101,14 +100,14 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
     // Note that the aggregator used by the paint manager won't give us
     // multiple regions that overlap, so we don't have to worry about double
     // painting in this code.
-    for (size_t i = 0; i < update.paint_rects.size(); i++) {
+    for (size_t i = 0; i < paint_rects.size(); i++) {
       // Since our image is just the invalid region, we need to offset the
       // areas we paint by that much. This is just a light blue background.
       FillRect(&updated_image,
-               update.paint_rects[i].x() - update.paint_bounds.x(),
-               update.paint_rects[i].y() - update.paint_bounds.y(),
-               update.paint_rects[i].width(),
-               update.paint_rects[i].height(),
+               paint_rects[i].x() - paint_bounds.x(),
+               paint_rects[i].y() - paint_bounds.y(),
+               paint_rects[i].width(),
+               paint_rects[i].height(),
                0xFFAAAAFF);
     }
 
@@ -116,8 +115,8 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
     // loop above.
     pp::Rect square = SquareForPoint(last_x_, last_y_);
     FillRect(&updated_image,
-             square.x() - update.paint_bounds.x(),
-             square.y() - update.paint_bounds.y(),
+             square.x() - paint_bounds.x(),
+             square.y() - paint_bounds.y(),
              square.width(),
              square.height(),
              0xFF000000);

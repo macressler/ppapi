@@ -56,8 +56,8 @@ typedef struct _pp_Event_Character {
 typedef struct _pp_Event_Mouse {
   uint32_t modifier;
   int32_t button;
-  int32_t x;
-  int32_t y;
+  float x;
+  float y;
   int32_t clickCount;
 } PP_Event_Mouse;
 
