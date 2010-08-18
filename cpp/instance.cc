@@ -21,6 +21,7 @@ namespace {
 
 DeviceFuncs<PPB_Instance> ppb_instance_f(PPB_INSTANCE_INTERFACE);
 DeviceFuncs<PPB_Find> ppb_find_f(PPB_FIND_INTERFACE);
+DeviceFuncs<PPB_CursorControl> ppb_cursor_f(PPB_CURSOR_CONTROL_INTERFACE);
 
 }  // namespace
 
@@ -125,15 +126,6 @@ bool Instance::IsFullFrame() {
   return ppb_instance_f->IsFullFrame(pp_instance());
 }
 
-bool Instance::SetCursor(PP_CursorType type,
-                         const ImageData& custom_image,
-                         const Point& hot_spot) {
-  if (!ppb_instance_f)
-    return false;
-  return ppb_instance_f->SetCursor(pp_instance(), type,
-                                   custom_image.pp_resource(),
-                                   &hot_spot.pp_point());
-}
 
 void Instance::NumberOfFindResultsChanged(int32_t total, bool final_result) {
   if (!ppb_find_f)
@@ -144,6 +136,30 @@ void Instance::NumberOfFindResultsChanged(int32_t total, bool final_result) {
 void Instance::SelectedFindResultChanged(int32_t index) {
   if (ppb_find_f)
     ppb_find_f->SelectedFindResultChanged(pp_instance(), index);
+}
+
+bool Instance::SetCursor(PP_CursorType type,
+               const ImageData& custom_image,
+               const Point& hot_spot) {
+  return ppb_cursor_f && ppb_cursor_f->SetCursor(instance_id_, type,
+                                                 custom_image.pp_resource(),
+                                                 hot_spot.pp_point());
+}
+
+bool Instance::CanLockCursor() {
+  return ppb_cursor_f && ppb_cursor_f->CanUnlockCursor(instance_id_);
+}
+
+bool Instance::LockCursor() {
+  return ppb_cursor_f && ppb_cursor_f->LockCursor(instance_id_);
+}
+
+bool Instance::UnlockCursor() {
+  return ppb_cursor_f && ppb_cursor_f->UnlockCursor(instance_id_);
+}
+
+bool Instance::HasCursor() {
+  return ppb_cursor_f && ppb_cursor_f->HasCursor(instance_id_);
 }
 
 }  // namespace pp

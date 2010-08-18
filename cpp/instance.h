@@ -79,13 +79,19 @@ class Instance {
   Var GetOwnerElementObject();
   bool BindGraphicsDeviceContext(const DeviceContext2D& context);
   bool IsFullFrame();
-  bool SetCursor(PP_CursorType type,
-                 const ImageData& custom_image,
-                 const Point& hot_spot);
 
   // PPB_Find methods
   void NumberOfFindResultsChanged(int32_t total, bool final_result);
   void SelectedFindResultChanged(int32_t index);
+
+  // CursorControl interface.
+  bool SetCursor(PP_CursorType type,
+                 const ImageData& custom_image,
+                 const Point& hot_spot);
+  bool CanLockCursor();
+  bool LockCursor();
+  bool UnlockCursor();
+  bool HasCursor();
 
  private:
   PP_Instance pp_instance_;
