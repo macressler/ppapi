@@ -4,6 +4,7 @@
 
 #include "ppapi/cpp/instance.h"
 
+#include "ppapi/c/ppb_cursor_control.h"
 #include "ppapi/c/ppb_find.h"
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/c/ppp_printing.h"
@@ -139,27 +140,27 @@ void Instance::SelectedFindResultChanged(int32_t index) {
 }
 
 bool Instance::SetCursor(PP_CursorType type,
-               const ImageData& custom_image,
-               const Point& hot_spot) {
-  return ppb_cursor_f && ppb_cursor_f->SetCursor(instance_id_, type,
+                         const ImageData& custom_image,
+                         const Point& hot_spot) {
+  return ppb_cursor_f && ppb_cursor_f->SetCursor(pp_instance(), type,
                                                  custom_image.pp_resource(),
-                                                 hot_spot.pp_point());
+                                                 &hot_spot.pp_point());
 }
 
 bool Instance::CanLockCursor() {
-  return ppb_cursor_f && ppb_cursor_f->CanUnlockCursor(instance_id_);
+  return ppb_cursor_f && ppb_cursor_f->CanLockCursor(pp_instance());
 }
 
 bool Instance::LockCursor() {
-  return ppb_cursor_f && ppb_cursor_f->LockCursor(instance_id_);
+  return ppb_cursor_f && ppb_cursor_f->LockCursor(pp_instance());
 }
 
 bool Instance::UnlockCursor() {
-  return ppb_cursor_f && ppb_cursor_f->UnlockCursor(instance_id_);
+  return ppb_cursor_f && ppb_cursor_f->UnlockCursor(pp_instance());
 }
 
-bool Instance::HasCursor() {
-  return ppb_cursor_f && ppb_cursor_f->HasCursor(instance_id_);
+bool Instance::HasCursorLock() {
+  return ppb_cursor_f && ppb_cursor_f->HasCursorLock(pp_instance());
 }
 
 }  // namespace pp

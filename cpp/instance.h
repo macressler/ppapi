@@ -91,7 +91,7 @@ class Instance {
   bool CanLockCursor();
   bool LockCursor();
   bool UnlockCursor();
-  bool HasCursor();
+  bool HasCursorLock();
 
  private:
   PP_Instance pp_instance_;
