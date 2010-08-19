@@ -13,7 +13,7 @@ class MyInstance : public pp::Instance {
   explicit MyInstance(PP_Instance instance) : pp::Instance(instance) {}
   virtual ~MyInstance() {}
 
-  virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
+  virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
     return true;
   }
 };

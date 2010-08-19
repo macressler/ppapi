@@ -20,13 +20,6 @@ class MyInstance : public pp::Instance {
       : pp::Instance(instance) {
   }
 
-  virtual ~MyInstance() {
-  }
-
-  virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
-    return true;
-  }
-
   virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
     if (position.size() == last_size_)
       return;
@@ -59,9 +52,6 @@ class MyInstance : public pp::Instance {
 
 class MyModule : public pp::Module {
  public:
-  MyModule() : pp::Module() {}
-  virtual ~MyModule() {}
-
   virtual pp::Instance* CreateInstance(PP_Instance instance) {
     return new MyInstance(instance);
   }

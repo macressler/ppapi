@@ -18,13 +18,6 @@ class MyInstance : public pp::Instance {
     callback_factory_.Initialize(this);
   }
 
-  virtual ~MyInstance() {
-  }
-
-  virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
-    return true;
-  }
-
   virtual bool HandleEvent(const PP_Event& event) {
     switch (event.type) {
       case PP_EVENT_TYPE_MOUSEDOWN: {

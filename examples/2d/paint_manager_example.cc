@@ -43,13 +43,6 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
     paint_manager_.Initialize(this, this, false);
   }
 
-  virtual ~MyInstance() {
-  }
-
-  virtual bool Init(size_t argc, const char* argn[], const char* argv[]) {
-    return true;
-  }
-
   virtual bool HandleEvent(const PP_Event& event) {
     switch (event.type) {
       case PP_EVENT_TYPE_MOUSEDOWN: {
@@ -149,9 +142,6 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
 
 class MyModule : public pp::Module {
  public:
-  MyModule() : pp::Module() {}
-  virtual ~MyModule() {}
-
   virtual pp::Instance* CreateInstance(PP_Instance instance) {
     return new MyInstance(instance);
   }
