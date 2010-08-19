@@ -22,7 +22,7 @@ class Graphics3D : public Resource {
   // Creates an is_null() Graphics3D object.
   Graphics3D() {}
 
-  Graphics3D(Instance instance, int32_t config, int32_t share_context,
+  Graphics3D(const Instance& instance, int32_t config, int32_t share_context,
              const int32_t* attrib_list);
 
   bool MakeCurrent() const;

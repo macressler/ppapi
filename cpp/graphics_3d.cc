@@ -55,7 +55,7 @@ const PPB_OpenGLES* Graphics3D::GetImplementation() {
   return &(*opengles_f);
 }
 
-Graphics3D::Graphics3D(Instance instance, int32_t config,
+Graphics3D::Graphics3D(const Instance& instance, int32_t config,
                        int32_t share_context, const int32_t* attrib_list) {
   if (graphics_3d_f && opengles_f) {
     InitializeOpenGLCInterface();
