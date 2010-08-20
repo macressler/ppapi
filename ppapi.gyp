@@ -53,6 +53,7 @@
         'c/ppb_audio_config.h',
         'c/ppb_audio_trusted.h',
         'c/ppb_buffer.h',
+        'c/ppb_char_set.h',
         'c/ppb_core.h',
         'c/ppb_device_context_2d.h',
         'c/ppb_directory_reader.h',
@@ -354,6 +355,8 @@
         # Test cases.
         'tests/test_buffer.cc',
         'tests/test_buffer.h',
+        'tests/test_char_set.cc',
+        'tests/test_char_set.h',
         'tests/test_device_context_2d.cc',
         'tests/test_device_context_2d.h',
         'tests/test_file_ref.cc',
