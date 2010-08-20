@@ -270,15 +270,15 @@
         'example/example.cc',
       ],
     },
-    {
-      'target_name': 'ppapi_example_device_context_2d',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/2d/device_context_2d_example.c',
-      ],
-    },
+    #{
+    #  'target_name': 'ppapi_example_device_context_2d',
+    #  'dependencies': [
+    #    'ppapi_example_skeleton',
+    #  ],
+    #  'sources': [
+    #    'examples/2d/device_context_2d_example.c',
+    #  ],
+    #},
     {
       'target_name': 'ppapi_example_paint_manager',
       'dependencies': [
