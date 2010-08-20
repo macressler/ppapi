@@ -207,140 +207,60 @@
       ],
     },
     {
-      'target_name': 'ppapi_example_skeleton',
-      'type': 'none',
-      'dependencies': [
-        'ppapi_cpp',
-      ],
-      'export_dependent_setting': ['ppapi_cpp'],
-      'direct_dependent_settings': {
-        'product_name': '>(_target_name)',
-        'conditions': [
-          ['OS=="win"', {
-            'type': 'shared_library',
-            'msvs_guid': 'EE00E36E-9E8C-4DFB-925E-FBE32CEDB91B',
-            'sources': [
-              'example/example.rc',
-            ],
-            'run_as': {
-              'action': [
-                '<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)chrome<(EXECUTABLE_SUFFIX)',
-                '--register-pepper-plugins=$(TargetPath);application/x-ppapi-example',
-                'file://$(ProjectDir)/example/example.html',
-              ],
-            },
-          }],
-          ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
-            'type': 'shared_library',
-            'cflags': ['-fvisibility=hidden'],
-            # -gstabs, used in the official builds, causes an ICE. Simply remove
-            # it.
-            'cflags!': ['-gstabs'],
-          }],
-          ['OS=="mac"', {
-            'type': 'loadable_module',
-            'mac_bundle': 1,
-            'product_extension': 'plugin',
-            'xcode_settings': {
-              'INFOPLIST_FILE': 'example/Info.plist',
-            },
-            'sources+': [
-              'example/Info.plist'
-            ],
-          }],
-        ],
-        # See README for instructions on how to run and debug on the Mac.
-        #'conditions' : [
-        #  ['OS=="mac"', {
-        #    'target_name' : 'Chromium',
-        #    'type' : 'executable',
-        #    'xcode_settings' : {
-        #      'ARGUMENTS' : '--renderer-startup-dialog --internal-pepper --no-sandbox file://${SRCROOT}/test_page.html'
-        #    },
-        #  }],
-        #],
-      },
-    },
-    {
       'target_name': 'ppapi_example',
       'dependencies': [
-        'ppapi_example_skeleton',
+        'ppapi_cpp'
       ],
+      'xcode_settings': {
+        'INFOPLIST_FILE': 'example/Info.plist',
+      },
       'sources': [
         'example/example.cc',
       ],
-    },
-    #{
-    #  'target_name': 'ppapi_example_device_context_2d',
-    #  'dependencies': [
-    #    'ppapi_example_skeleton',
-    #  ],
-    #  'sources': [
-    #    'examples/2d/device_context_2d_example.c',
-    #  ],
-    #},
-    {
-      'target_name': 'ppapi_example_paint_manager',
-      'dependencies': [
-        'ppapi_example_skeleton',
+      'conditions': [
+        ['OS=="win"', {
+          'product_name': 'ppapi_example',
+          'type': 'shared_library',
+          'msvs_guid': 'EE00E36E-9E8C-4DFB-925E-FBE32CEDB91B',
+          'sources': [
+            'example/example.rc',
+          ],
+          'run_as': {
+            'action': [
+              '<(PRODUCT_DIR)/<(EXECUTABLE_PREFIX)chrome<(EXECUTABLE_SUFFIX)',
+              '--register-pepper-plugins=$(TargetPath);application/x-ppapi-example',
+              'file://$(ProjectDir)/example/example.html',
+            ],
+          },
+        }],
+        ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+          'product_name': 'ppapi_example',
+          'type': 'shared_library',
+          'cflags': ['-fvisibility=hidden'],
+          # -gstabs, used in the official builds, causes an ICE. Simply remove
+          # it.
+          'cflags!': ['-gstabs'],
+        }],
+        ['OS=="mac"', {
+          'type': 'loadable_module',
+          'mac_bundle': 1,
+          'product_name': 'PPAPIExample',
+          'product_extension': 'plugin',
+          'sources+': [
+            'example/Info.plist'
+          ],
+        }],
       ],
-      'sources': [
-        'examples/2d/paint_manager_example.cc',
-      ],
-    },
-    {
-      'target_name': 'ppapi_example_scroll',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/2d/scroll.cc',
-      ],
-    },
-    {
-      'target_name': 'ppapi_example_audio',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/audio/audio.cc',
-      ],
-    },
-    {
-      'target_name': 'ppapi_example_file_chooser',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/file_chooser/file_chooser.cc',
-      ],
-    },
-    {
-      'target_name': 'ppapi_example_simple_font',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/font/simple_font.cc',
-      ],
-    },
-    #{
-    #  'target_name': 'ppapi_example_c_stub',
-    #  'dependencies': [
-    #    'ppapi_example_skeleton',
-    #  ],
-    #  'sources': [
-    #    'examples/stub/stub.c',
-    #  ],
-    #},
-    {
-      'target_name': 'ppapi_example_cc_stub',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/stub/stub.cc',
-      ],
+      # See README for instructions on how to run and debug on the Mac.
+      #'conditions' : [
+      #  ['OS=="mac"', {
+      #    'target_name' : 'Chromium',
+      #    'type' : 'executable',
+      #    'xcode_settings' : {
+      #      'ARGUMENTS' : '--renderer-startup-dialog --internal-pepper --no-sandbox file://${SRCROOT}/test_page.html'
+      #    },
+      #  }],
+      #],
     },
     {
       'target_name': 'ppapi_tests',
