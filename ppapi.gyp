@@ -324,15 +324,15 @@
         'examples/font/simple_font.cc',
       ],
     },
-    {
-      'target_name': 'ppapi_example_c_stub',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/stub/stub.c',
-      ],
-    },
+    #{
+    #  'target_name': 'ppapi_example_c_stub',
+    #  'dependencies': [
+    #    'ppapi_example_skeleton',
+    #  ],
+    #  'sources': [
+    #    'examples/stub/stub.c',
+    #  ],
+    #},
     {
       'target_name': 'ppapi_example_cc_stub',
       'dependencies': [
