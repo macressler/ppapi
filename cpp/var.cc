@@ -15,6 +15,21 @@
 #include "ppapi/cpp/module_impl.h"
 #include "ppapi/cpp/scriptable_object.h"
 
+// Defining sprintf
+#if defined(_MSC_VER)
+#  include <stdio.h>
+#  define snprintf _snprintf_s
+#endif
+
+// Defining PRId32
+#if defined(_WIN64)
+#  define PRId32 "I64d"
+#elif defined(_WIN32)
+#  define PRId32 "ld"
+#else
+#  include <inttypes.h>
+#endif
+
 namespace {
 
 DeviceFuncs<PPB_Var> ppb_var_f(PPB_VAR_INTERFACE);
@@ -274,6 +289,25 @@ Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
   PP_Var args[4] = {arg1.var_, arg2.var_, arg3.var_, arg4.var_};
   return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 4, args,
                                         OutException(exception)));
+}
+
+std::string Var::DebugString() const {
+  char buf[256];
+  if (is_void())
+    snprintf(buf, sizeof(buf), "Var<VOID>");
+  else if (is_null())
+    snprintf(buf, sizeof(buf), "Var<NULL>");
+  else if (is_bool())
+    snprintf(buf, sizeof(buf), AsBool() ? "Var<true>" : "Var<false>");
+  else if (is_int())
+    snprintf(buf, sizeof(buf), "Var<%"PRId32">", AsInt());
+  else if (is_double())
+    snprintf(buf, sizeof(buf), "Var<%f>", AsDouble());
+  else if (is_string())
+    snprintf(buf, sizeof(buf), "Var<'%s'>", AsString().c_str());
+  else if (is_object())
+    snprintf(buf, sizeof(buf), "Var<OBJECT>");
+  return buf;
 }
 
 }  // namespace pp

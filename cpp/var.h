@@ -129,6 +129,11 @@ class Var {
     return ret;
   }
 
+  // Prints a short description "Var<X>" that can be used for logging, where
+  // "X" is the underlying scalar or "VOID" or "OBJ" as it does not call into
+  // the browser to get the object description.
+  std::string DebugString() const;
+
  private:
   // Prevent an arbitrary pointer argument from being implicitly converted to
   // a bool at Var construction. If somebody makes such a mistake, (s)he will
