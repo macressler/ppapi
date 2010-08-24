@@ -16,8 +16,8 @@
 #include "ppapi/cpp/scriptable_object.h"
 
 // Defining sprintf
+#include <stdio.h>
 #if defined(_MSC_VER)
-#  include <stdio.h>
 #  define snprintf _snprintf_s
 #endif
 
