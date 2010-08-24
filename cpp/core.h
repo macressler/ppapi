@@ -42,6 +42,8 @@ class Core {
                         const CompletionCallback& callback,
                         int32_t result = 0);
 
+  bool IsMainThread();
+
  private:
   // Allow Module to construct.
   friend class Module;

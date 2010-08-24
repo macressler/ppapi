@@ -44,6 +44,12 @@ typedef struct _ppb_Core {
   void (*CallOnMainThread)(int32_t delay_in_milliseconds,
                            PP_CompletionCallback callback,
                            int32_t result);
+
+  // Returns true if the current thread is the main pepper thread.
+  //
+  // This is useful for implementing sanity checks, and deciding if dispatching
+  // via CallOnMainThread() is required.
+  bool (*IsMainThread)();
 } PPB_Core;
 
 #endif  // PPAPI_C_PPB_CORE_H_

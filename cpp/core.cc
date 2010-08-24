@@ -18,4 +18,8 @@ void Core::CallOnMainThread(int32_t delay_in_milliseconds,
                                       result);
 }
 
+bool Core::IsMainThread() {
+  return interface_->IsMainThread();
+}
+
 }  // namespace pp
