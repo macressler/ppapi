@@ -73,25 +73,24 @@ Var::Var(double d) {
   needs_release_ = false;
 }
 
-Var::Var(const char* str) {
+Var::Var(const char* utf8_str) {
   if (ppb_var_f) {
-    var_ = ppb_var_f->VarFromUtf8(str, static_cast<uint32_t>(strlen(str)));
-    needs_release_ = true;
+    var_ = ppb_var_f->VarFromUtf8(utf8_str,
+                                  static_cast<uint32_t>(strlen(utf8_str)));
   } else {
-    var_.type = PP_VARTYPE_VOID;
-    needs_release_ = false;
+    var_.type = PP_VARTYPE_NULL;
   }
+  needs_release_ = (var_.type == PP_VARTYPE_STRING);
 }
 
-Var::Var(const std::string& str) {
+Var::Var(const std::string& utf8_str) {
   if (ppb_var_f) {
-    var_ = ppb_var_f->VarFromUtf8(str.c_str(),
-                                  static_cast<uint32_t>(str.size()));
-    needs_release_ = true;
+    var_ = ppb_var_f->VarFromUtf8(utf8_str.c_str(),
+                                  static_cast<uint32_t>(utf8_str.size()));
   } else {
-    var_.type = PP_VARTYPE_VOID;
-    needs_release_ = false;
+    var_.type = PP_VARTYPE_NULL;
   }
+  needs_release_ = (var_.type == PP_VARTYPE_STRING);
 }
 
 Var::Var(ScriptableObject* object) {
@@ -99,7 +98,7 @@ Var::Var(ScriptableObject* object) {
     var_ = ppb_var_f->CreateObject(object->GetClass(), object);
     needs_release_ = true;
   } else {
-    var_.type = PP_VARTYPE_VOID;
+    var_.type = PP_VARTYPE_NULL;
     needs_release_ = false;
   }
 }
@@ -111,7 +110,7 @@ Var::Var(const Var& other) {
       needs_release_ = true;
       ppb_var_f->AddRef(var_);
     } else {
-      var_.type = PP_VARTYPE_VOID;
+      var_.type = PP_VARTYPE_NULL;
       needs_release_ = false;
     }
   } else {

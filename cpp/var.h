@@ -25,8 +25,8 @@ class Var {
   Var(bool b);
   Var(int32_t i);
   Var(double d);
-  Var(const char* str);
-  Var(const std::string& str);
+  Var(const char* utf8_str);  // Must be encoded in UTF-8.
+  Var(const std::string& utf8_str);  // Must be encoded in UTF-8.
 
   // This magic constructor is used when we've gotten a PP_Var as a return
   // value that has already been addref'ed for us.

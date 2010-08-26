@@ -26,18 +26,21 @@ typedef struct _ppb_Var {
   // do nothing so you can always call it no matter what the type.
   void (*Release)(PP_Var var);
 
-  // Creates a string var from a string. The string is encoded in UTF-8 and is
-  // NOT NULL-terminated, the length must be specified in |len|. If the length
-  // is 0, the |data| pointer will not be dereferenced and may be NULL. Note,
-  // however, that if you do this, the "NULL-ness" will not be preserved, as
-  // VarToUtf8 will never return NULL on success, even for empty strings.
+  // Creates a string var from a string. The string must be encoded in valid
+  // UTF-8 and is NOT NULL-terminated, the length must be specified in |len|.
+  // It is an error if the string is not valid UTF-8.
+  //
+  // If the length is 0, the |data| pointer will not be dereferenced and may
+  // be NULL. Note, however, that if you do this, the "NULL-ness" will not be
+  // preserved, as VarToUtf8 will never return NULL on success, even for empty
+  // strings.
   //
   // The resulting object will be a refcounted string object. It will be
   // AddRef()ed for the caller. When the caller is done with it, it should be
   // Release()d.
   //
-  // On error (basically out of memory to allocate the string) this function
-  // will return a Void var.
+  // On error (basically out of memory to allocate the string, or input that
+  // is not valid UTF-8), this function will return a Null var.
   PP_Var (*VarFromUtf8)(const char* data, uint32_t len);
 
   // Converts a string-type var to a char* encoded in UTF-8. This string is NOT
