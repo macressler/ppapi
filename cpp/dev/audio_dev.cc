@@ -2,20 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ppapi/cpp/audio.h"
+#include "ppapi/cpp/dev/audio_dev.h"
 
 #include "ppapi/cpp/module_impl.h"
 
 namespace {
 
-DeviceFuncs<PPB_Audio> audio_f(PPB_AUDIO_INTERFACE);
+DeviceFuncs<PPB_Audio_Dev> audio_f(PPB_AUDIO_DEV_INTERFACE);
 
 }  // namespace
 
 namespace pp {
 
-Audio::Audio(Instance instance, AudioConfig config, PPB_Audio_Callback callback,
-             void* user_data)
+Audio_Dev::Audio_Dev(const Instance& instance,
+                     const AudioConfig_Dev& config,
+                     PPB_Audio_Callback callback,
+                     void* user_data)
     : config_(config) {
   if (audio_f) {
     PassRefFromConstructor(audio_f->Create(instance.pp_instance(),
@@ -24,11 +26,11 @@ Audio::Audio(Instance instance, AudioConfig config, PPB_Audio_Callback callback,
   }
 }
 
-bool Audio::StartPlayback() {
+bool Audio_Dev::StartPlayback() {
   return audio_f && audio_f->StartPlayback(pp_resource());
 }
 
-bool Audio::StopPlayback() {
+bool Audio_Dev::StopPlayback() {
   return audio_f && audio_f->StopPlayback(pp_resource());
 }
 

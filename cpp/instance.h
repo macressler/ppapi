@@ -5,7 +5,6 @@
 #ifndef PPAPI_CPP_INSTANCE_H_
 #define PPAPI_CPP_INSTANCE_H_
 
-#include "ppapi/c/pp_cursor_type.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
@@ -83,15 +82,6 @@ class Instance {
   // PPB_Find methods
   void NumberOfFindResultsChanged(int32_t total, bool final_result);
   void SelectedFindResultChanged(int32_t index);
-
-  // CursorControl interface.
-  bool SetCursor(PP_CursorType type,
-                 const ImageData& custom_image,
-                 const Point& hot_spot);
-  bool CanLockCursor();
-  bool LockCursor();
-  bool UnlockCursor();
-  bool HasCursorLock();
 
  private:
   PP_Instance pp_instance_;

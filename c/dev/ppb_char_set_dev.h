@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PPB_CHAR_SET_H_
-#define PPAPI_C_PPB_CHAR_SET_H_
+#ifndef PPAPI_C_DEV_PPB_CHAR_SET_DEV_H_
+#define PPAPI_C_DEV_PPB_CHAR_SET_DEV_H_
 
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
-#define PPB_CHAR_SET_DEV "PPB_CharSet(Dev);1"
+#define PPB_CHAR_SET_DEV_INTERFACE "PPB_CharSet(Dev);1"
 
 // Specifies the error behavior for the character set conversion functions.
 // This will affect two cases: where the input is not encoded correctly, and
@@ -31,7 +31,7 @@ enum PP_CharSet_ConversionError {
   PP_CHARSET_CONVERSIONERROR_SUBSTITUTE,
 };
 
-typedef struct _ppb_CharSetDev {
+struct PPB_CharSet_Dev {
   // Converts the UTF-16 string pointed to in |*utf16| to an 8-bit string in the
   // specified code page. |utf16_len| is measured in UTF-16 units, not bytes.
   // This value may not be NULL.
@@ -72,6 +72,6 @@ typedef struct _ppb_CharSetDev {
   // with legacy data. You should be using UTF-8 or UTF-16 and you don't have
   // to worry about the character sets.
   PP_Var (*GetDefaultCodePageForUILanguage)();
-} PPB_CharSetDev;
+};
 
-#endif  // PPAPI_C_PPB_CHAR_SET_H_
+#endif  // PPAPI_C_DEV_PPB_CHAR_SET_DEV_H_

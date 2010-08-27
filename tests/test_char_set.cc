@@ -4,7 +4,7 @@
 
 #include "ppapi/tests/test_char_set.h"
 
-#include "ppapi/c/ppb_char_set.h"
+#include "ppapi/c/dev/ppb_char_set_dev.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/tests/test_instance.h"
 
@@ -16,8 +16,8 @@ TestCharSet::TestCharSet(TestInstance* instance)
 }
 
 bool TestCharSet::Init() {
-  char_set_interface_ = reinterpret_cast<PPB_CharSetDev const*>(
-      pp::Module::Get()->GetBrowserInterface(PPB_CHAR_SET_DEV));
+  char_set_interface_ = reinterpret_cast<struct PPB_CharSet_Dev const*>(
+      pp::Module::Get()->GetBrowserInterface(PPB_CHAR_SET_DEV_INTERFACE));
   return !!char_set_interface_;
 }
 

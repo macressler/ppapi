@@ -18,7 +18,7 @@ enum PP_VarType {
 };
 
 typedef struct _pp_Var {
-  PP_VarType type;
+  enum PP_VarType type;
   union {
     bool as_bool;
 

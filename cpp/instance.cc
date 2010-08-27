@@ -4,7 +4,6 @@
 
 #include "ppapi/cpp/instance.h"
 
-#include "ppapi/c/ppb_cursor_control.h"
 #include "ppapi/c/ppb_find.h"
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/c/ppp_printing.h"
@@ -22,7 +21,6 @@ namespace {
 
 DeviceFuncs<PPB_Instance> ppb_instance_f(PPB_INSTANCE_INTERFACE);
 DeviceFuncs<PPB_Find> ppb_find_f(PPB_FIND_INTERFACE);
-DeviceFuncs<PPB_CursorControl> ppb_cursor_f(PPB_CURSOR_CONTROL_INTERFACE);
 
 }  // namespace
 
@@ -137,30 +135,6 @@ void Instance::NumberOfFindResultsChanged(int32_t total, bool final_result) {
 void Instance::SelectedFindResultChanged(int32_t index) {
   if (ppb_find_f)
     ppb_find_f->SelectedFindResultChanged(pp_instance(), index);
-}
-
-bool Instance::SetCursor(PP_CursorType type,
-                         const ImageData& custom_image,
-                         const Point& hot_spot) {
-  return ppb_cursor_f && ppb_cursor_f->SetCursor(pp_instance(), type,
-                                                 custom_image.pp_resource(),
-                                                 &hot_spot.pp_point());
-}
-
-bool Instance::CanLockCursor() {
-  return ppb_cursor_f && ppb_cursor_f->CanLockCursor(pp_instance());
-}
-
-bool Instance::LockCursor() {
-  return ppb_cursor_f && ppb_cursor_f->LockCursor(pp_instance());
-}
-
-bool Instance::UnlockCursor() {
-  return ppb_cursor_f && ppb_cursor_f->UnlockCursor(pp_instance());
-}
-
-bool Instance::HasCursorLock() {
-  return ppb_cursor_f && ppb_cursor_f->HasCursorLock(pp_instance());
 }
 
 }  // namespace pp

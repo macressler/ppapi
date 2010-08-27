@@ -35,7 +35,6 @@
       },
       'sources': [
         'c/pp_completion_callback.h',
-        'c/pp_cursor_type.h',
         'c/pp_errors.h',
         'c/pp_event.h',
         'c/pp_file_info.h',
@@ -47,13 +46,8 @@
         'c/pp_size.h',
         'c/pp_stdint.h',
         'c/pp_var.h',
-        'c/pp_video.h',
         'c/ppb.h',
-        'c/ppb_audio.h',
-        'c/ppb_audio_config.h',
-        'c/ppb_audio_trusted.h',
         'c/ppb_buffer.h',
-        'c/ppb_char_set.h',
         'c/ppb_core.h',
         'c/ppb_device_context_2d.h',
         'c/ppb_directory_reader.h',
@@ -74,7 +68,6 @@
         'c/ppb_url_response_info.h',
         'c/ppb_url_util.h',
         'c/ppb_var.h',
-        'c/ppb_video_decoder.h',
         'c/ppp.h',
         'c/ppp_class.h',
         'c/ppp_graphics_3d.h',
@@ -84,6 +77,17 @@
         'c/ppp_scrollbar.h',
         'c/ppp_widget.h',
         'c/ppp_zoom.h',
+
+        # Dev interfaces.
+        'c/dev/pp_cursor_type_dev.h',
+        'c/dev/pp_video_dev.h',
+        'c/dev/ppb_audio_dev.h',
+        'c/dev/ppb_audio_config_dev.h',
+        'c/dev/ppb_audio_trusted_dev.h',
+        'c/dev/ppb_char_set_dev.h',
+        'c/dev/ppb_cursor_control_dev.h',
+        'c/dev/ppb_video_decoder_dev.h',
+        'c/dev/ppp_cursor_control_dev.h',
       ],
     },
     {
@@ -96,10 +100,6 @@
         '..',
       ],
       'sources': [
-        'cpp/audio.cc',
-        'cpp/audio.h',
-        'cpp/audio_config.cc',
-        'cpp/audio_config.h',
         'cpp/buffer.cc',
         'cpp/buffer.h',
         'cpp/completion_callback.h',
@@ -154,10 +154,16 @@
         'cpp/url_util.h',
         'cpp/var.cc',
         'cpp/var.h',
-        'cpp/video_decoder.cc',
-        'cpp/video_decoder.h',
         'cpp/widget.cc',
         'cpp/widget.h',
+
+        # Dev interfaces.
+        'cpp/dev/audio_dev.cc',
+        'cpp/dev/audio_dev.h',
+        'cpp/dev/audio_config_dev.cc',
+        'cpp/dev/audio_config_dev.h',
+        'cpp/dev/video_decoder_dev.cc',
+        'cpp/dev/video_decoder_dev.h',
       ],
       'conditions': [
         ['OS=="win"', {

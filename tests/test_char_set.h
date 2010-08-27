@@ -10,7 +10,7 @@
 
 #include "ppapi/tests/test_case.h"
 
-typedef struct _ppb_CharSetDev PPB_CharSetDev;
+struct PPB_CharSet_Dev;
 
 class TestCharSet : public TestCase {
  public:
@@ -29,7 +29,7 @@ class TestCharSet : public TestCase {
   // stored in the given vector.
   std::vector<uint16_t> UTF8ToUTF16(const std::string& utf8);
 
-  const PPB_CharSetDev* char_set_interface_;
+  const struct PPB_CharSet_Dev* char_set_interface_;
 };
 
 #endif  // PPAPI_TESTS_TEST_CHAR_SET_H_

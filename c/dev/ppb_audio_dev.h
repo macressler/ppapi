@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PPB_AUDIO_H_
-#define PPAPI_C_PPB_AUDIO_H_
+#ifndef PPAPI_C_DEV_PPB_AUDIO_DEV_H_
+#define PPAPI_C_DEV_PPB_AUDIO_DEV_H_
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-#define PPB_AUDIO_INTERFACE "PPB_Audio;1"
+#define PPB_AUDIO_DEV_INTERFACE "PPB_Audio(Dev);1"
 
 // Callback function type for SetCallback.
 typedef void (*PPB_Audio_Callback)(void* sample_buffer, void* user_data);
@@ -27,7 +27,7 @@ typedef void (*PPB_Audio_Callback)(void* sample_buffer, void* user_data);
 // Audio audio(AudioConfig(44100, 0), audio_callback, NULL);
 // audio.StartPlayback();
 //
-typedef struct _ppb_Audio {
+struct PPB_Audio_Dev {
   // Creates a paused audio interface. No sound will be heard until
   // StartPlayback() is called. The callback is called with the buffer address
   // and given user data whenever the buffer needs to be filled. From within the
@@ -54,7 +54,7 @@ typedef struct _ppb_Audio {
   // returns true. On error, returns false. If a callback is in progress,
   // StopPlayback will block until callback completes.
   bool (*StopPlayback)(PP_Resource audio);
-} PPB_Audio;
+};
 
-#endif  // PPAPI_C_PPB_DEVICE_CONTEXT_AUDIO_H_
+#endif  // PPAPI_C_DEV_PPB_DEVICE_CONTEXT_AUDIO_DEV_H_
 

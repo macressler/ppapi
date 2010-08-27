@@ -2,24 +2,24 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PPB_CURSOR_CONTROL_H_
-#define PPAPI_C_PPB_CURSOR_CONTROL_H_
+#ifndef PPAPI_C_DEV_PPB_CURSOR_CONTROL_DEV_H_
+#define PPAPI_C_DEV_PPB_CURSOR_CONTROL_DEV_H_
 
-#include "ppapi/c/pp_cursor_type.h"
+#include "ppapi/c/dev/pp_cursor_type_dev.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_point.h"
 #include "ppapi/c/pp_resource.h"
 
-#define PPB_CURSOR_CONTROL_INTERFACE "PPB_CursorControl;1"
+#define PPB_CURSOR_CONTROL_INTERFACE "PPB_CursorControl(Dev);1"
 
-typedef struct _ppb_CursorControl {
+struct PPB_CursorControl_Dev {
   // Set a cursor.  If "type" is PP_CURSOR_TYPE_CUSTOM, then "custom_image"
   // must be an ImageData resource containing the cursor and "hot_spot" must
   // contain the offset within that image that refers to the cursor's position.
   bool (*SetCursor)(PP_Instance instance,
-                    PP_CursorType type,
+                    enum PP_CursorType_Dev type,
                     PP_Resource custom_image,
-                    const PP_Point* hot_spot);
+                    const struct PP_Point* hot_spot);
 
   // This method causes the cursor to be moved to the center of the
   // instance and be locked, preventing the user from moving it.
@@ -50,7 +50,7 @@ typedef struct _ppb_CursorControl {
 
   // Returns true if the cursor can be locked.
   bool (*CanLockCursor)(PP_Instance);
-} PPB_CursorControl;
+};
 
-#endif  //  PPAPI_C_PPB_CURSOR_CONTROL_H_
+#endif  //  PPAPI_C_DEV_PPB_CURSOR_CONTROL_DEV_H_
 

@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PPB_AUDIO_CONFIG_H_
-#define PPAPI_C_PPB_AUDIO_CONFIG_H_
+#ifndef PPAPI_C_DEV_PPB_AUDIO_CONFIG_DEV_H_
+#define PPAPI_C_DEV_PPB_AUDIO_CONFIG_DEV_H_
 
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-#define PPB_AUDIO_CONFIG_INTERFACE "PPB_AudioConfig;1"
+#define PPB_AUDIO_CONFIG_DEV_INTERFACE "PPB_AudioConfig(Dev);1"
 
 enum {
   PP_AUDIOMINSAMPLEFRAMECOUNT = 64,
@@ -24,7 +24,7 @@ enum {
 // Audio configuration. This base configuration interface supports only stereo
 // 16bit output. This class is not mutable, therefore it is okay to access
 // instances from different threads.
-typedef struct _ppb_AudioConfig {
+struct PPB_AudioConfig_Dev {
   // Create a 16 bit stereo config with the given sample rate. We guarantee that
   // PP_AUDIOSAMELERATE_44100 and PP_AUDIOSAMELERATE_48000 sample rates are
   // supported. Sample counts between PP_AUDIOMINSAMPLEFRAMECOUNT and
@@ -50,7 +50,7 @@ typedef struct _ppb_AudioConfig {
   // Getters for sample rate & frame count.
   uint32_t (*GetSampleRate)(PP_Resource config);
   uint32_t (*GetSampleFrameCount)(PP_Resource config);
-} PPB_AudioConfig;
+};
 
-#endif  // PPAPI_C_PPB_AUDIO_CONFIG_H_
+#endif  // PPAPI_C_DEV_PPB_AUDIO_CONFIG_DEV_H_
 

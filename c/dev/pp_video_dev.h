@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PP_VIDEO_H_
-#define PPAPI_C_PP_VIDEO_H_
+#ifndef PPAPI_C_DEV_PP_VIDEO_DEV_H_
+#define PPAPI_C_DEV_PP_VIDEO_DEV_H_
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-enum PP_VideoKey {
+enum PP_VideoKey_Dev {
   PP_VIDEOKEY_NONE = 0,
   // Value is type of PP_VideoCodecId.
   PP_VIDEOKEY_CODECID,
@@ -39,7 +39,7 @@ enum PP_VideoKey {
   PP_VIDEOKEY_H264FEATURE_WEIGHTEDPREDICTION
 };
 
-enum PP_VideoDecoderEvent {
+enum PP_VideoDecoderEvent_Dev {
   PP_VIDEODECODEREVENT_NONE = 0,
   // Signaling that an error has been hit.
   PP_VIDEODECODEREVENT_ERROR,
@@ -49,7 +49,7 @@ enum PP_VideoDecoderEvent {
   PP_VIDEODECODEREVENT_NEWCROP
 };
 
-enum PP_VideoDecodeError {
+enum PP_VideoDecodeError_Dev {
   PP_VIDEODECODEERROR_NONE = 0,
   PP_VIDEODECODEERROR_NOTSUPPORTED,
   PP_VIDEODECODEERROR_INSUFFICIENTRESOURCES,
@@ -58,7 +58,7 @@ enum PP_VideoDecodeError {
   PP_VIDEODECODEERROR_HARDWARE
 };
 
-enum PP_VideoCodecId {
+enum PP_VideoCodecId_Dev {
   PP_VIDEODECODECID_NONE = 0,
   PP_VIDEODECODECID_H264,
   PP_VIDEODECODECID_VC1,
@@ -66,13 +66,13 @@ enum PP_VideoCodecId {
   PP_VIDEODECODECID_VP8
 };
 
-enum PP_VideoOperation {
+enum PP_VideoOperation_Dev {
   PP_VIDEOOPERATION_NONE = 0,
   PP_VIDEOOPERATION_DECODE,
   PP_VIDEOOPERATION_ENCODE
 };
 
-enum PP_VideoCodecProfile {
+enum PP_VideoCodecProfile_Dev {
   PP_VIDEOCODECPROFILE_NONE = 0,
   PP_VIDEOCODECPROFILE_H264_BASELINE,
   PP_VIDEOCODECPROFILE_H264_MAIN,
@@ -94,7 +94,7 @@ enum PP_VideoCodecProfile {
   PP_VIDEOCODECPROFILE_MPEG2_HIGH
 };
 
-enum PP_VideoCodecLevel {
+enum PP_VideoCodecLevel_Dev {
   PP_VIDEOCODECLEVEL_NONE = 0,
   PP_VIDEOCODECLEVEL_H264_10,
   PP_VIDEOCODECLEVEL_H264_1B,
@@ -128,13 +128,13 @@ enum PP_VideoCodecLevel {
   PP_VIDEOCODECLEVEL_MPEG2_HIGH
 };
 
-enum PP_VideoPayloadFormat {
+enum PP_VideoPayloadFormat_Dev {
   PP_VIDEOPAYLOADFORMAT_NONE = 0,
   PP_VIDEOPAYLOADFORMAT_BYTESTREAM,
   PP_VIDEOPAYLOADFORMAT_RTPPAYLOAD
 };
 
-enum PP_VideoFrameColorType {
+enum PP_VideoFrameColorType_Dev {
   PP_VIDEOFRAMECOLORTYPE_NONE = 0,
   PP_VIDEOFRAMECOLORTYPE_RGB565,
   PP_VIDEOFRAMECOLORTYPE_ARGB8888,
@@ -145,14 +145,14 @@ enum PP_VideoFrameColorType {
   PP_VIDEOFRAMECOLORTYPE_YUV444PLANAR
 };
 
-enum PP_VideoFrameSurfaceType {
+enum PP_VideoFrameSurfaceType_Dev {
   PP_VIDEOFRAMESURFACETYPE_NONE = 0,
   PP_VIDEOFRAMESURFACETYPE_SYSTEMMEMORY,
   PP_VIDEOFRAMESURFACETYPE_GLTEXTURE,
   PP_VIDEOFRAMESURFACETYPE_PIXMAP
 };
 
-enum PP_VideoFrameInfoFlag {
+enum PP_VideoFrameInfoFlag_Dev {
   PP_VIDEOFRAMEINFOFLAG_NONE = 0,
   // Indicate this is the end of stream. Used by both plugin and browser.
   PP_VIDEOFRAMEINFOFLAG_EOS = 1 << 0,
@@ -164,7 +164,7 @@ enum PP_VideoFrameInfoFlag {
   PP_VIDEOFRAMEINFOFLAG_DATACORRUPT = 1 << 3
 };
 
-enum PP_VideoFrameBufferConst {
+enum PP_VideoFrameBufferConst_Dev {
   // YUV formats
   PP_VIDEOFRAMEBUFFER_YPLANE = 0,
   PP_VIDEOFRAMEBUFFER_UPLANE = 1,
@@ -178,7 +178,7 @@ enum PP_VideoFrameBufferConst {
   PP_VIDEOFRAMEBUFFER_MAXNUMBERPLANES = 4
 };
 
-typedef int64_t PP_VideoDecodeData;
+typedef int64_t PP_VideoDecodeData_Dev;
 
 // Array of key/value pairs describing video configuration.
 // It could include any keys from PP_VideoKey. Its last element shall be
@@ -192,11 +192,11 @@ typedef int64_t PP_VideoDecodeData;
 //   PP_VIDEOKEY_ACCELERATION, 1
 //   PP_VIDEOKEY_NONE,
 // };
-typedef int32_t* PP_VideoConfig;
-typedef int32_t PP_VideoConfigElement;
+typedef int32_t* PP_VideoConfig_Dev;
+typedef int32_t PP_VideoConfigElement_Dev;
 
 // The data structure for compressed data buffer.
-typedef struct _pp_VideoCompressedDataBuffer {
+struct PP_VideoCompressedDataBuffer_Dev {
   // The buffer is created through PPB_Buffer API.
   // TODO(wjia): would uint8_t* be good, too?
   PP_Resource buffer;
@@ -208,9 +208,9 @@ typedef struct _pp_VideoCompressedDataBuffer {
 
   // Bit mask of PP_VideoFrameInfoFlag.
   uint32_t flags;
-} PP_VideoCompressedDataBuffer;
+};
 
-typedef struct _pp_VideoFrameBuffer {
+struct PP_VideoFrameBuffer_Dev {
   union {
     struct {
       int32_t planes;
@@ -231,11 +231,11 @@ typedef struct _pp_VideoFrameBuffer {
   // Storage for decoder to save some private data. It could be useful when
   // plugin returns frame buffer to decoder.
   void* private_handle;
-} PP_VideoFrameBuffer;
+};
 
-typedef struct _pp_VideoUncompressedDataBuffer {
-  PP_VideoConfig format;
-  PP_VideoFrameBuffer buffer;
+struct PP_VideoUncompressedDataBuffer_Dev {
+  PP_VideoConfig_Dev format;
+  struct PP_VideoFrameBuffer_Dev buffer;
 
   // Time stamp of the frame in microsecond.
   uint64_t time_stamp_us;
@@ -248,21 +248,21 @@ typedef struct _pp_VideoUncompressedDataBuffer {
   // in decoding.
   // TODO(wjia): add more info about error pixels, such as error MB map, etc.
   bool has_error;
-} PP_VideoUncompressedDataBuffer;
+};
 
 // Plugin callback for decoder to deliver decoded frame buffers.
 // |format| in |buffer| specifies the format of decoded frame, with
 // PP_VIDEOKEY_COLORTYPE and PP_VIDEOKEY_SURFACETYPE required.
-typedef void (*PP_VideoDecodeOutputCallback_Func)(
+typedef void (*PP_VideoDecodeOutputCallback_Func_Dev)(
     PP_Instance instance,
-    PP_VideoUncompressedDataBuffer* buffer);
+    struct PP_VideoUncompressedDataBuffer_Dev* buffer);
 
 // Plugin callback for decoder to return input data buffers.
 // Plugin can optionally provide this callback only when it wants to recycle
 // input data buffers.
-typedef void (*PP_VideoDecodeInputCallback_Func)(
+typedef void (*PP_VideoDecodeInputCallback_Func_Dev)(
     PP_Instance instance,
-    PP_VideoCompressedDataBuffer* buffer);
+    struct PP_VideoCompressedDataBuffer_Dev* buffer);
 
 // Event handling Function for decoder to deliver events to plugin.
 // The correspondence between event and data1, data2:
@@ -272,19 +272,19 @@ typedef void (*PP_VideoDecodeInputCallback_Func)(
 //   data1 is type of PP_Size*, data2 is ignored;
 // When event == PP_VIDEODECODEREVENT_NEWCROP,
 //   data1 is type of PP_Rect*, data2 is ignored;
-typedef void (*PP_VideoDecodeEventHandler_Func)(
+typedef void (*PP_VideoDecodeEventHandler_Func_Dev)(
     PP_Instance instance,
-    PP_VideoDecoderEvent event,
-    PP_VideoDecodeData data1,
-    PP_VideoDecodeData data2);
+    PP_VideoDecoderEvent_Dev event,
+    PP_VideoDecodeData_Dev data1,
+    PP_VideoDecodeData_Dev data2);
 
 // Requested decoder configuration and callback from plugin.
-typedef struct _pp_VideoDecoderConfig {
-  PP_VideoConfig input_format;
-  PP_VideoConfig output_format;
-  PP_VideoDecodeOutputCallback_Func output_callback;
-  PP_VideoDecodeInputCallback_Func input_callback;
-  PP_VideoDecodeEventHandler_Func event_handler;
-} PP_VideoDecoderConfig;
+struct PP_VideoDecoderConfig_Dev {
+  PP_VideoConfig_Dev input_format;
+  PP_VideoConfig_Dev output_format;
+  PP_VideoDecodeOutputCallback_Func_Dev output_callback;
+  PP_VideoDecodeInputCallback_Func_Dev input_callback;
+  PP_VideoDecodeEventHandler_Func_Dev event_handler;
+};
 
-#endif  // PPAPI_C_PP_VIDEO_H_
+#endif  // PPAPI_C_DEV_PP_VIDEO_DEV_H_
