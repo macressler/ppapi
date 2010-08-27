@@ -55,14 +55,24 @@ std::string TestImageData::TestInvalidSize() {
   if (!zero_width.is_null())
     return "Zero width accepted";
 
-  pp::ImageData negative_height(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-                                pp::Size(16, -2), true);
-  if (!negative_height.is_null())
+  PP_Size negative_height;
+  negative_height.width = 16;
+  negative_height.height = -2;
+  PP_Resource rsrc = image_data_interface_->Create(
+      pp::Module::Get()->pp_module(),
+      PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+      &negative_height, true);
+  if (rsrc)
     return "Negative height accepted";
 
-  pp::ImageData negative_width(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-                               pp::Size(-2, 16), true);
-  if (!negative_width.is_null())
+  PP_Size negative_width;
+  negative_width.width = -2;
+  negative_width.height = 16;
+  rsrc = image_data_interface_->Create(
+      pp::Module::Get()->pp_module(),
+      PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+      &negative_width, true);
+  if (rsrc)
     return "Negative width accepted";
 
   return "";
