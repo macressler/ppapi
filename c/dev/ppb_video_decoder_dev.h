@@ -13,7 +13,7 @@
 
 #define PPB_VIDEODECODER_DEV_INTERFACE "PPB_VideoDecoder(Dev);1"
 
-typedef struct PPB_VideoDecoder_Dev {
+struct PPB_VideoDecoder_Dev {
   // Queries capability of the decoder for |codec|.
   // |codec| is the requested codec id.
   // |configs| is a pointer to a buffer containing |config_size| elements.
