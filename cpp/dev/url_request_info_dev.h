@@ -26,7 +26,7 @@ class URLRequestInfo_Dev : public Resource {
   bool AppendDataToBody(const Var& data);
   bool AppendFileToBody(const struct FileRef_Dev& file_ref,
                         PP_Time expected_last_modified_time = 0);
-  bool AppendFileRangeToBody(const struct FileRef_Dev& file_ref,
+  bool AppendFileRangeToBody(const FileRef_Dev& file_ref,
                              int64_t start_offset,
                              int64_t length,
                              PP_Time expected_last_modified_time = 0);
