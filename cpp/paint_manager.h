@@ -8,12 +8,12 @@
 #include <vector>
 
 #include "ppapi/cpp/completion_callback.h"
-#include "ppapi/cpp/device_context_2d.h"
+#include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/paint_aggregator.h"
 
 namespace pp {
 
-class DeviceContext2D;
+class Graphics2D;
 class Instance;
 class Point;
 class Rect;
@@ -28,9 +28,11 @@ class Rect;
 //
 // Typical usage:
 //
-//  class MyClass : public pp::Instance {
+//  class MyClass : public pp::Instance, public PaintManager::Client {
 //   public:
-//    MyClass() : paint_manager_(&device_) {}
+//    MyClass() {
+//      paint_manager_.Initialize(this, this, false);
+//    }
 //
 //    void ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
 //      paint_manager_.SetSize(position.size());
@@ -43,7 +45,7 @@ class Rect;
 //    }
 //
 //    // Implementation of PaintManager::Client
-//    virtual bool OnPaint(pp::DeviceContext2D& device,
+//    virtual bool OnPaint(pp::Graphics2D& device,
 //                         const pp::PaintUpdate& update) {
 //      // If our app needed scrolling, we would apply that first here.
 //
@@ -61,17 +63,17 @@ class PaintManager {
  public:
   class Client {
    public:
-    // Paints the given invalid area of the plugin to the given device. Returns
-    // true if anything was painted.
+    // Paints the given invalid area of the plugin to the given graphics
+    // device. Returns true if anything was painted.
     //
     // You are given the list of rects to paint in |paint_rects|, and the
     // union of all of these rects in |paint_bounds|. You only have to paint
     // the area inside each of the |paint_rects|, but can paint more if you
     // want (some apps may just want to paint the union).
     //
-    // Do not call Flush() on the device, this will be done automatically if
-    // you return true from this function since the PaintManager needs to
-    // handle the callback.
+    // Do not call Flush() on the graphics device, this will be done
+    // automatically if you return true from this function since the
+    // PaintManager needs to handle the callback.
     //
     // It is legal for you to cause invalidates inside of Paint which will
     // then get executed as soon as the Flush for this update has completed.
@@ -79,7 +81,7 @@ class PaintManager {
     // CPU, possibly updating much faster than necessary. It is best to have a
     // 1/60 second timer to do an invalidate instead. This will limit your
     // animation to the slower of 60Hz or "however fast Flush can complete."
-    virtual bool OnPaint(DeviceContext2D& device,
+    virtual bool OnPaint(Graphics2D& graphics,
                          const std::vector<Rect>& paint_rects,
                          const Rect& paint_bounds) = 0;
 
@@ -140,8 +142,8 @@ class PaintManager {
   // Provides access to the underlying device in case you need it. Note: if
   // you call Flush on this device the paint manager will get very confused,
   // don't do this!
-  const DeviceContext2D& device() const { return device_; }
-  DeviceContext2D& device() { return device_; }
+  const Graphics2D& graphics() const { return graphics_; }
+  Graphics2D& graphics() { return graphics_; }
 
   // Invalidate the entire plugin.
   void Invalidate();
@@ -182,8 +184,9 @@ class PaintManager {
 
   CompletionCallbackFactory<PaintManager> callback_factory_;
 
-  // This device will be is_null() if no device has been manually set yet.
-  DeviceContext2D device_;
+  // This graphics device will be is_null() if no graphics has been manually
+  // set yet.
+  Graphics2D graphics_;
 
   PaintAggregator aggregator_;
 

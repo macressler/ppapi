@@ -5,6 +5,7 @@
 #ifndef PAPPI_TESTS_TEST_SCROLLBAR_H_
 #define PAPPI_TESTS_TEST_SCROLLBAR_H_
 
+#include "ppapi/cpp/dev/scrollbar_dev.h"
 #include "ppapi/tests/test_case.h"
 
 class TestScrollbar : public TestCase {
@@ -13,12 +14,13 @@ class TestScrollbar : public TestCase {
 
   // TestCase implementation.
   virtual void RunTest();
-  virtual void ScrollbarValueChanged(pp::Scrollbar scrollbar, uint32_t value);
+  virtual void ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
+                                     uint32_t value);
 
  private:
   std::string TestHandleEvent();
 
-  pp::Scrollbar scrollbar_;
+  pp::Scrollbar_Dev scrollbar_;
   bool scrollbar_value_changed_;
 };
 

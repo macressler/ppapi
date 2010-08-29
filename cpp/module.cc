@@ -25,22 +25,22 @@
 
 #include <string.h>
 
+#include "ppapi/c/dev/ppp_find_dev.h"
+#include "ppapi/c/dev/ppp_graphics_3d_dev.h"
+#include "ppapi/c/dev/ppp_printing_dev.h"
+#include "ppapi/c/dev/ppp_scrollbar_dev.h"
+#include "ppapi/c/dev/ppp_widget_dev.h"
+#include "ppapi/c/dev/ppp_zoom_dev.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_var.h"
-#include "ppapi/c/ppp_find.h"
-#include "ppapi/c/ppp_graphics_3d.h"
 #include "ppapi/c/ppp_instance.h"
-#include "ppapi/c/ppp_printing.h"
-#include "ppapi/c/ppp_scrollbar.h"
-#include "ppapi/c/ppp_widget.h"
-#include "ppapi/c/ppp_zoom.h"
+#include "ppapi/cpp/dev/scrollbar_dev.h"
+#include "ppapi/cpp/dev/url_loader_dev.h"
+#include "ppapi/cpp/dev/widget_dev.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/resource.h"
-#include "ppapi/cpp/scrollbar.h"
-#include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
-#include "ppapi/cpp/widget.h"
 
 namespace pp {
 
@@ -94,7 +94,7 @@ bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
     return false;
-  return instance->HandleDocumentLoad(URLLoader(pp_url_loader));
+  return instance->HandleDocumentLoad(URLLoader_Dev(pp_url_loader));
 }
 
 bool Instance_HandleEvent(PP_Instance pp_instance,
@@ -154,8 +154,9 @@ static PPP_Instance instance_interface = {
 
 // PPP_Printing implementation -------------------------------------------------
 
-PP_PrintOutputFormat* Printing_QuerySupportedFormats(
-    PP_Instance pp_instance, uint32_t* format_count) {
+PP_PrintOutputFormat_Dev* Printing_QuerySupportedFormats(
+    PP_Instance pp_instance,
+    uint32_t* format_count) {
   Module* module_singleton = Module::Get();
   if (!module_singleton) {
     *format_count = 0;
@@ -170,7 +171,7 @@ PP_PrintOutputFormat* Printing_QuerySupportedFormats(
 }
 
 int32_t Printing_Begin(PP_Instance pp_instance,
-                       const PP_PrintSettings* print_settings) {
+                       const struct PP_PrintSettings_Dev* print_settings) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
     return 0;
@@ -180,7 +181,7 @@ int32_t Printing_Begin(PP_Instance pp_instance,
 
   // See if we support the specified print output format.
   uint32_t format_count = 0;
-  const PP_PrintOutputFormat* formats =
+  const PP_PrintOutputFormat_Dev* formats =
       instance->QuerySupportedPrintOutputFormats(&format_count);
   if (!formats)
     return 0;
@@ -192,7 +193,7 @@ int32_t Printing_Begin(PP_Instance pp_instance,
 }
 
 PP_Resource Printing_PrintPages(PP_Instance pp_instance,
-                                const PP_PrintPageNumberRange* page_ranges,
+                                const PP_PrintPageNumberRange_Dev* page_ranges,
                                 uint32_t page_range_count) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
@@ -213,7 +214,7 @@ void Printing_End(PP_Instance pp_instance) {
   return instance->PrintEnd();
 }
 
-static PPP_Printing printing_interface = {
+static PPP_Printing_Dev printing_interface = {
   &Printing_QuerySupportedFormats,
   &Printing_Begin,
   &Printing_PrintPages,
@@ -231,10 +232,10 @@ void Widget_Invalidate(PP_Instance instance_id,
   Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
   if (!instance)
     return;
-  return instance->InvalidateWidget(Widget(widget_id), *dirty_rect);
+  return instance->InvalidateWidget(Widget_Dev(widget_id), *dirty_rect);
 }
 
-static PPP_Widget widget_interface = {
+static PPP_Widget_Dev widget_interface = {
   &Widget_Invalidate,
 };
 
@@ -249,14 +250,14 @@ void Scrollbar_ValueChanged(PP_Instance instance_id,
   Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
   if (!instance)
     return;
-  return instance->ScrollbarValueChanged(Scrollbar(scrollbar_id), value);
+  return instance->ScrollbarValueChanged(Scrollbar_Dev(scrollbar_id), value);
 }
 
-static PPP_Scrollbar scrollbar_interface = {
+static PPP_Scrollbar_Dev scrollbar_interface = {
   &Scrollbar_ValueChanged,
 };
 
-// PPP_Zoom implementation ------------------------------------------------
+// PPP_Zoom implementation -----------------------------------------------------
 
 void Zoom(PP_Instance instance_id, float scale, bool text_only) {
   Module* module_singleton = Module::Get();
@@ -268,11 +269,11 @@ void Zoom(PP_Instance instance_id, float scale, bool text_only) {
   return instance->Zoom(scale, text_only);
 }
 
-static PPP_Zoom zoom_interface = {
+static PPP_Zoom_Dev zoom_interface = {
   &Zoom,
 };
 
-// PPP_Find implementation ------------------------------------------------
+// PPP_Find implementation -----------------------------------------------------
 
 bool StartFind(PP_Instance instance_id, const char* text, bool case_sensitive) {
   Module* module_singleton = Module::Get();
@@ -304,7 +305,7 @@ void StopFind(PP_Instance instance_id) {
   return instance->StopFind();
 }
 
-static PPP_Find find_interface = {
+static PPP_Find_Dev find_interface = {
   &StartFind,
   &SelectFindResult,
   &StopFind,
@@ -322,7 +323,7 @@ void Graphics3D_ContextLost(PP_Instance pp_instance) {
   return instance->Graphics3DContextLost();
 }
 
-static PPP_Graphics3D graphics_3d_interface = {
+static PPP_Graphics3D_Dev graphics_3d_interface = {
   &Graphics3D_ContextLost,
 };
 
@@ -339,17 +340,17 @@ Module::~Module() {
 const void* Module::GetInstanceInterface(const char* interface_name) {
   if (strcmp(interface_name, PPP_INSTANCE_INTERFACE) == 0)
     return &instance_interface;
-  if (strcmp(interface_name, PPP_PRINTING_INTERFACE) == 0)
+  if (strcmp(interface_name, PPP_PRINTING_DEV_INTERFACE) == 0)
     return &printing_interface;
-  if (strcmp(interface_name, PPP_WIDGET_INTERFACE) == 0)
+  if (strcmp(interface_name, PPP_WIDGET_DEV_INTERFACE) == 0)
     return &widget_interface;
-  if (strcmp(interface_name, PPP_SCROLLBAR_INTERFACE) == 0)
+  if (strcmp(interface_name, PPP_SCROLLBAR_DEV_INTERFACE) == 0)
     return &scrollbar_interface;
-  if (strcmp(interface_name, PPP_ZOOM_INTERFACE) == 0)
+  if (strcmp(interface_name, PPP_ZOOM_DEV_INTERFACE) == 0)
     return &zoom_interface;
-  if (strcmp(interface_name, PPP_FIND_INTERFACE) == 0)
+  if (strcmp(interface_name, PPP_FIND_DEV_INTERFACE) == 0)
     return &find_interface;
-  if (strcmp(interface_name, PPP_GRAPHICS_3D_INTERFACE) == 0)
+  if (strcmp(interface_name, PPP_GRAPHICS_3D_DEV_INTERFACE) == 0)
     return &graphics_3d_interface;
 
   return NULL;

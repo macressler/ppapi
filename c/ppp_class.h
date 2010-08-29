@@ -8,7 +8,7 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
-typedef struct _pp_Var PP_Var;
+struct PP_Var;
 
 // Interface for the plugin to implement JavaScript-accessible objects.
 //
@@ -23,31 +23,31 @@ typedef struct _pp_Var PP_Var;
 // Please also see:
 //   http://code.google.com/p/ppapi/wiki/InterfacingWithJavaScript
 // for general information on using and implementing vars.
-typedef struct _ppp_Class {
+struct PPP_Class {
   // |name| is guaranteed to be an integer or string type var. Exception is
   // guaranteed non-NULL. An integer is used for |name| when implementing
   // array access into the object. This test should only return true for
   // properties that are not methods.  Use HasMethod() to handle methods.
   bool (*HasProperty)(void* object,
-                      PP_Var name,
-                      PP_Var* exception);
+                      struct PP_Var name,
+                      struct PP_Var* exception);
 
   // |name| is guaranteed to be a string-type. Exception is guaranteed non-NULL.
   // If the method does not exist, return false and don't set the exception.
   // Errors in this function will probably not occur in general usage, but
   // if you need to throw an exception, still return false.
   bool (*HasMethod)(void* object,
-                    PP_Var name,
-                    PP_Var* exception);
+                    struct PP_Var name,
+                    struct PP_Var* exception);
 
   // |name| is guaranteed to be a string-type or an integer-type var. Exception
   // is guaranteed non-NULL. An integer is used for |name| when implementing
   // array access into the object. If the property does not exist, set the
   // exception and return a var of type Void. A property does not exist if
   // a call HasProperty() for the same |name| would return false.
-  PP_Var (*GetProperty)(void* object,
-                        PP_Var name,
-                        PP_Var* exception);
+  struct PP_Var (*GetProperty)(void* object,
+                               struct PP_Var name,
+                               struct PP_Var* exception);
 
   // Exception is guaranteed non-NULL.
   //
@@ -63,41 +63,41 @@ typedef struct _ppp_Class {
   // Release()ing each var and calling PPB_Core.MemFree on the property pointer.
   void (*GetAllPropertyNames)(void* object,
                               uint32_t* property_count,
-                              PP_Var** properties,
-                              PP_Var* exception);
+                              struct PP_Var** properties,
+                              struct PP_Var* exception);
 
   // |name| is guaranteed to be an integer or string type var. Exception is
   // guaranteed non-NULL.
   void (*SetProperty)(void* object,
-                      PP_Var name,
-                      PP_Var value,
-                      PP_Var* exception);
+                      struct PP_Var name,
+                      struct PP_Var value,
+                      struct PP_Var* exception);
 
   // |name| is guaranteed to be an integer or string type var. Exception is
   // guaranteed non-NULL.
   void (*RemoveProperty)(void* object,
-                         PP_Var name,
-                         PP_Var* exception);
+                         struct PP_Var name,
+                         struct PP_Var* exception);
 
   // TODO(brettw) need native array access here.
 
   // |name| is guaranteed to be a string type var. Exception is guaranteed
   // non-NULL
-  PP_Var (*Call)(void* object,
-                 PP_Var method_name,
-                 uint32_t argc,
-                 PP_Var* argv,
-                 PP_Var* exception);
+  struct PP_Var (*Call)(void* object,
+                        struct PP_Var method_name,
+                        uint32_t argc,
+                        struct PP_Var* argv,
+                        struct PP_Var* exception);
 
   // Exception is guaranteed non-NULL.
-  PP_Var (*Construct)(void* object,
-                      uint32_t argc,
-                      PP_Var* argv,
-                      PP_Var* exception);
+  struct PP_Var (*Construct)(void* object,
+                             uint32_t argc,
+                             struct PP_Var* argv,
+                             struct PP_Var* exception);
 
   // Called when the reference count of the object reaches 0. Normally, plugins
   // would free their internal data pointed to by the |object| pointer.
   void (*Deallocate)(void* object);
-} PPP_Class;
+};
 
 #endif  // PPAPI_C_PPP_CLASS_H_

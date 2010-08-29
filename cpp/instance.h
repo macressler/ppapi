@@ -5,25 +5,25 @@
 #ifndef PPAPI_CPP_INSTANCE_H_
 #define PPAPI_CPP_INSTANCE_H_
 
+#include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
-#include "ppapi/c/ppp_printing.h"
 
-typedef struct _pp_Event PP_Event;
+struct PP_Event;
 
 namespace pp {
 
-class DeviceContext2D;
+class Graphics2D;
 class ImageData;
 class Point;
 class Rect;
 class Rect;
 class Resource;
-class Scrollbar;
-class URLLoader;
+class Scrollbar_Dev;
+class URLLoader_Dev;
 class Var;
-class Widget;
+class Widget_Dev;
 
 class Instance {
  public:
@@ -40,7 +40,7 @@ class Instance {
 
   // PPP_Instance methods for the plugin to override.
   // See ppp_instance.h for details.
-  virtual bool HandleDocumentLoad(const URLLoader& url_loader);
+  virtual bool HandleDocumentLoad(const URLLoader_Dev& url_loader);
   virtual bool HandleEvent(const PP_Event& event);
   virtual Var GetInstanceObject();
   virtual void ViewChanged(const Rect& position, const Rect& clip);
@@ -48,38 +48,45 @@ class Instance {
 
   // PPP_Printing methods for the plugin to override if it supports printing.
   // See ppp_printing.h for details.
-  virtual PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
+  virtual PP_PrintOutputFormat_Dev* QuerySupportedPrintOutputFormats(
       uint32_t* format_count);
-  virtual int32_t PrintBegin(const PP_PrintSettings& print_settings);
-  virtual Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
+  virtual int32_t PrintBegin(const PP_PrintSettings_Dev& print_settings);
+  virtual Resource PrintPages(const PP_PrintPageNumberRange_Dev* page_ranges,
                               uint32_t page_range_count);
   virtual void PrintEnd();
 
   // Widget interface.
-  virtual void InvalidateWidget(Widget widget, const Rect& dirty_rect);
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
+  virtual void InvalidateWidget(Widget_Dev widget, const Rect& dirty_rect);
 
   // Scrollbar interface.
-  virtual void ScrollbarValueChanged(Scrollbar scrollbar, uint32_t value);
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
+  virtual void ScrollbarValueChanged(Scrollbar_Dev scrollbar, uint32_t value);
 
   // Zoom interface.
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void Zoom(float scale, bool text_only);
 
   // Find interface.
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual bool StartFind(const char* text, bool case_sensitive);
   virtual void SelectFindResult(bool forward);
   virtual void StopFind();
 
   // Graphics3D interface.
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void Graphics3DContextLost();
 
   // PPB_Instance methods for querying the browser.
   // See ppb_instance.h for details.
   Var GetWindowObject();
   Var GetOwnerElementObject();
-  bool BindGraphicsDeviceContext(const DeviceContext2D& context);
+  bool BindGraphics(const Graphics2D& graphics);
   bool IsFullFrame();
 
   // PPB_Find methods
+  // TODO(brettw) http://crbug.com/53718 don't expose this here.
   void NumberOfFindResultsChanged(int32_t total, bool final_result);
   void SelectedFindResultChanged(int32_t index);
 

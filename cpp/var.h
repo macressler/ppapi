@@ -10,8 +10,6 @@
 
 #include "ppapi/c/pp_var.h"
 
-typedef struct _ppp_Class PPP_Class;
-
 namespace pp {
 
 class ScriptableObject;

@@ -7,7 +7,7 @@
 
 #include "ppapi/tests/test_case.h"
 
-typedef struct _ppb_ImageData PPB_ImageData;
+struct PPB_ImageData;
 
 class TestImageData : public TestCase {
  public:

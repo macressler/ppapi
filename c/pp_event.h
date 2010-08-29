@@ -42,49 +42,49 @@ typedef enum {
   PP_EVENT_MODIFIER_RIGHTBUTTONDOWN  = 1 << 8
 } PP_Event_Modifier;
 
-typedef struct _pp_Event_Key {
+struct PP_Event_Key {
   uint32_t modifier;
   uint32_t normalizedKeyCode;
-} PP_Event_Key;
+};
 
-typedef struct _pp_Event_Character {
+struct PP_Event_Character {
   uint32_t modifier;
   uint16_t text[4];
   uint16_t unmodifiedText[4];
-} PP_Event_Character;
+};
 
-typedef struct _pp_Event_Mouse {
+struct PP_Event_Mouse {
   uint32_t modifier;
   int32_t button;
   float x;
   float y;
   int32_t clickCount;
-} PP_Event_Mouse;
+};
 
-typedef struct _pp_Event_Wheel {
+struct PP_Event_Wheel {
   uint32_t modifier;
   float deltaX;
   float deltaY;
   float wheelTicksX;
   float wheelTicksY;
   uint32_t scrollByPage;
-} PP_Event_Wheel;
+};
 
-typedef struct _pp_Event_Focus {
+struct PP_Event_Focus {
   int32_t value;
-} PP_Event_Focus;
+};
 
-typedef struct _pp_Event {
+struct PP_Event {
   uint32_t size;
   int32_t type;
   PP_Time time_stamp_seconds;
   union {
-    PP_Event_Key key;
-    PP_Event_Character character;
-    PP_Event_Mouse mouse;
-    PP_Event_Wheel wheel;
-    PP_Event_Focus focus;
+    struct PP_Event_Key key;
+    struct PP_Event_Character character;
+    struct PP_Event_Mouse mouse;
+    struct PP_Event_Wheel wheel;
+    struct PP_Event_Focus focus;
   } u;
-} PP_Event;
+};
 
 #endif  // PPAPI_C_PP_EVENT_H_

@@ -9,14 +9,14 @@
 #include "ppapi/c/pp_size.h"
 #include "ppapi/c/pp_stdint.h"
 
-typedef struct _pp_Rect {
+struct PP_Rect {
   PP_Point point;
   PP_Size size;
-} PP_Rect;
+};
 
-inline PP_Rect PP_MakeRectFromXYWH(int32_t x, int32_t y,
-                                   int32_t w, int32_t h) {
-  PP_Rect ret;
+inline struct PP_Rect PP_MakeRectFromXYWH(int32_t x, int32_t y,
+                                          int32_t w, int32_t h) {
+  struct PP_Rect ret;
   ret.point.x = x;
   ret.point.y = y;
   ret.size.width = w;

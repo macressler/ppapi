@@ -21,26 +21,27 @@ typedef void (*PP_CompletionCallback_Func)(void* user_data, int32_t result);
 // The result parameter passes an int32_t that if negative indicates an error
 // code.  Otherwise the result value indicates success.  If it is a positive
 // value then it may carry additional information.
-typedef struct _pp_CompletionCallback {
+struct PP_CompletionCallback {
   PP_CompletionCallback_Func func;
   void* user_data;
-} PP_CompletionCallback;
+};
 
 inline PP_CompletionCallback PP_MakeCompletionCallback(
     PP_CompletionCallback_Func func,
     void* user_data) {
-  PP_CompletionCallback cc = { func, user_data };
+  struct PP_CompletionCallback cc = { func, user_data };
   return cc;
 }
 
-inline void PP_RunCompletionCallback(PP_CompletionCallback* cc, int32_t res) {
+inline void PP_RunCompletionCallback(struct PP_CompletionCallback* cc,
+                                     int32_t res) {
   cc->func(cc->user_data, res);
 }
 
 // Use this in place of an actual completion callback to request blocking
 // behavior.  If specified, the calling thread will block until a method
 // completes.  This is only usable from background threads.
-inline PP_CompletionCallback PP_BlockUntilComplete() {
+inline struct PP_CompletionCallback PP_BlockUntilComplete() {
   return PP_MakeCompletionCallback(NULL, 0);
 }
 

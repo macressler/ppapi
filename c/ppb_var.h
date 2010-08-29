@@ -8,23 +8,23 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
-typedef struct _ppp_Class PPP_Class;
+struct PPP_Class;
 
 #define PPB_VAR_INTERFACE "PPB_Var;1"
 
 // Please see:
 //   http://code.google.com/p/ppapi/wiki/InterfacingWithJavaScript
 // for general information on using this interface.
-typedef struct _ppb_Var {
+struct PPB_Var {
   // Adds a reference to the given var. If this is not a refcounted object,
   // this function will do nothing so you can always call it no matter what the
   // type.
-  void (*AddRef)(PP_Var var);
+  void (*AddRef)(struct PP_Var var);
 
   // Removes a reference to given var, deleting it if the internal refcount
   // becomes 0. If the given var is not a refcounted object, this function will
   // do nothing so you can always call it no matter what the type.
-  void (*Release)(PP_Var var);
+  void (*Release)(struct PP_Var var);
 
   // Creates a string var from a string. The string must be encoded in valid
   // UTF-8 and is NOT NULL-terminated, the length must be specified in |len|.
@@ -41,7 +41,7 @@ typedef struct _ppb_Var {
   //
   // On error (basically out of memory to allocate the string, or input that
   // is not valid UTF-8), this function will return a Null var.
-  PP_Var (*VarFromUtf8)(const char* data, uint32_t len);
+  struct PP_Var (*VarFromUtf8)(const char* data, uint32_t len);
 
   // Converts a string-type var to a char* encoded in UTF-8. This string is NOT
   // NULL-terminated. The length will be placed in |*len|. If the string is
@@ -52,7 +52,7 @@ typedef struct _ppb_Var {
   // be 0. Note that if the Var is corrupt or the string has been freed, this
   // function may crash, it is the plugin's responsibility to manage the memory
   // properly.
-  const char* (*VarToUtf8)(PP_Var var, uint32_t* len);
+  const char* (*VarToUtf8)(struct PP_Var var, uint32_t* len);
 
   // Returns true if the property with the given name exists on the given
   // object, false if it does not. Methods are also counted as properties.
@@ -62,21 +62,21 @@ typedef struct _ppb_Var {
   //
   // If you pass an invalid name or object, the exception will be set (if it is
   // non-NULL, and the return value will be false).
-  bool (*HasProperty)(PP_Var object,
-                      PP_Var name,
-                      PP_Var* exception);
+  bool (*HasProperty)(struct PP_Var object,
+                      struct PP_Var name,
+                      struct PP_Var* exception);
 
   // Identical to HasProperty, except that HasMethod additionally checks if the
   // property is a function.
-  bool (*HasMethod)(PP_Var object,
-                    PP_Var name,
-                    PP_Var* exception);
+  bool (*HasMethod)(struct PP_Var object,
+                    struct PP_Var name,
+                    struct PP_Var* exception);
 
   // Returns the value of the given property. If the property doesn't exist, the
   // exception (if non-NULL) will be set and a "Void" var will be returned.
-  PP_Var (*GetProperty)(PP_Var object,
-                        PP_Var name,
-                        PP_Var* exception);
+  struct PP_Var (*GetProperty)(struct PP_Var object,
+                               struct PP_Var name,
+                               struct PP_Var* exception);
 
   // Retrieves all property names on the given object. Property names include
   // methods.
@@ -104,24 +104,24 @@ typedef struct _ppb_Var {
   //   for (uint32_t i = 0; i < count; i++)
   //     ppb_var.Release(properties[i]);
   //   ppb_core.MemFree(properties);
-  void (*GetAllPropertyNames)(PP_Var object,
+  void (*GetAllPropertyNames)(struct PP_Var object,
                               uint32_t* property_count,
-                              PP_Var** properties,
-                              PP_Var* exception);
+                              struct PP_Var** properties,
+                              struct PP_Var* exception);
 
   // Sets the property with the given name on the given object. The exception
   // will be set, if it is non-NULL, on failure.
-  void (*SetProperty)(PP_Var object,
-                      PP_Var name,
-                      PP_Var value,
-                      PP_Var* exception);
+  void (*SetProperty)(struct PP_Var object,
+                      struct PP_Var name,
+                      struct PP_Var value,
+                      struct PP_Var* exception);
 
   // Removes the given property from the given object. The property name must
   // be an string or integer var, using other types will throw an exception
   // (assuming the exception pointer is non-NULL).
-  void (*RemoveProperty)(PP_Var object,
-                         PP_Var name,
-                         PP_Var* exception);
+  void (*RemoveProperty)(struct PP_Var object,
+                         struct PP_Var name,
+                         struct PP_Var* exception);
 
   // TODO(brettw) need native array access here.
 
@@ -140,26 +140,26 @@ typedef struct _ppb_Var {
   // Example:
   //   Call(obj, VarFromUtf8("DoIt"), 0, NULL, NULL) = obj.DoIt() in JavaScript.
   //   Call(obj, PP_MakeNull(), 0, NULL, NULL) = obj() in JavaScript.
-  PP_Var (*Call)(PP_Var object,
-                 PP_Var method_name,
-                 uint32_t argc,
-                 PP_Var* argv,
-                 PP_Var* exception);
+  struct PP_Var (*Call)(struct PP_Var object,
+                        struct PP_Var method_name,
+                        uint32_t argc,
+                        struct PP_Var* argv,
+                        struct PP_Var* exception);
 
   // Invoke the object as a constructor.
   //
   // For example, if |object| is |String|, this is like saying |new String| in
   // JavaScript.
-  PP_Var (*Construct)(PP_Var object,
-                      uint32_t argc,
-                      PP_Var* argv,
-                      PP_Var* exception);
+  struct PP_Var (*Construct)(struct PP_Var object,
+                             uint32_t argc,
+                             struct PP_Var* argv,
+                             struct PP_Var* exception);
 
   // If the object is an instance of the given class, then this method returns
   // true and sets *object_data to the value passed to CreateObject provided
   // object_data is non-NULL. Otherwise, this method returns false.
-  bool (*IsInstanceOf)(PP_Var var,
-                       const PPP_Class* object_class,
+  bool (*IsInstanceOf)(struct PP_Var var,
+                       const struct PPP_Class* object_class,
                        void** object_data);
 
   // Creates an object that the plugin implements. The plugin supplies a
@@ -187,8 +187,8 @@ typedef struct _ppb_Var {
   //   PP_Var MakePoint(int x, int y) {
   //     return CreateObject(&point_class, new Point(x, y));
   //   }
-  PP_Var (*CreateObject)(const PPP_Class* object_class,
-                         void* object_data);
-} PPB_Var;
+  struct PP_Var (*CreateObject)(const struct PPP_Class* object_class,
+                                void* object_data);
+};
 
 #endif  // PPAPI_C_PPB_VAR_H_

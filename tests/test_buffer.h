@@ -9,7 +9,7 @@
 
 #include "ppapi/tests/test_case.h"
 
-typedef struct _ppb_Buffer PPB_Buffer;
+struct PPB_Buffer_Dev;
 
 class TestBuffer : public TestCase {
  public:
@@ -25,7 +25,7 @@ class TestBuffer : public TestCase {
   std::string TestIsBuffer();
 
   // Used by the tests that access the C API directly.
-  const PPB_Buffer* buffer_interface_;
+  const PPB_Buffer_Dev* buffer_interface_;
 };
 
 #endif  // PAPPI_TESTS_TEST_BUFFER_H_

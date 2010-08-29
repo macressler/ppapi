@@ -50,7 +50,7 @@ class PaintAggregator {
   };
 
   PaintAggregator();
-  
+
   // Setters for the configuration settings. See the corresponding variables
   // below for what these mean.
   void set_max_redundant_paint_to_scroll_area(float area) {
@@ -59,7 +59,7 @@ class PaintAggregator {
   void set_max_paint_rects(size_t max_rects) {
     max_paint_rects_ = max_rects;
   }
- 
+
   // There is a PendingUpdate if InvalidateRect or ScrollRect were called and
   // ClearPendingUpdate was not called.
   bool HasPendingUpdate() const;

@@ -4,7 +4,7 @@
 
 #include "ppapi/tests/test_image_data.h"
 
-#include "ppapi/cpp/device_context_2d.h"
+#include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
@@ -122,7 +122,7 @@ std::string TestImageData::TestIsImageData() {
 
   // Make another resource type and test it.
   const int w = 16, h = 16;
-  pp::DeviceContext2D device(pp::Size(w, h), true);
+  pp::Graphics2D device(pp::Size(w, h), true);
   if (device.is_null())
     return "Couldn't create device context";
   if (image_data_interface_->IsImageData(device.pp_resource()))

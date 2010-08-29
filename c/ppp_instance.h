@@ -8,12 +8,12 @@
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
 
-typedef struct _pp_Event PP_Event;
-typedef struct _pp_Var PP_Var;
+struct PP_Event;
+struct PP_Var;
 
 #define PPP_INSTANCE_INTERFACE "PPP_Instance;1"
 
-typedef struct _ppp_Instance {
+struct PPP_Instance {
   // You may not call other parts of PPAPI from this function (for example, do
   // not execute JS or modify the DOM. Put such code in InitializeInstance.
   //
@@ -51,7 +51,7 @@ typedef struct _ppp_Instance {
   // browser. If it was not handled, it will bubble according to the normal
   // rules. So it is important that a plugin respond accurately with whether
   // event propogation should continue.
-  bool (*HandleEvent)(PP_Instance instance, const PP_Event* event);
+  bool (*HandleEvent)(PP_Instance instance, const struct PP_Event* event);
 
   // Returns a Var representing the instance object to the web page. Normally
   // this will be a PPP_Class object that exposes certain methods the page
@@ -61,7 +61,7 @@ typedef struct _ppp_Instance {
   //
   // The returned PP_Var should have a reference added for the caller, which
   // will be responsible for Release()ing that reference.
-  PP_Var (*GetInstanceObject)(PP_Instance instance);
+  struct PP_Var (*GetInstanceObject)(PP_Instance instance);
 
   // Called when the position, the size, or the clip rect has changed.
   //
@@ -73,14 +73,14 @@ typedef struct _ppp_Instance {
   // relative to the top left of the plugin's coordinate system (not the page).
   // If the plugin is invisible, the clip rect will be (0, 0, 0, 0).
   void (*ViewChanged)(PP_Instance instance,
-                      const PP_Rect* position,
-                      const PP_Rect* clip);
+                      const struct PP_Rect* position,
+                      const struct PP_Rect* clip);
 
   // Returns the selection, either as plain text or as html depending on "html".
   // If nothing is selected, or if the given format is unavailable, return a
   // void string.
-  PP_Var (*GetSelectedText)(PP_Instance instance,
-                            bool html);
-} PPP_Instance;
+  struct PP_Var (*GetSelectedText)(PP_Instance instance,
+                                   bool html);
+};
 
 #endif  // PPAPI_C_PPP_INSTANCE_H_

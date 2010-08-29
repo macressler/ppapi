@@ -7,13 +7,13 @@
 
 #include "ppapi/c/pp_stdint.h"
 
-typedef struct _pp_Point {
+struct PP_Point {
   int32_t x;
   int32_t y;
-} PP_Point;
+};
 
-inline PP_Point PP_MakePoint(int32_t x, int32_t y) {
-  PP_Point ret;
+inline struct PP_Point PP_MakePoint(int32_t x, int32_t y) {
+  struct PP_Point ret;
   ret.x = x;
   ret.y = y;
   return ret;

@@ -10,11 +10,11 @@
 #include "ppapi/c/pp_time.h"
 #include "ppapi/c/pp_var.h"
 
-typedef struct _pp_CompletionCallback PP_CompletionCallback;
+struct PP_CompletionCallback;
 
 #define PPB_CORE_INTERFACE "PPB_Core;1"
 
-typedef struct _ppb_Core {
+struct PPB_Core {
   // Same as AddRefVar for Resources.
   void (*AddRefResource)(PP_Resource resource);
 
@@ -42,7 +42,7 @@ typedef struct _ppb_Core {
   // NOTE: If the browser is shutting down or if the plugin has no instances,
   // then the callback function may not be called.
   void (*CallOnMainThread)(int32_t delay_in_milliseconds,
-                           PP_CompletionCallback callback,
+                           struct PP_CompletionCallback callback,
                            int32_t result);
 
   // Returns true if the current thread is the main pepper thread.
@@ -50,6 +50,6 @@ typedef struct _ppb_Core {
   // This is useful for implementing sanity checks, and deciding if dispatching
   // via CallOnMainThread() is required.
   bool (*IsMainThread)();
-} PPB_Core;
+};
 
-#endif  // PPAPI_C_PPB_CORE_H_
+#endif  // PPAPI_C_DEV_PPB_CORE_DEV_H_

@@ -4,18 +4,19 @@
 
 #include "ppapi/tests/test_url_util.h"
 
-#include "ppapi/cpp/url_util.h"
+#include "ppapi/c/dev/ppb_url_util_dev.h"
+#include "ppapi/cpp/dev/url_util_dev.h"
 #include "ppapi/tests/test_instance.h"
 
 REGISTER_TEST_CASE(UrlUtil);
 
-static bool ComponentEquals(const PP_UrlComponent& component,
+static bool ComponentEquals(const PP_UrlComponent_Dev& component,
                             int begin, int len) {
   return component.begin == begin && component.len == len;
 }
 
 bool TestUrlUtil::Init() {
-  util_ = pp::UrlUtil::Get();
+  util_ = pp::UrlUtil_Dev::Get();
   return !!util_;
 }
 
@@ -33,7 +34,7 @@ std::string TestUrlUtil::TestCanonicalize() {
   ASSERT_TRUE(result.AsString() == "http://google.com/");
 
   // Test all the components
-  PP_UrlComponents c;
+  PP_UrlComponents_Dev c;
   result = util_->Canonicalize(
       "http://me:pw@Google.com:1234/path?query#ref ",
       &c);

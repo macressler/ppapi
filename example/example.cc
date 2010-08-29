@@ -11,19 +11,19 @@
 
 #include <algorithm>
 
+#include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_event.h"
 #include "ppapi/c/pp_rect.h"
-#include "ppapi/c/ppp_printing.h"
 #include "ppapi/cpp/completion_callback.h"
-#include "ppapi/cpp/device_context_2d.h"
+#include "ppapi/cpp/dev/url_loader_dev.h"
+#include "ppapi/cpp/dev/url_request_info_dev.h"
+#include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/rect.h"
 #include "ppapi/cpp/scriptable_object.h"
-#include "ppapi/cpp/url_request_info.h"
-#include "ppapi/cpp/url_loader.h"
 #include "ppapi/cpp/var.h"
 
 static const int kStepsPerCircle = 800;
@@ -88,11 +88,11 @@ class MyFetcher {
   void Start(const pp::Instance& instance,
              const pp::Var& url,
              MyFetcherClient* client) {
-    pp::URLRequestInfo request;
+    pp::URLRequestInfo_Dev request;
     request.SetURL(url);
     request.SetMethod("GET");
 
-    loader_ = pp::URLLoader(instance);
+    loader_ = pp::URLLoader_Dev(instance);
     client_ = client;
 
     pp::CompletionCallback callback =
@@ -102,7 +102,7 @@ class MyFetcher {
       callback.Run(rv);
   }
 
-  void StartWithOpenedLoader(const pp::URLLoader& loader,
+  void StartWithOpenedLoader(const pp::URLLoader_Dev& loader,
                              MyFetcherClient* client) {
     loader_ = loader;
     client_ = client;
@@ -142,7 +142,7 @@ class MyFetcher {
   }
 
   pp::CompletionCallbackFactory<MyFetcher> callback_factory_;
-  pp::URLLoader loader_;
+  pp::URLLoader_Dev loader_;
   MyFetcherClient* client_;
   char buf_[4096];
   std::string data_;
@@ -170,7 +170,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     return true;
   }
 
-  virtual bool HandleDocumentLoad(const pp::URLLoader& loader) {
+  virtual bool HandleDocumentLoad(const pp::URLLoader_Dev& loader) {
     fetcher_ = new MyFetcher();
     fetcher_->StartWithOpenedLoader(loader, this);
     return true;
@@ -189,7 +189,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
         return false;
     }
   }
-  
+
   virtual pp::Var GetInstanceObject() {
     return new MyScriptableObject();
   }
@@ -240,8 +240,8 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     width_ = position.size().width();
     height_ = position.size().height();
 
-    device_context_ = pp::DeviceContext2D(pp::Size(width_, height_), false);
-    if (!BindGraphicsDeviceContext(device_context_)) {
+    device_context_ = pp::Graphics2D(pp::Size(width_, height_), false);
+    if (!BindGraphics(device_context_)) {
       printf("Couldn't bind the device context\n");
       return;
     }
@@ -274,16 +274,18 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   // Print interfaces.
-  virtual PP_PrintOutputFormat* QuerySupportedPrintOutputFormats(
+  virtual PP_PrintOutputFormat_Dev* QuerySupportedPrintOutputFormats(
       uint32_t* format_count) {
-    PP_PrintOutputFormat* format = reinterpret_cast<PP_PrintOutputFormat*>(
-        pp::Module::Get()->core()->MemAlloc(sizeof(PP_PrintOutputFormat)));
+    PP_PrintOutputFormat_Dev* format =
+        reinterpret_cast<PP_PrintOutputFormat_Dev*>(
+            pp::Module::Get()->core()->MemAlloc(
+                sizeof(PP_PrintOutputFormat_Dev)));
     *format = PP_PRINTOUTPUTFORMAT_RASTER;
     *format_count = 1;
     return format;
   }
 
-  virtual int32_t PrintBegin(const PP_PrintSettings& print_settings) {
+  virtual int32_t PrintBegin(const PP_PrintSettings_Dev& print_settings) {
     if (print_settings_.format != PP_PRINTOUTPUTFORMAT_RASTER)
       return 0;
 
@@ -292,8 +294,9 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     return 1;
   }
 
-  virtual pp::Resource PrintPages(const PP_PrintPageNumberRange* page_ranges,
-                                  uint32_t page_range_count) {
+  virtual pp::Resource PrintPages(
+      const PP_PrintPageNumberRange_Dev* page_ranges,
+      uint32_t page_range_count) {
     if (!print_settings_valid_)
       return pp::Resource();
 
@@ -384,7 +387,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   }
 
   pp::Var console_;
-  pp::DeviceContext2D device_context_;
+  pp::Graphics2D device_context_;
 
   double time_at_last_check_;
 
@@ -396,7 +399,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
   // Incremented for each flush we get.
   int animation_counter_;
   bool print_settings_valid_;
-  PP_PrintSettings print_settings_;
+  PP_PrintSettings_Dev print_settings_;
 };
 
 void FlushCallback(void* data, int32_t result) {

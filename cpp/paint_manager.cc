@@ -49,13 +49,13 @@ void PaintManager::Initialize(Instance* instance,
 }
 
 void PaintManager::SetSize(const Size& new_size) {
-  if (new_size == device_.size())
+  if (new_size == graphics_.size())
     return;
 
-  device_ = DeviceContext2D(new_size, is_always_opaque_);
-  if (device_.is_null())
+  graphics_ = Graphics2D(new_size, is_always_opaque_);
+  if (graphics_.is_null())
     return;
-  instance_->BindGraphicsDeviceContext(device_);
+  instance_->BindGraphics(graphics_);
 
   manual_callback_pending_ = false;
   flush_pending_ = false;
@@ -66,18 +66,18 @@ void PaintManager::SetSize(const Size& new_size) {
 
 void PaintManager::Invalidate() {
   // You must call SetDevice before using.
-  PP_DCHECK(!device_.is_null());
+  PP_DCHECK(!graphics_.is_null());
 
   EnsureCallbackPending();
-  aggregator_.InvalidateRect(Rect(device_.size()));
+  aggregator_.InvalidateRect(Rect(graphics_.size()));
 }
 
 void PaintManager::InvalidateRect(const Rect& rect) {
   // You must call SetDevice before using.
-  PP_DCHECK(!device_.is_null());
+  PP_DCHECK(!graphics_.is_null());
 
   // Clip the rect to the device area.
-  Rect clipped_rect = rect.Intersect(Rect(device_.size()));
+  Rect clipped_rect = rect.Intersect(Rect(graphics_.size()));
   if (clipped_rect.IsEmpty())
     return;  // Nothing to do.
 
@@ -87,7 +87,7 @@ void PaintManager::InvalidateRect(const Rect& rect) {
 
 void PaintManager::ScrollRect(const Rect& clip_rect, const Point& amount) {
   // You must call SetDevice before using.
-  PP_DCHECK(!device_.is_null());
+  PP_DCHECK(!graphics_.is_null());
 
   EnsureCallbackPending();
   aggregator_.ScrollRect(clip_rect, amount);
@@ -123,12 +123,12 @@ void PaintManager::DoPaint() {
 
   // Apply any scroll before asking the client to paint.
   if (update.has_scroll)
-    device_.Scroll(update.scroll_rect, update.scroll_delta);
+    graphics_.Scroll(update.scroll_rect, update.scroll_delta);
 
-  if (!client_->OnPaint(device_, update.paint_rects, update.paint_bounds))
+  if (!client_->OnPaint(graphics_, update.paint_rects, update.paint_bounds))
     return;  // Nothing was painted, don't schedule a flush.
 
-  int32_t result = device_.Flush(
+  int32_t result = graphics_.Flush(
       callback_factory_.NewCallback(&PaintManager::OnFlushComplete));
 
   // If you trigger this assertion, then your plugin has called Flush()

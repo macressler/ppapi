@@ -7,7 +7,7 @@
 
 #include <vector>
 
-typedef struct _ppp_Class PPP_Class;
+struct PPP_Class;
 
 namespace pp {
 

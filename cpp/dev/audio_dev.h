@@ -8,7 +8,7 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/dev/ppb_audio_dev.h"
 #include "ppapi/cpp/dev/audio_config_dev.h"
-#include "ppapi/cpp/buffer.h"
+#include "ppapi/cpp/dev/buffer_dev.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/resource.h"
 

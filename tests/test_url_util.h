@@ -5,7 +5,7 @@
 #ifndef PPAPI_TESTS_TEST_URL_UTIL_H_
 #define PPAPI_TESTS_TEST_URL_UTIL_H_
 
-#include "ppapi/cpp/url_util.h"
+#include "ppapi/cpp/dev/url_util_dev.h"
 #include "ppapi/tests/test_case.h"
 
 class TestUrlUtil : public TestCase {
@@ -23,7 +23,7 @@ class TestUrlUtil : public TestCase {
   std::string TestDocumentCanRequest();
   std::string TestDocumentCanAccessDocument();
 
-  pp::UrlUtil* util_;
+  const pp::UrlUtil_Dev* util_;
 };
 
 #endif  // PPAPI_TESTS_TEST_URL_UTIL_H_

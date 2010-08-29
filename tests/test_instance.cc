@@ -64,7 +64,7 @@ void TestInstance::ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
   }
 }
 
-void TestInstance::ScrollbarValueChanged(pp::Scrollbar scrollbar,
+void TestInstance::ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
                                          uint32_t value) {
   current_case_->ScrollbarValueChanged(scrollbar, value);
 }

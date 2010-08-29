@@ -105,7 +105,7 @@ class CompletionCallback {
 //     char buf_[4096];
 //     int64_t offset_;
 //   };
-// 
+//
 template <typename T>
 class CompletionCallbackFactory {
  public:
@@ -160,7 +160,7 @@ class CompletionCallbackFactory {
 
   // A copy of "a" and "b" will be passed to "method" when the completion
   // callback runs.
-  // 
+  //
   // Method should be of type:
   //   void (T::*)(int32_t result, const A& a, const B& b)
   //

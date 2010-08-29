@@ -7,7 +7,7 @@
 
 #include "ppapi/c/pp_stdint.h"
 
-enum PP_VarType {
+typedef enum {
   PP_VARTYPE_VOID,
   PP_VARTYPE_NULL,
   PP_VARTYPE_BOOL,
@@ -15,10 +15,10 @@ enum PP_VarType {
   PP_VARTYPE_DOUBLE,
   PP_VARTYPE_STRING,
   PP_VARTYPE_OBJECT
-};
+} PP_VarType;
 
-typedef struct _pp_Var {
-  enum PP_VarType type;
+struct PP_Var {
+  PP_VarType type;
   union {
     bool as_bool;
 
@@ -39,20 +39,20 @@ typedef struct _pp_Var {
     // so a plugin can initialize this ID to 0 to indicate a "NULL handle."
     int64_t as_id;
   } value;
-} PP_Var;
+};
 
-inline PP_Var PP_MakeVoid() {
-  PP_Var result = { PP_VARTYPE_VOID, {0} };
+inline struct PP_Var PP_MakeVoid() {
+  struct PP_Var result = { PP_VARTYPE_VOID, {0} };
   return result;
 }
 
-inline PP_Var PP_MakeNull() {
-  PP_Var result = { PP_VARTYPE_NULL, {0} };
+inline struct PP_Var PP_MakeNull() {
+  struct PP_Var result = { PP_VARTYPE_NULL, {0} };
   return result;
 }
 
-inline PP_Var PP_MakeBool(bool value) {
-  PP_Var result = { PP_VARTYPE_BOOL, {0} };
+inline struct PP_Var PP_MakeBool(bool value) {
+  struct PP_Var result = { PP_VARTYPE_BOOL, {0} };
   result.value.as_bool = value;
   return result;
 }

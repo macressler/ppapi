@@ -10,9 +10,9 @@
 #include "ppapi/tests/test_case.h"
 
 namespace pp {
-class FileIO;
-class URLLoader;
-class URLRequestInfo;
+class FileIO_Dev;
+class URLLoader_Dev;
+class URLRequestInfo_Dev;
 }
 
 class TestURLLoader : public TestCase {
@@ -24,9 +24,10 @@ class TestURLLoader : public TestCase {
   virtual void RunTest();
   
  private:
-  std::string ReadEntireFile(pp::FileIO* file_io, std::string* data);
-  std::string ReadEntireResponseBody(pp::URLLoader* loader, std::string* body);
-  std::string LoadAndCompareBody(const pp::URLRequestInfo& request,
+  std::string ReadEntireFile(pp::FileIO_Dev* file_io, std::string* data);
+  std::string ReadEntireResponseBody(pp::URLLoader_Dev* loader,
+                                     std::string* body);
+  std::string LoadAndCompareBody(const pp::URLRequestInfo_Dev& request,
                                  const std::string& expected_body);
 
   std::string TestBasicGET();

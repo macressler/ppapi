@@ -11,12 +11,12 @@
 
 #define PPB_INSTANCE_INTERFACE "PPB_Instance;1"
 
-typedef struct _ppb_Instance {
+struct PPB_Instance {
   // Returns a reference to the DOM window containing this instance.
-  PP_Var (*GetWindowObject)(PP_Instance instance);
+  struct PP_Var (*GetWindowObject)(PP_Instance instance);
 
   // Returns a reference to the DOM element containing this instance.
-  PP_Var (*GetOwnerElementObject)(PP_Instance instance);
+  struct PP_Var (*GetOwnerElementObject)(PP_Instance instance);
 
   // Binds the given graphics device as the current drawing surface. The
   // contents of this device is what will be displayed in the plugin's area
@@ -39,14 +39,13 @@ typedef struct _ppb_Instance {
   //
   // Binding a device will invalidate that portion of the web page to flush the
   // contents of the new device to the screen.
-  bool (*BindGraphicsDeviceContext)(PP_Instance instance,
-                                    PP_Resource device);
+  bool (*BindGraphics)(PP_Instance instance, PP_Resource device);
 
   // Returns true if the instance is full-frame.  Such a plugin represents the
   // entire document in a frame rather than an embedded resource. This can
   // happen if the user does a top level navigation or the page specifies an
   // iframe to a resource with a MIME type registered by the plugin.
   bool (*IsFullFrame)(PP_Instance instance);
-} PPB_Instance;
+};
 
 #endif  // PPAPI_C_PPB_INSTANCE_H_

@@ -10,11 +10,11 @@
 #include "ppapi/c/pp_size.h"
 #include "ppapi/c/pp_stdint.h"
 
-enum PP_ImageDataFormat {
+typedef enum {
   PP_IMAGEDATAFORMAT_BGRA_PREMUL
-};
+} PP_ImageDataFormat;
 
-typedef struct _pp_ImageDataDesc {
+struct PP_ImageDataDesc {
   PP_ImageDataFormat format;
 
   // Size of the bitmap in pixels.
@@ -23,11 +23,11 @@ typedef struct _pp_ImageDataDesc {
   // The row width in bytes. This may be different than width * 4 since there
   // may be padding at the end of the lines.
   int32_t stride;
-} PP_ImageDataDesc;
+};
 
 #define PPB_IMAGEDATA_INTERFACE "PPB_ImageData;1"
 
-typedef struct _ppb_ImageData {
+struct PPB_ImageData {
   // Returns the browser's preferred format for image data. This format will be
   // the format is uses internally for painting. Other formats may require
   // internal conversions to paint or may have additional restrictions depending
@@ -48,7 +48,7 @@ typedef struct _ppb_ImageData {
   // plugin if the bitmap was cached and re-used.
   PP_Resource (*Create)(PP_Module module,
                         PP_ImageDataFormat format,
-                        const PP_Size* size,
+                        const struct PP_Size* size,
                         bool init_to_zero);
 
   // Returns true if the given resource is an image data. Returns false if the
@@ -59,13 +59,13 @@ typedef struct _ppb_ImageData {
   // if the resource is not an image data. On false, the |desc| structure will
   // be filled with 0.
   bool (*Describe)(PP_Resource resource,
-                   PP_ImageDataDesc* desc);
+                   struct PP_ImageDataDesc* desc);
 
   // Maps this bitmap into the plugin address space and returns a pointer to the
   // beginning of the data.
   void* (*Map)(PP_Resource resource);
 
   void (*Unmap)(PP_Resource resource);
-} PPB_ImageData;
+};
 
 #endif  // PPAPI_C_PPB_IMAGE_DATA_H_

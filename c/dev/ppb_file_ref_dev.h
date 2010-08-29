@@ -1,0 +1,61 @@
+// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef PPAPI_C_DEV_PPB_FILE_REF_DEV_H_
+#define PPAPI_C_DEV_PPB_FILE_REF_DEV_H_
+
+#include "ppapi/c/dev/pp_file_info_dev.h"
+#include "ppapi/c/pp_instance.h"
+#include "ppapi/c/pp_resource.h"
+#include "ppapi/c/pp_var.h"
+
+#define PPB_FILEREF_DEV_INTERFACE "PPB_FileRef(Dev);1"
+
+// A FileRef is a "weak pointer" to a file in a file system.  It contains a
+// PP_FileSystemType identifier and a file path string.  FileRef methods are
+// cheap and do not operate on the file system.  To operate on the file system
+// use PPB_FileSystem, PPB_FileIO, etc.
+struct PPB_FileRef_Dev {
+  // Creates a weak pointer to a file in the application's local persistent
+  // filesystem.  File paths are POSIX style.  Returns 0 if the path is
+  // malformed.
+  PP_Resource (*CreatePersistentFileRef)(PP_Instance instance,
+                                         const char* path);
+
+  // Creates a weak pointer to a file in the application's local temporary
+  // filesystem.  File paths are POSIX style.  Returns 0 if the path is
+  // malformed.
+  PP_Resource (*CreateTemporaryFileRef)(PP_Instance instance,
+                                        const char* path);
+
+  // Returns true if the given resource is a FileRef. Returns false if the
+  // resource is invalid or some type other than a FileRef.
+  bool (*IsFileRef)(PP_Resource resource);
+
+  // Returns the file system identifier of this file.
+  PP_FileSystemType_Dev (*GetFileSystemType)(PP_Resource file_ref);
+
+  // Returns the name of the file.
+  struct PP_Var (*GetName)(PP_Resource file_ref);
+
+  // Returns the absolute path of the file.  This method fails if the file
+  // system type is PP_FileSystemType_External.
+  struct PP_Var (*GetPath)(PP_Resource file_ref);
+
+  // Returns the parent directory of this file.  If file_ref points to the root
+  // of the filesystem, then the root is returned.  This method fails if the
+  // file system type is PP_FileSystemType_External.
+  PP_Resource (*GetParent)(PP_Resource file_ref);
+
+  // TODO(darin): Add these conversion routines.
+#if 0
+  // Convert a DOM File object to a FileRef object.
+  PP_Resource (*FromFileObject)(PP_Var file_object);
+
+  // Convert a FileRef object to a DOM File object.
+  PP_Var (*ToFileObject)(PP_Resource file_ref);
+#endif
+};
+
+#endif  // PPAPI_C_DEV_PPB_FILE_REF_DEV_H_

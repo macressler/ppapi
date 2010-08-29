@@ -7,13 +7,13 @@
 
 #include "ppapi/c/pp_stdint.h"
 
-typedef struct _pp_Size {
+struct PP_Size {
   int32_t width;
   int32_t height;
-} PP_Size;
+};
 
-inline PP_Size PP_MakeSize(int32_t w, int32_t h) {
-  PP_Size ret;
+inline struct PP_Size PP_MakeSize(int32_t w, int32_t h) {
+  struct PP_Size ret;
   ret.width = w;
   ret.height = h;
   return ret;
