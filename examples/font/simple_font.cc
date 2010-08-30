@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #include "ppapi/cpp/completion_callback.h"
-#include "ppapi/cpp/device_context_2d.h"
-#include "ppapi/cpp/font.h"
+#include "ppapi/cpp/dev/font_dev.h"
+#include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
@@ -26,20 +26,20 @@ class MyInstance : public pp::Instance {
     last_size_ = position.size();
 
     pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, last_size_, true);
-    pp::DeviceContext2D device(last_size_, false);
-    BindGraphicsDeviceContext(device);
+    pp::Graphics2D device(last_size_, false);
+    BindGraphics(device);
 
-    pp::FontDescription desc;
+    pp::FontDescription_Dev desc;
     desc.set_family(PP_FONTFAMILY_SANSSERIF);
     desc.set_size(30);
-    pp::Font font(desc);
+    pp::Font_Dev font(desc);
 
     pp::Rect text_clip(position.size());  // Use entire bounds for clip.
     font.DrawTextAt(&image,
-        pp::TextRun("\xD9\x85\xD8\xB1\xD8\xAD\xD8\xA8\xD8\xA7\xE2\x80\x8E",
-                    true, true),
+        pp::TextRun_Dev("\xD9\x85\xD8\xB1\xD8\xAD\xD8\xA8\xD8\xA7\xE2\x80\x8E",
+                         true, true),
         pp::Point(10, 40), 0xFF008000, clip, false);
-    font.DrawTextAt(&image, pp::TextRun("Hello"),
+    font.DrawTextAt(&image, pp::TextRun_Dev("Hello"),
         pp::Point(10, 80), 0xFF000080, text_clip, false);
 
     device.PaintImageData(image, pp::Point(0, 0));

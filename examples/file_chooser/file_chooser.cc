@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#include "ppapi/c/dev/ppb_file_chooser_dev.h"
 #include "ppapi/c/pp_event.h"
-#include "ppapi/c/ppb_file_chooser.h"
 #include "ppapi/cpp/completion_callback.h"
-#include "ppapi/cpp/file_chooser.h"
-#include "ppapi/cpp/file_ref.h"
+#include "ppapi/cpp/dev/file_chooser_dev.h"
+#include "ppapi/cpp/dev/file_ref_dev.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
@@ -40,22 +40,23 @@ class MyInstance : public pp::Instance {
   void ShowFileChooser(bool multi_select) {
     RecreateConsole();
 
-    PP_FileChooserOptions options;
+    PP_FileChooserOptions_Dev options;
     options.mode = (multi_select ? PP_FILECHOOSERMODE_OPENMULTIPLE :
                     PP_FILECHOOSERMODE_OPEN);
     options.accept_mime_types = (multi_select ? "" : "plain/text");
 
     // Deleted in ShowSelectedFileNames().
-    pp::FileChooser* file_chooser = new pp::FileChooser(*this, &options);
+    pp::FileChooser_Dev* file_chooser = new pp::FileChooser_Dev(
+        *this, options);
     file_chooser->Show(callback_factory_.NewCallback(
         &MyInstance::ShowSelectedFileNames, file_chooser));
   }
 
-  void ShowSelectedFileNames(int32_t, pp::FileChooser* file_chooser) {
+  void ShowSelectedFileNames(int32_t, pp::FileChooser_Dev* file_chooser) {
     if (!file_chooser)
       return;
 
-    pp::FileRef file_ref = file_chooser->GetNextChosenFile();
+    pp::FileRef_Dev file_ref = file_chooser->GetNextChosenFile();
     while (!file_ref.is_null()) {
       Log(file_ref.GetPath());
       file_ref = file_chooser->GetNextChosenFile();

@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include "ppapi/c/pp_event.h"
-#include "ppapi/cpp/device_context_2d.h"
+#include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
@@ -73,7 +73,7 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
   }
 
   // PaintManager::Client implementation.
-  virtual bool OnPaint(pp::DeviceContext2D& device,
+  virtual bool OnPaint(pp::Graphics2D& device,
                        const std::vector<pp::Rect>& paint_rects,
                        const pp::Rect& paint_bounds) {
     // Make an image just large enough to hold all dirty rects. We won't

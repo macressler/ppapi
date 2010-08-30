@@ -12,7 +12,7 @@
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppb.h"
 #include "ppapi/c/ppb_core.h"
-#include "ppapi/c/ppb_device_context_2d.h"
+#include "ppapi/c/ppb_graphics_2d.h"
 #include "ppapi/c/ppb_image_data.h"
 #include "ppapi/c/ppb_instance.h"
 #include "ppapi/c/ppp.h"
@@ -22,7 +22,7 @@ PP_Module g_module_id;
 PPB_GetInterface g_get_browser_interface = NULL;
 
 const PPB_Core* g_core_interface;
-const PPB_DeviceContext2D* g_device_context_interface;
+const PPB_Graphics2D* g_graphics_2d_interface;
 const PPB_ImageData* g_image_data_interface;
 const PPB_Instance* g_instance_interface;
 
@@ -43,12 +43,11 @@ PP_Resource MakeAndBindDeviceContext(PP_Instance instance,
                                      const PP_Size* size) {
   PP_Resource device_context;
 
-  device_context = g_device_context_interface->Create(g_module_id, size, false);
+  device_context = g_graphics_2d_interface->Create(g_module_id, size, false);
   if (!device_context)
     return 0;
 
-  if (!g_instance_interface->BindGraphicsDeviceContext(instance,
-                                                       device_context)) {
+  if (!g_instance_interface->BindGraphics(instance, device_context)) {
     g_core_interface->ReleaseResource(device_context);
     return 0;
   }
@@ -89,8 +88,8 @@ void Repaint(InstanceInfo* instance, const PP_Size* size) {
     return;
   }
 
-  g_device_context_interface->ReplaceContents(device_context, image);
-  g_device_context_interface->Flush(device_context,
+  g_graphics_2d_interface->ReplaceContents(device_context, image);
+  g_graphics_2d_interface->Flush(device_context,
       PP_MakeCompletionCallback(&FlushCompletionCallback, NULL));
 
   g_core_interface->ReleaseResource(device_context);
@@ -202,10 +201,10 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module module,
       get_browser_interface(PPB_INSTANCE_INTERFACE);
   g_image_data_interface = (const PPB_ImageData*)
       get_browser_interface(PPB_IMAGEDATA_INTERFACE);
-  g_device_context_interface = (const PPB_DeviceContext2D*)
-      get_browser_interface(PPB_DEVICECONTEXT2D_INTERFACE);
+  g_graphics_2d_interface = (const PPB_Graphics2D*)
+      get_browser_interface(PPB_GRAPHICS_2D_INTERFACE);
   if (!g_core_interface || !g_instance_interface || !g_image_data_interface ||
-      !g_device_context_interface)
+      !g_graphics_2d_interface)
     return -1;
 
   return PP_OK;

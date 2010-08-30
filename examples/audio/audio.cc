@@ -5,7 +5,7 @@
 #include <cmath>
 #include <limits>
 
-#include "ppapi/cpp/audio.h"
+#include "ppapi/cpp/dev/audio_dev.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 
@@ -20,15 +20,15 @@ const double sample_count = 4096;
 
 class MyInstance : public pp::Instance {
  public:
-  explicit MyInstance(PP_Instance instance) :
-      pp::Instance(instance),
-      audio_time_(0) {}
+  explicit MyInstance(PP_Instance instance)
+      : pp::Instance(instance),
+        audio_time_(0) {
+  }
 
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]) {
-    audio_ = pp::Audio(*this,
-                       pp::AudioConfig(sample_frequency, sample_count),
-                       SineWaveCallback,
-                       this);
+    audio_ = pp::Audio_Dev(
+        *this, pp::AudioConfig_Dev(sample_frequency, sample_count),
+        SineWaveCallback, this);
     return audio_.StartPlayback();
   }
 
@@ -51,7 +51,7 @@ class MyInstance : public pp::Instance {
   }
 
   // Audio resource. Allocated in Init(), freed on destruction.
-  pp::Audio audio_;
+  pp::Audio_Dev audio_;
 
   // Audio buffer time. Used to make prevent sine wave skips on buffer
   // boundaries.

@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "ppapi/cpp/completion_callback.h"
-#include "ppapi/cpp/device_context_2d.h"
+#include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
@@ -47,8 +47,11 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
   void OnTimer(int32_t) {
     pp::Module::Get()->core()->CallOnMainThread(
         16, factory_.NewCallback(&MyInstance::OnTimer), 0);
+    // The scroll and the invalidate will do the same thing in this example,
+    // but the invalidate will cause a large repaint, whereas the scroll will
+    // be faster and cause a smaller repaint.
 #if 1
-    paint_manager_.ScrollRect(pp::Rect(paint_manager_.device().size()),
+    paint_manager_.ScrollRect(pp::Rect(paint_manager_.graphics().size()),
                               pp::Point(kAdvanceXPerFrame, kAdvanceYPerFrame));
 #else
     paint_manager_.Invalidate();
@@ -58,7 +61,7 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
 
  private:
   // PaintManager::Client implementation.
-  virtual bool OnPaint(pp::DeviceContext2D& device,
+  virtual bool OnPaint(pp::Graphics2D& device,
                        const std::vector<pp::Rect>& paint_rects,
                        const pp::Rect& paint_bounds) {
     if (!kicked_off_) {
