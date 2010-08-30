@@ -11,7 +11,7 @@
 
 namespace pp {
 
-class FileRef_dev;
+class FileRef_Dev;
 
 class URLRequestInfo_Dev : public Resource {
  public:
