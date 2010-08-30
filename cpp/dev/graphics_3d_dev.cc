@@ -27,6 +27,45 @@ inline void InitializeOpenGLCInterface() {
 
 namespace pp {
 
+// static
+bool Graphics3D_Dev::GetConfigs(int32_t *configs, int32_t config_size,
+                                int32_t *num_config) {
+  if (graphics_3d_f)
+    return graphics_3d_f->GetConfigs(configs, config_size, num_config);
+  return false;
+}
+
+// static
+bool Graphics3D_Dev::ChooseConfig(const int32_t *attrib_list, int32_t *configs,
+                                  int32_t config_size, int32_t *num_config) {
+  if (graphics_3d_f)
+    return graphics_3d_f->ChooseConfig(attrib_list, configs, config_size,
+                                       num_config);
+  return false;
+}
+
+// static
+bool Graphics3D_Dev::GetConfigAttrib(int32_t config, int32_t attribute,
+                                     int32_t *value) {
+  if (graphics_3d_f)
+    return graphics_3d_f->GetConfigAttrib(config, attribute, value);
+  return false;
+}
+
+// static
+const char* Graphics3D_Dev::QueryString(int32_t name) {
+  if (graphics_3d_f)
+    return graphics_3d_f->QueryString(name);
+  return false;
+}
+
+// static
+void* Graphics3D_Dev::GetProcAddress(const char* name) {
+  if (graphics_3d_f)
+    return graphics_3d_f->GetProcAddress(name);
+  return NULL;
+}
+
 Graphics3D_Dev Graphics3D_Dev::FromResource(PP_Resource resource_id) {
   if (graphics_3d_f && graphics_3d_f->IsGraphics3D(resource_id))
     return Graphics3D_Dev(resource_id);

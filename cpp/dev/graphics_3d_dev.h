@@ -14,6 +14,19 @@ namespace pp {
 
 class Graphics3D_Dev : public Resource {
  public:
+  static bool GetConfigs(int32_t* configs, int32_t config_size,
+                         int32_t* num_config);
+
+  static bool ChooseConfig(const int32_t* attrib_list, int32_t* configs,
+                           int32_t config_size, int32_t* num_config);
+
+  static bool GetConfigAttrib(int32_t config, int32_t attribute,
+                              int32_t* value);
+
+  static const char* QueryString(int32_t name);
+
+  static void* GetProcAddress(const char* name);
+
   static bool ResetCurrent();
   static Graphics3D_Dev GetCurrentContext();
   static uint32_t GetError();
