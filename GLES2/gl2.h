@@ -5,7 +5,7 @@
 #ifndef __gl2_h_
 #define __gl2_h_
 
-#include "../c/ppb_opengles.h"
+#include "../c/dev/ppb_opengles_dev.h"
 /*
  * This document is licensed under the SGI Free Software B License Version
  * 2.0. For details, see http://oss.sgi.com/projects/FreeB/ .
@@ -455,7 +455,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-extern const PPB_OpenGLES* pepper_opengl_interface;
+extern const struct PPB_OpenGLES_Dev* pepper_opengl_interface;
 #ifdef __cplusplus
 }
 #endif

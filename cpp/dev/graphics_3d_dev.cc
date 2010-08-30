@@ -9,7 +9,9 @@
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/module_impl.h"
 
-const PPB_OpenGLES_Dev* pepper_opengl_interface;
+extern "C" {
+const PPB_OpenGLES_Dev* pepper_opengl_interface = NULL;
+}
 
 namespace {
 
