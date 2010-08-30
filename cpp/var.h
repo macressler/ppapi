@@ -93,6 +93,11 @@ class Var {
   // in debug mode, and return an empty string.
   std::string AsString() const;
 
+  // This assumes the object is of type object. If it's not, it will assert in
+  // debug mode. If it is not an object or not a ScriptableObject type, returns
+  // NULL.
+  ScriptableObject* AsScriptableObject() const;
+
   bool HasProperty(const Var& name, Var* exception = NULL) const;
   Var GetProperty(const Var& name, Var* exception = NULL) const;
   void GetAllPropertyNames(std::vector<Var>* properties,

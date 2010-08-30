@@ -176,6 +176,18 @@ std::string Var::AsString() const {
   return std::string(str, len);
 }
 
+ScriptableObject* Var::AsScriptableObject() const {
+  if (!is_object()) {
+    PP_NOTREACHED();
+  } else if (ppb_var_f) {
+    void* object = NULL;
+    if (ppb_var_f->IsInstanceOf(var_, ScriptableObject::GetClass(), &object)) {
+      return reinterpret_cast<ScriptableObject*>(object);
+    }
+  }
+  return NULL;
+}
+
 bool Var::HasProperty(const Var& name, Var* exception) const {
   if (!ppb_var_f)
     return false;
