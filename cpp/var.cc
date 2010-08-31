@@ -22,7 +22,9 @@
 #endif
 
 // Defining PRId32
-#if defined(_WIN64)
+#if defined(__native_client__)
+#  define PRId32 "ld"
+#elif defined(_WIN64)
 #  define PRId32 "I64d"
 #elif defined(_WIN32)
 #  define PRId32 "ld"
