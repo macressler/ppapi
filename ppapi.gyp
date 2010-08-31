@@ -297,6 +297,8 @@
         'tests/test_url_loader.h',
         'tests/test_url_util.cc',
         'tests/test_url_util.h',
+        'tests/test_var.cc',
+        'tests/test_var.h',
       ],
       'dependencies': [
         'ppapi_cpp'

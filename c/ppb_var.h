@@ -45,12 +45,12 @@ struct PPB_Var {
 
   // Converts a string-type var to a char* encoded in UTF-8. This string is NOT
   // NULL-terminated. The length will be placed in |*len|. If the string is
-  // valid but empty, the return value will be non-NULL, but |*len| will still
+  // valid but empty the return value will be non-NULL, but |*len| will still
   // be 0.
   //
   // If the var is not a string, this function will return NULL and |*len| will
   // be 0. Note that if the Var is corrupt or the string has been freed, this
-  // function may crash, it is the plugin's responsibility to manage the memory
+  // function may crash; it is the plugin's responsibility to manage the memory
   // properly.
   const char* (*VarToUtf8)(struct PP_Var var, uint32_t* len);
 
