@@ -161,6 +161,7 @@ void Instance::RemovePerInstanceObject(const std::string& interface_name,
 
   // Validate that we're removing the object we thing we are.
   PP_DCHECK(found->second == object);
+  (void)object;  // Prevent warning in release mode.
 
   interface_name_to_objects_.erase(found);
 }
