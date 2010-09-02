@@ -14,7 +14,7 @@ struct PPB_CharSet_Dev;
 
 class TestCharSet : public TestCase {
  public:
-  TestCharSet(TestInstance* instance);
+  TestCharSet(TestingInstance* instance);
 
   // TestCase implementation.
 

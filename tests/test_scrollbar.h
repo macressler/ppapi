@@ -10,7 +10,7 @@
 
 class TestScrollbar : public TestCase {
  public:
-  TestScrollbar(TestInstance* instance);
+  TestScrollbar(TestingInstance* instance);
 
   // TestCase implementation.
   virtual void RunTest();

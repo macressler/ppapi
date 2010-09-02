@@ -6,11 +6,11 @@
 
 #include "ppapi/c/dev/ppb_char_set_dev.h"
 #include "ppapi/cpp/module.h"
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/testing_instance.h"
 
 REGISTER_TEST_CASE(CharSet);
 
-TestCharSet::TestCharSet(TestInstance* instance)
+TestCharSet::TestCharSet(TestingInstance* instance)
     : TestCase(instance),
       char_set_interface_(NULL) {
 }

@@ -21,3 +21,17 @@ std::string TestCase::MakeFailureMessage(const char* file,
   output << "Failure in " << file << "(" << line << "): " << cmd;
   return output.str();
 }
+
+pp::Var TestCase::GetTestObject() {
+  if (test_object_.is_void()) {
+    pp::ScriptableObject* so = CreateTestObject();
+    if (so)
+      test_object_ = pp::Var(so);  // Takes ownership.
+  }
+  return test_object_;
+}
+
+pp::ScriptableObject* TestCase::CreateTestObject() {
+  return NULL;
+}
+

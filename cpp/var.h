@@ -137,17 +137,23 @@ class Var {
   // the browser to get the object description.
   std::string DebugString() const;
 
+  // For use when calling the raw C PPAPI when using the C++ Var as a possibly
+  // NULL exception. This will handle getting the address of the internal value
+  // out if it's non-NULL.
+  //
+  // Example:
+  //   void FooBar(a, b, Var* exception = NULL) {
+  //     foo_interface->Bar(a, b, Var::OutException(exception));
+  //   }
+  static inline PP_Var* OutException(Var* v) {
+    return v ? &v->var_ : 0;
+  }
+
  private:
   // Prevent an arbitrary pointer argument from being implicitly converted to
   // a bool at Var construction. If somebody makes such a mistake, (s)he will
   // get a compilation error.
   Var(void* non_scriptable_object_pointer);
-
-  // For internal use, this will handle getting the address of the internal
-  // value out if it's non-NULL for exception handling.
-  static inline PP_Var* OutException(Var* v) {
-    return v ? &v->var_ : 0;
-  }
 
   PP_Var var_;
   bool needs_release_;

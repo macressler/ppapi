@@ -11,7 +11,7 @@ struct PPB_ImageData;
 
 class TestImageData : public TestCase {
  public:
-  TestImageData(TestInstance* instance) : TestCase(instance) {}
+  TestImageData(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();

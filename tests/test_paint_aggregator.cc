@@ -5,7 +5,7 @@
 #include "ppapi/tests/test_paint_aggregator.h"
 
 #include "ppapi/cpp/paint_aggregator.h"
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/testing_instance.h"
 
 REGISTER_TEST_CASE(PaintAggregator);
 

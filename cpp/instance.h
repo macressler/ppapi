@@ -87,6 +87,7 @@ class Instance {
   Var GetOwnerElementObject();
   bool BindGraphics(const Graphics2D& graphics);
   bool IsFullFrame();
+  Var ExecuteScript(const Var& script, Var* exception = NULL);
 
   // Many optional interfaces are associated with a plugin instance. For
   // example, the find in PPP_Find interface receives updates on a per-instance

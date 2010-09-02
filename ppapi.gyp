@@ -277,8 +277,8 @@
         # Common test files.
         'tests/test_case.cc',
         'tests/test_case.h',
-        'tests/test_instance.cc',
-        'tests/test_instance.h',
+        'tests/testing_instance.cc',
+        'tests/testing_instance.h',
 
         # Test cases.
         'tests/test_buffer.cc',
@@ -291,6 +291,8 @@
         'tests/test_graphics_2d.h',
         'tests/test_image_data.cc',
         'tests/test_image_data.h',
+        'tests/test_instance.cc',
+        'tests/test_instance.h',
         'tests/test_paint_aggregator.cc',
         'tests/test_paint_aggregator.h',
         'tests/test_scrollbar.cc',

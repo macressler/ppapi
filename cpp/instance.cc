@@ -131,6 +131,14 @@ bool Instance::IsFullFrame() {
   return ppb_instance_f->IsFullFrame(pp_instance());
 }
 
+Var Instance::ExecuteScript(const Var& script, Var* exception) {
+  if (!ppb_instance_f)
+    return Var();
+  return Var(Var::PassRef(),
+             ppb_instance_f->ExecuteScript(pp_instance(), script.pp_var(),
+                                           Var::OutException(exception)));
+}
+
 void Instance::AddPerInstanceObject(const std::string& interface_name,
                                     void* object) {
   // Ensure we're not trying to register more than one object per interface

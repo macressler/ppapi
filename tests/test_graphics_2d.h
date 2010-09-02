@@ -21,7 +21,7 @@ class Rect;
 
 class TestGraphics2D : public TestCase {
  public:
-  TestGraphics2D(TestInstance* instance) : TestCase(instance) {}
+  TestGraphics2D(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();

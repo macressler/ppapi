@@ -6,7 +6,7 @@
 
 #include "ppapi/c/dev/ppb_url_util_dev.h"
 #include "ppapi/cpp/dev/url_util_dev.h"
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/testing_instance.h"
 
 REGISTER_TEST_CASE(UrlUtil);
 

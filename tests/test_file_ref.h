@@ -11,7 +11,7 @@
 
 class TestFileRef : public TestCase {
  public:
-  explicit TestFileRef(TestInstance* instance) : TestCase(instance) {}
+  explicit TestFileRef(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();

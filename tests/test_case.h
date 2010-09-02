@@ -9,13 +9,18 @@
 
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/cpp/dev/scrollbar_dev.h"
+#include "ppapi/cpp/var.h"
 
-class TestInstance;
+class TestingInstance;
+
+namespace pp {
+class ScriptableObject;
+}
 
 // Individual classes of tests derive from this generic test case.
 class TestCase {
  public:
-  TestCase(TestInstance* instance) : instance_(instance) {}
+  TestCase(TestingInstance* instance) : instance_(instance) {}
   virtual ~TestCase() {}
 
   // Optionally override to do testcase specific initialization.
@@ -27,18 +32,34 @@ class TestCase {
 
   std::string MakeFailureMessage(const char* file, int line, const char* cmd);
 
+  // Returns the scriptable test object for the current test, if any.
+  // Internally, this uses CreateTestObject which each test overrides.
+  pp::Var GetTestObject();
+
   // Override to get scrollbar notifications.
   virtual void ScrollbarValueChanged(pp::Scrollbar_Dev, uint32_t) {}
 
  protected:
+  // Overridden by each test to supply a ScriptableObject corresponding to the
+  // test. There can only be one object created for all test in a given class
+  // so be sure your object is designed to be re-used.
+  //
+  // This object should be created on the heap. Ownership will be passed to the
+  // caller. Return NULL if there is no supported test object (the default).
+  virtual pp::ScriptableObject* CreateTestObject();
+
   // Pointer to the instance that owns us.
-  TestInstance* instance_;
+  TestingInstance* instance_;
+
+ private:
+  // Holds the test object, if any was retrieved from CreateTestObject.
+  pp::Var test_object_;
 };
 
 // This class is an implementation detail.
 class TestCaseFactory {
  public:
-  typedef TestCase* (*Method)(TestInstance* instance);
+  typedef TestCase* (*Method)(TestingInstance* instance);
 
   TestCaseFactory(const char* name, Method method)
       : next_(head_),
@@ -48,7 +69,7 @@ class TestCaseFactory {
   }
 
  private:
-  friend class TestInstance;
+  friend class TestingInstance;
 
   TestCaseFactory* next_;
   const char* name_;
@@ -65,12 +86,12 @@ class TestCaseFactory {
 //
 // This will cause your test to be included in the set of known tests.
 //
-#define REGISTER_TEST_CASE(name)                                         \
-  static TestCase* Test##name##_FactoryMethod(TestInstance* instance) {  \
-    return new Test##name(instance);                                     \
-  }                                                                      \
-  static TestCaseFactory g_Test##name_factory(                           \
-    #name, &Test##name##_FactoryMethod                                   \
+#define REGISTER_TEST_CASE(name)                                            \
+  static TestCase* Test##name##_FactoryMethod(TestingInstance* instance) {  \
+    return new Test##name(instance);                                        \
+  }                                                                         \
+  static TestCaseFactory g_Test##name_factory(                              \
+    #name, &Test##name##_FactoryMethod                                      \
   )
 
 // Helper macro for calling functions implementing specific tests in the

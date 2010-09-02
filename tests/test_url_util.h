@@ -10,7 +10,7 @@
 
 class TestUrlUtil : public TestCase {
  public:
-  TestUrlUtil(TestInstance* instance) : TestCase(instance), util_(NULL) {}
+  TestUrlUtil(TestingInstance* instance) : TestCase(instance), util_(NULL) {}
 
   // TestCase implementation.
   virtual bool Init();

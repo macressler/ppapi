@@ -13,7 +13,7 @@ struct PPB_Buffer_Dev;
 
 class TestBuffer : public TestCase {
  public:
-  explicit TestBuffer(TestInstance* instance) : TestCase(instance) {}
+  explicit TestBuffer(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();

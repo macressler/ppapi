@@ -4,170 +4,119 @@
 
 #include "ppapi/tests/test_instance.h"
 
-#include <algorithm>
-#include <string.h>
-
 #include "ppapi/cpp/module.h"
-#include "ppapi/cpp/var.h"
-#include "ppapi/tests/test_case.h"
+#include "ppapi/cpp/scriptable_object.h"
+#include "ppapi/tests/testing_instance.h"
 
-TestCaseFactory* TestCaseFactory::head_ = NULL;
+namespace {
 
-// Returns a new heap-allocated test case for the given test, or NULL on
-// failure.
-TestInstance::TestInstance(PP_Instance instance)
-    : pp::Instance(instance),
-      current_case_(NULL),
-      executed_tests_(false) {
+static const char kSetValueFunction[] = "SetValue";
+static const char kSetExceptionFunction[] = "SetException";
+static const char kReturnValueFunction[] = "ReturnValue";
+
+// ScriptableObject used by instance.
+class InstanceSO : public pp::ScriptableObject {
+ public:
+  InstanceSO(TestInstance* i) : test_instance_(i) {}
+
+  // pp::ScriptableObject overrides.
+  bool HasMethod(const pp::Var& name, pp::Var* exception);
+  pp::Var Call(const pp::Var& name,
+               const std::vector<pp::Var>& args,
+               pp::Var* exception);
+
+ private:
+  TestInstance* test_instance_;
+};
+
+bool InstanceSO::HasMethod(const pp::Var& name, pp::Var* exception) {
+  if (!name.is_string())
+    return false;
+  return name.AsString() == kSetValueFunction ||
+         name.AsString() == kSetExceptionFunction ||
+         name.AsString() == kReturnValueFunction;
 }
 
-bool TestInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
-  // Create the proper test case from the argument.
-  for (uint32_t i = 0; i < argc; i++) {
-    if (strcmp(argn[i], "testcase") == 0) {
-      if (argv[i][0] == '\0')
-        break;
-      current_case_ = CaseForTestName(argv[i]);
-      if (!current_case_)
-        errors_.append(std::string("Unknown test case ") + argv[i]);
-      else if (!current_case_->Init())
-        errors_.append(" Test case could not initialize.");
-      return true;
-    }
+pp::Var InstanceSO::Call(const pp::Var& method_name,
+                         const std::vector<pp::Var>& args,
+                         pp::Var* exception) {
+  if (!method_name.is_string())
+    return false;
+  std::string name = method_name.AsString();
+
+  if (name == kSetValueFunction) {
+    if (args.size() != 1 || !args[0].is_string())
+      *exception = pp::Var("Bad argument to SetValue(<string>)");
+    else
+      test_instance_->set_string(args[0].AsString());
+  } else if (name == kSetExceptionFunction) {
+    if (args.size() != 1 || !args[0].is_string())
+      *exception = pp::Var("Bad argument to SetException(<string>)");
+    else
+      *exception = args[0];
+  } else if (name == kReturnValueFunction) {
+    if (args.size() != 1)
+      *exception = pp::Var("Need single arg to call ReturnValue");
+    else
+      return args[0];
+  } else {
+    *exception = pp::Var("Bad function call");
   }
 
-  // In ViewChanged, we'll dump out a list of all available tests.
+  return pp::Var();
+}
+
+}  // namespace
+
+REGISTER_TEST_CASE(Instance);
+
+TestInstance::TestInstance(TestingInstance* instance) : TestCase(instance) {
+}
+
+bool TestInstance::Init() {
   return true;
 }
 
-void TestInstance::ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
-  if (!executed_tests_) {
-    executed_tests_ = true;
-
-    // Clear the console.
-    // This does: window.document.getElementById("console").innerHTML = "";
-    GetWindowObject().GetProperty("document").
-        Call("getElementById", "console").SetProperty("innerHTML", "");
-
-    if (!errors_.empty()) {
-      // Catch initialization errors and output the current error string to
-      // the console.
-      LogError("Plugin initialization failed: " + errors_);
-    } else if (!current_case_) {
-      LogAvailableTests();
-    } else {
-      current_case_->RunTest();
-    }
-
-    // Declare we're done by setting a cookie to either "PASS" or the errors.
-    SetCookie("COMPLETION_COOKIE", errors_.empty() ? "PASS" : errors_);
-  }
+void TestInstance::RunTest() {
+  RUN_TEST(ExecuteScript);
 }
 
-void TestInstance::ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
-                                         uint32_t value) {
-  current_case_->ScrollbarValueChanged(scrollbar, value);
+pp::ScriptableObject* TestInstance::CreateTestObject() {
+  return new InstanceSO(this);
 }
 
-void TestInstance::LogTest(const std::string& test_name,
-                           const std::string& error_message) {
-  std::string html;
-  html.append("<div class=\"test_line\"><span class=\"test_name\">");
-  html.append(test_name);
-  html.append("</span> ");
-  if (error_message.empty()) {
-    html.append("<span class=\"pass\">PASS</span>");
-  } else {
-    html.append("<span class=\"fail\">FAIL</span>: <span class=\"err_msg\">");
-    html.append(error_message);
-    html.append("</span>");
+std::string TestInstance::TestExecuteScript() {
+  // Simple call back into the plugin.
+  pp::Var exception;
+  pp::Var ret = instance_->ExecuteScript(
+      "document.getElementById('plugin').SetValue('hello, world');",
+      &exception);
+  ASSERT_TRUE(ret.is_void());
+  ASSERT_TRUE(exception.is_void());
+  ASSERT_TRUE(string_ == "hello, world");
 
-    if (!errors_.empty())
-      errors_.append(", ");  // Separator for different error messages.
-    errors_.append(test_name + " FAIL: " + error_message);
-  }
-  html.append("</div>");
-  LogHTML(html);
+  // Return values from the plugin should be returned.
+  ret = instance_->ExecuteScript(
+      "document.getElementById('plugin').ReturnValue('return value');",
+      &exception);
+  ASSERT_TRUE(ret.is_string() && ret.AsString() == "return value");
+  ASSERT_TRUE(exception.is_void());
+
+  // Exception thrown by the plugin should be caught.
+  ret = instance_->ExecuteScript(
+      "document.getElementById('plugin').SetException('plugin exception');",
+      &exception);
+  ASSERT_TRUE(ret.is_void());
+  ASSERT_TRUE(exception.is_string());
+  // TODO(brettw) bug 54011: The TryCatch isn't working properly and
+  // doesn't actually pass the exception text up.
+  //ASSERT_TRUE(exception.AsString() == "plugin exception");
+
+  // Exception caused by string evaluation should be caught.
+  exception = pp::Var();
+  ret = instance_->ExecuteScript("document.doesntExist()", &exception);
+  ASSERT_TRUE(ret.is_void());
+  ASSERT_TRUE(exception.is_string());  // Don't know exactly what it will say.
+
+  return std::string();
 }
-
-void TestInstance::AppendError(const std::string& message) {
-  if (!errors_.empty())
-    errors_.append(", ");
-  errors_.append(message);
-}
-
-TestCase* TestInstance::CaseForTestName(const char* name) {
-  TestCaseFactory* iter = TestCaseFactory::head_;
-  while (iter != NULL) {
-    if (strcmp(name, iter->name_) == 0)
-      return iter->method_(this);
-    iter = iter->next_;
-  }
-  return NULL;
-}
-
-void TestInstance::LogAvailableTests() {
-  // Print out a listing of all tests.
-  std::vector<std::string> test_cases;
-  TestCaseFactory* iter = TestCaseFactory::head_;
-  while (iter != NULL) {
-    test_cases.push_back(iter->name_);
-    iter = iter->next_;
-  }
-  std::sort(test_cases.begin(), test_cases.end());
-
-  std::string html;
-  html.append("Available test cases: <dl>");
-  for (size_t i = 0; i < test_cases.size(); ++i) {
-    html.append("<dd><a href='?");
-    html.append(test_cases[i]);
-    html.append("'>");
-    html.append(test_cases[i]);
-    html.append("</a></dd>");
-  }
-  html.append("</dl>");
-  html.append("<button onclick='RunAll()'>Run All Tests</button>");
-  LogHTML(html);  
-}
-
-void TestInstance::LogError(const std::string& text) {
-  std::string html;
-  html.append("<span class=\"fail\">FAIL</span>: <span class=\"err_msg\">");
-  html.append(text);
-  html.append("</span>");
-  LogHTML(html);
-}
-
-void TestInstance::LogHTML(const std::string& html) {
-  // This does: window.document.getElementById("console").innerHTML += html
-  pp::Var console = GetWindowObject().GetProperty("document").
-      Call("getElementById", "console");
-  pp::Var inner_html = console.GetProperty("innerHTML");
-  console.SetProperty("innerHTML", inner_html.AsString() + html);
-}
-
-void TestInstance::SetCookie(const std::string& name,
-                             const std::string& value) {
-  // window.document.cookie = "<name>=<value>; path=/"
-  std::string cookie_string = name + "=" + value + "; path=/";
-  pp::Var document = GetWindowObject().GetProperty("document");
-  document.SetProperty("cookie", cookie_string);
-}
-
-class Module : public pp::Module {
- public:
-  Module() : pp::Module() {}
-  virtual ~Module() {}
-
-  virtual pp::Instance* CreateInstance(PP_Instance instance) {
-    return new TestInstance(instance);
-  }
-};
-
-namespace pp {
-
-Module* CreateModule() {
-  return new ::Module();
-}
-
-}  // namespace pp

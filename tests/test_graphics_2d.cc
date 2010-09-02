@@ -15,7 +15,7 @@
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/rect.h"
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/testing_instance.h"
 
 REGISTER_TEST_CASE(Graphics2D);
 

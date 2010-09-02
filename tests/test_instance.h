@@ -2,74 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_TEST_TEST_INSTANCE_H_
-#define PPAPI_TEST_TEST_INSTANCE_H_
+#ifndef PPAPI_TESTS_TEST_INSTANCE_H_
+#define PPAPI_TESTS_TEST_INSTANCE_H_
 
 #include <string>
+#include <vector>
 
-#include "ppapi/cpp/instance.h"
+#include "ppapi/tests/test_case.h"
 
-class TestCase;
-
-namespace pp {
-class Scrollbar_Dev;
-}
-
-class TestInstance : public pp::Instance {
+class TestInstance : public TestCase {
  public:
-  TestInstance(PP_Instance instance);
+  TestInstance(TestingInstance* instance);
 
-  // pp::Instance override.
-  virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
-  virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip);
-  virtual void ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
-                                     uint32_t value);
+  // TestCase implementation.
+  virtual bool Init();
+  virtual void RunTest();
 
-  // Outputs the information from one test run, using the format
-  //   <test_name> [PASS|FAIL <error_message>]
-  // If error_message is empty, we say the test passed and emit PASS. If
-  // error_message is nonempty, the test failed with that message as the error
-  // string.
-  //
-  // Intended usage:
-  //   LogTest("Foo", FooTest());
-  //
-  // Where FooTest is defined as:
-  //   std::string FooTest() {
-  //     if (something_horrible_happened)
-  //       return "Something horrible happened";
-  //     return "";
-  //   }
-  void LogTest(const std::string& test_name, const std::string& error_message);
+  void set_string(const std::string& s) { string_ = s; }
 
-  // Appends an error message to the log.
-  void AppendError(const std::string& message);
+ protected:
+  // Test case protected overrides.
+  virtual pp::ScriptableObject* CreateTestObject();
 
  private:
-  // Creates a new TestCase for the give test name, or NULL if there is no such
-  // test. Ownership is passed to the caller.
-  TestCase* CaseForTestName(const char* name);
+  std::string TestExecuteScript();
 
-  // Appends a list of available tests to the console in the document.
-  void LogAvailableTests();
-
-  // Appends the given error test to the console in the document.
-  void LogError(const std::string& text);
-
-  // Appends the given HTML string to the console in the document.
-  void LogHTML(const std::string& html);
-
-  // Sets the given cookie in the current document.
-  void SetCookie(const std::string& name, const std::string& value);
-
-  // Owning pointer to the current test case. Valid after Init has been called.
-  TestCase* current_case_;
-
-  // Set once the tests are run so we know not to re-run when the view is sized.
-  bool executed_tests_;
-
-  // Collects all errors to send the the browser. Empty indicates no error yet.
-  std::string errors_;
+  // Value written by set_string which is called by the ScriptableObject. This
+  // allows us to keep track of what was called.
+  std::string string_;
 };
 
-#endif  // PPAPI_TEST_TEST_INSTANCE_H_
+#endif  // PPAPI_TESTS_TEST_INSTANCE_H_

@@ -7,11 +7,11 @@
 #include "ppapi/c/pp_event.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/rect.h"
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/testing_instance.h"
 
 REGISTER_TEST_CASE(Scrollbar);
 
-TestScrollbar::TestScrollbar(TestInstance* instance)
+TestScrollbar::TestScrollbar(TestingInstance* instance)
     : TestCase(instance),
       scrollbar_(*instance, true),
       scrollbar_value_changed_(false) {

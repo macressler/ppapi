@@ -17,7 +17,7 @@ class URLRequestInfo_Dev;
 
 class TestURLLoader : public TestCase {
  public:
-  explicit TestURLLoader(TestInstance* instance) : TestCase(instance) {}
+  explicit TestURLLoader(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();

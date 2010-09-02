@@ -9,7 +9,7 @@
 
 class TestPaintAggregator : public TestCase {
  public:
-  TestPaintAggregator(TestInstance* instance) : TestCase(instance) {}
+  TestPaintAggregator(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();
