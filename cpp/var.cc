@@ -107,7 +107,7 @@ Var::Var(ScriptableObject* object) {
 
 Var::Var(const Var& other) {
   var_ = other.var_;
-  if (NeedsRefcounting(var_) && other.needs_release_) {
+  if (NeedsRefcounting(var_)) {
     if (ppb_var_f) {
       needs_release_ = true;
       ppb_var_f->AddRef(var_);
