@@ -5,6 +5,9 @@
 #ifndef PPAPI_CPP_INSTANCE_H_
 #define PPAPI_CPP_INSTANCE_H_
 
+#include <map>
+#include <string>
+
 #include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
@@ -85,13 +88,39 @@ class Instance {
   bool BindGraphics(const Graphics2D& graphics);
   bool IsFullFrame();
 
-  // PPB_Find methods
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  void NumberOfFindResultsChanged(int32_t total, bool final_result);
-  void SelectedFindResultChanged(int32_t index);
+  // Many optional interfaces are associated with a plugin instance. For
+  // example, the find in PPP_Find interface receives updates on a per-instance
+  // basis. This "per-instance" tracking allows such objects to associate
+  // themselves with an instance as "the" handler for that interface name.
+  //
+  // In the case of the find example, the find object registers with its
+  // associated instance in its constructor and unregisters in its destructor.
+  // Then whenever it gets updates with a PP_Instance parameter, it can
+  // map back to the find object corresponding to that given PP_Instance by
+  // calling GetPerInstanceObject.
+  //
+  // This lookup is done on a per-interface-name basis. This means you can
+  // only have one object of a given interface name associated with an
+  // instance.
+  //
+  // If you are adding a handler for an additional interface, be sure to
+  // register with the module (AddPluginInterface) for your interface name to
+  // get the C calls in the first place.
+  void AddPerInstanceObject(const std::string& interface_name, void* object);
+  void RemovePerInstanceObject(const std::string& interface_name, void* object);
+
+  // See comments for Add/RemovePerInstanceObject. This function is used to
+  // lookup an object previously associated with an instance. Returns NULL
+  // if the instance is invalid or there is no object for the given interface
+  // name on the instance.
+  static void* GetPerInstanceObject(PP_Instance instance,
+                                    const std::string& interface_name);
 
  private:
   PP_Instance pp_instance_;
+
+  typedef std::map<std::string, void*> InterfaceNameToObjectMap;
+  InterfaceNameToObjectMap interface_name_to_objects_;
 };
 
 }  // namespace pp

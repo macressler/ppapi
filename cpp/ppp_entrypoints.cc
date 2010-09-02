@@ -48,5 +48,5 @@ PP_EXPORT void PPP_ShutdownModule() {
 PP_EXPORT const void* PPP_GetInterface(const char* interface_name) {
   if (!g_module_singleton)
     return NULL;
-  return g_module_singleton->GetInstanceInterface(interface_name);
+  return g_module_singleton->GetPluginInterface(interface_name);
 }

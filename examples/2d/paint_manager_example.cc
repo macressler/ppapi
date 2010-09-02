@@ -68,8 +68,8 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
     }
   }
 
-  virtual void ViewChanged(const PP_Rect& position, const PP_Rect& clip) {
-    paint_manager_.SetSize(position.size);
+  virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
+    paint_manager_.SetSize(position.size());
   }
 
   // PaintManager::Client implementation.

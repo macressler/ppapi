@@ -6,6 +6,7 @@
 #define PPAPI_CPP_MODULE_H_
 
 #include <map>
+#include <string>
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_module.h"
@@ -45,10 +46,10 @@ class Module {
   // It will be NULL before Init() has been called.
   Core* core() { return core_; }
 
-  // Implements GetInterface for the browser to get plugin interfaces. Override
-  // if you need to implement your own interface types that this wrapper
-  // doesn't support.
-  virtual const void* GetInstanceInterface(const char* interface_name);
+  // Implements GetInterface for the browser to get plugin interfaces. If you
+  // need to provide your own implementations of new interfaces, you can use
+  // AddPluginInterface which this function will use.
+  const void* GetPluginInterface(const char* interface_name);
 
   // Returns an interface in the browser.
   const void* GetBrowserInterface(const char* interface_name);
@@ -56,6 +57,21 @@ class Module {
   // Returns the object associated with this PP_Instance, or NULL if one is
   // not found.
   Instance* InstanceForPPInstance(PP_Instance instance);
+
+  // Adds a handler for a given interface name. When the browser requests
+  // that interface name, the given |vtable| will be returned.
+  //
+  // In general, plugins will not need to call this directly. Instead, the
+  // C++ wrappers for each interface will register themselves with this
+  // function.
+  //
+  // This function may be called more than once with the same interface name
+  // and vtable with no effect. However, it may not be used to register a
+  // different vtable for an already-registered interface. It will assert for
+  // a different registration for an already-registered interface in debug
+  // mode, and just ignore the registration in release mode.
+  void AddPluginInterface(const std::string& interface_name,
+                          const void* vtable);
 
   // Sets the browser interface and calls the regular init function that
   // can be overridden by the base classes.
@@ -85,6 +101,11 @@ class Module {
   PPB_GetInterface get_browser_interface_;
 
   Core* core_;
+
+  // All additional interfaces this plugin can handle as registered by
+  // AddPluginInterface.
+  typedef std::map<std::string, const void*> InterfaceMap;
+  InterfaceMap additional_interfaces_;
 };
 
 }  // namespace pp

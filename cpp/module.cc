@@ -25,7 +25,7 @@
 
 #include <string.h>
 
-#include "ppapi/c/dev/ppp_find_dev.h"
+#include "ppapi/c/dev/ppb_find_dev.h"
 #include "ppapi/c/dev/ppp_graphics_3d_dev.h"
 #include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/dev/ppp_scrollbar_dev.h"
@@ -273,44 +273,6 @@ static PPP_Zoom_Dev zoom_interface = {
   &Zoom,
 };
 
-// PPP_Find implementation -----------------------------------------------------
-
-bool StartFind(PP_Instance instance_id, const char* text, bool case_sensitive) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return false;
-  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
-  if (!instance)
-    return false;
-  return instance->StartFind(text, case_sensitive);
-}
-
-void SelectFindResult(PP_Instance instance_id, bool forward) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return;
-  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
-  if (!instance)
-    return;
-  return instance->SelectFindResult(forward);
-}
-
-void StopFind(PP_Instance instance_id) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return;
-  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
-  if (!instance)
-    return;
-  return instance->StopFind();
-}
-
-static PPP_Find_Dev find_interface = {
-  &StartFind,
-  &SelectFindResult,
-  &StopFind,
-};
-
 // PPP_Graphics3D implementation -----------------------------------------------
 
 void Graphics3D_ContextLost(PP_Instance pp_instance) {
@@ -337,7 +299,7 @@ Module::~Module() {
   core_ = NULL;
 }
 
-const void* Module::GetInstanceInterface(const char* interface_name) {
+const void* Module::GetPluginInterface(const char* interface_name) {
   if (strcmp(interface_name, PPP_INSTANCE_INTERFACE) == 0)
     return &instance_interface;
   if (strcmp(interface_name, PPP_PRINTING_DEV_INTERFACE) == 0)
@@ -348,10 +310,14 @@ const void* Module::GetInstanceInterface(const char* interface_name) {
     return &scrollbar_interface;
   if (strcmp(interface_name, PPP_ZOOM_DEV_INTERFACE) == 0)
     return &zoom_interface;
-  if (strcmp(interface_name, PPP_FIND_DEV_INTERFACE) == 0)
-    return &find_interface;
   if (strcmp(interface_name, PPP_GRAPHICS_3D_DEV_INTERFACE) == 0)
     return &graphics_3d_interface;
+
+  // Now see if anything was dynamically registered.
+  InterfaceMap::const_iterator found = additional_interfaces_.find(
+      std::string(interface_name));
+  if (found != additional_interfaces_.end())
+    return found->second;
 
   return NULL;
 }
@@ -365,6 +331,20 @@ Instance* Module::InstanceForPPInstance(PP_Instance instance) {
   if (found == current_instances_.end())
     return NULL;
   return found->second;
+}
+
+void Module::AddPluginInterface(const std::string& interface_name,
+                                const void* vtable) {
+  // Verify that we're not trying to register an interface that's already
+  // handled, and if it is, that we're re-registering with the same vtable.
+  // Calling GetPluginInterface rather than looking it up in the map allows
+  // us to also catch "internal" ones in addition to just previously added ones.
+  const void* existing_interface = GetPluginInterface(interface_name.c_str());
+  if (existing_interface) {
+    PP_DCHECK(vtable == existing_interface);
+    return;
+  }
+  additional_interfaces_[interface_name] = vtable;
 }
 
 bool Module::InternalInit(PP_Module mod,

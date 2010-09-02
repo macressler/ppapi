@@ -146,6 +146,8 @@
         'cpp/dev/file_ref_dev.h',
         'cpp/dev/file_system_dev.cc',
         'cpp/dev/file_system_dev.h',
+        'cpp/dev/find_dev.cc',
+        'cpp/dev/find_dev.h',
         'cpp/dev/font_dev.cc',
         'cpp/dev/font_dev.h',
         'cpp/dev/graphics_3d_dev.cc',
