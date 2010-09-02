@@ -8,7 +8,7 @@
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/testing_instance.h"
 
 static uint32_t kInvalidLength = static_cast<uint32_t>(-1);
 
