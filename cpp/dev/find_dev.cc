@@ -50,7 +50,7 @@ DeviceFuncs<PPB_Find_Dev> ppb_find_f(PPB_FIND_DEV_INTERFACE);
 }  // namespace
 
 Find_Dev::Find_Dev(Instance* instance) : associated_instance_(instance) {
-  pp::Module::Get()->AddPluginInterface(kPPPFindInterface, this);
+  pp::Module::Get()->AddPluginInterface(kPPPFindInterface, &ppp_find);
   associated_instance_->AddPerInstanceObject(kPPPFindInterface, this);
 }
 
