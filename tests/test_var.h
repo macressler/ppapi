@@ -13,7 +13,7 @@ struct PPB_Var;
 
 class TestVar : public TestCase {
  public:
-  explicit TestVar(TestInstance* instance) : TestCase(instance) {}
+  explicit TestVar(TestingInstance* instance) : TestCase(instance) {}
 
   // TestCase implementation.
   virtual bool Init();
