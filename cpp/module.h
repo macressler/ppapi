@@ -39,6 +39,13 @@ class Module {
   // Returns the internal module handle.
   PP_Module pp_module() const { return pp_module_; }
 
+  // Returns the internal get_browser_interface pointer.
+  // TODO(sehr): This should be removed once the NaCl browser plugin no longer
+  // needs it.
+  PPB_GetInterface get_browser_interface() const {
+    return get_browser_interface_;
+  }
+
   // Returns the core interface for doing basic global operations. This is
   // guaranteed to be non-NULL once the module has successfully initialized
   // and during the Init() call.

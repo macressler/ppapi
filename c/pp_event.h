@@ -27,7 +27,7 @@ typedef enum {
   PP_EVENT_TYPE_KEYDOWN    = 7,
   PP_EVENT_TYPE_KEYUP      = 8,
   PP_EVENT_TYPE_CHAR       = 9,
-  PP_EVENT_TYPE_FOCUS      = 11,
+  PP_EVENT_TYPE_FOCUS      = 11
 } PP_Event_Type;
 
 typedef enum {
