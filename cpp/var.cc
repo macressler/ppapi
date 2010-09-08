@@ -22,7 +22,8 @@
 #endif
 
 // Defining PRId32
-#if defined(__native_client__)
+#if defined(__native_client__) && !defined(__GLIBC__)
+// This is a workaround for a broken <inttypes.h> in nacl-newlib.
 #  define PRId32 "ld"
 #elif defined(_WIN64)
 #  define PRId32 "I64d"
