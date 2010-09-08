@@ -5,6 +5,14 @@
 #ifndef PPAPI_C_PP_EVENT_H_
 #define PPAPI_C_PP_EVENT_H_
 
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PP
+ * @{
+ */
+
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_time.h"
 
@@ -86,5 +94,10 @@ struct PP_Event {
     struct PP_Event_Focus focus;
   } u;
 };
+
+/**
+ * @}
+ * End of addtogroup PP
+ */
 
 #endif  // PPAPI_C_PP_EVENT_H_

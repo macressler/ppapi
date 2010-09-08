@@ -7,18 +7,33 @@
 
 #include "ppapi/c/pp_stdint.h"
 
-// A resource is data associated with the Pepper plugin interface. While a
-// Var represents something callable to JS or from the plugin to the DOM, a
-// resource has no meaning or visibility outside of the plugin interface.
-//
-// Resources are reference counted. Use AddRefResource and ReleaseResource to
-// manage your reference count of a resource. The data will be automatically
-// destroyed when the internal reference count reaches 0.
-//
-// Value is an opaque handle assigned by the browser to the resource. It is
-// guaranteed never to be 0 for a valid resource, so a plugin can initialize
-// it to 0 to indicate a "NULL handle." Some interfaces may return a NULL
-// resource to indicate failure.
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PP
+ * @{
+ */
+
+/**
+ * A resource is data associated with the Pepper plugin interface. While a
+ * Var represents something callable to JS or from the plugin to the DOM, a
+ * resource has no meaning or visibility outside of the plugin interface.
+ *
+ * Resources are reference counted. Use AddRefResource and ReleaseResource to
+ * manage your reference count of a resource. The data will be automatically
+ * destroyed when the internal reference count reaches 0.
+ *
+ * Value is an opaque handle assigned by the browser to the resource. It is
+ * guaranteed never to be 0 for a valid resource, so a plugin can initialize
+ * it to 0 to indicate a "NULL handle." Some interfaces may return a NULL
+ * resource to indicate failure.
+ */
 typedef int64_t PP_Resource;
+
+/**
+ * @}
+ * End addtogroup PP
+ */
 
 #endif  // PPAPI_C_PP_RESOURCE_H_

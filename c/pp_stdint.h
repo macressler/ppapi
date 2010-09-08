@@ -5,6 +5,14 @@
 #ifndef PPAPI_C_PP_STDINT_H_
 #define PPAPI_C_PP_STDINT_H_
 
+/**
+ * @file
+ * Provides a definition of C99 sized types
+ * across different compilers.
+ *
+ * @addtogroup PP
+ * @{
+ */
 #if defined(_MSC_VER)
 
 typedef unsigned char uint8_t;
@@ -21,4 +29,8 @@ typedef unsigned __int64 uint64_t;
 #include <stddef.h>  // Needed for size_t.
 #endif
 
+/**
+ * @}
+ * End addtogroup PP
+ */
 #endif  // PPAPI_C_PP_STDINT_H_

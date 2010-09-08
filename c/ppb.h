@@ -5,8 +5,22 @@
 #ifndef PPAPI_C_PPB_H_
 #define PPAPI_C_PPB_H_
 
-// Returns an interface pointer for the interface of the given name, or NULL
-// if the interface is not supported. Interface names should be ASCII.
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PPB
+ * @{
+ */
+
+/**
+ * Returns an interface pointer for the interface of the given name, or NULL
+ * if the interface is not supported. Interface names should be ASCII.
+ */
 typedef const void* (*PPB_GetInterface)(const char* interface_name);
 
+/**
+ * @}
+ * End addtogroup PPB
+ */
 #endif  // PPAPI_C_PPB_H_

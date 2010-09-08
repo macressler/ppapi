@@ -5,6 +5,14 @@
 #ifndef PPAPI_C_PP_VAR_H_
 #define PPAPI_C_PP_VAR_H_
 
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PP
+ * @{
+ */
+
 #include "ppapi/c/pp_stdint.h"
 
 typedef enum {
@@ -17,26 +25,30 @@ typedef enum {
   PP_VARTYPE_OBJECT
 } PP_VarType;
 
+/**
+ * Do not rely on having a predictable and reproducible
+ * int/double differentiation.
+ * JavaScript has a "number" type for holding a number, and
+ * does not differentiate between floating point and integer numbers. The
+ * JavaScript library will try to optimize operations by using integers
+ * when possible, but could end up with doubles depending on how the number
+ * was arrived at.
+ *
+ * Your best bet is to have a wrapper for variables
+ * that always gets out the type you expect, converting as necessary.
+ */
 struct PP_Var {
   PP_VarType type;
   union {
     bool as_bool;
-
-    // Numeric values. JavaScript has a "number" type for holding a number, and
-    // does not differentiate between floating point and integer numbers. The
-    // JavaScript library will try to optimize operations by using integers
-    // when possible, but could end up with doubles depending on how the number
-    // was arrived at.
-    //
-    // Therefore, you should not rely on having a predictable and reproducible
-    // int/double differentiation. The best bet is to have a wrapper for this
-    // which always gets out the type you expect, converting as necessary.
     int32_t as_int;
     double as_double;
 
-    // Internal ID for strings and objects. The identifier is an opaque handle
-    // assigned by the browser to the plugin. It is guaranteed never to be 0,
-    // so a plugin can initialize this ID to 0 to indicate a "NULL handle."
+    /**
+     * Internal ID for strings and objects. The identifier is an opaque handle
+     * assigned by the browser to the plugin. It is guaranteed never to be 0,
+     * so a plugin can initialize this ID to 0 to indicate a "NULL handle."
+     */
     int64_t as_id;
   } value;
 };
@@ -69,4 +81,8 @@ inline PP_Var PP_MakeDouble(double value) {
   return result;
 }
 
+/**
+ * @}
+ * End addtogroup PP
+ */
 #endif  // PPAPI_C_PP_VAR_H_

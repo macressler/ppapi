@@ -5,6 +5,14 @@
 #ifndef PPAPI_CPP_INSTANCE_H_
 #define PPAPI_CPP_INSTANCE_H_
 
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup CPP
+ * @{
+ */
+
 #include <map>
 #include <string>
 
@@ -15,6 +23,7 @@
 
 struct PP_Event;
 
+/** The C++ interface to the Pepper API. */
 namespace pp {
 
 class Graphics2D;
@@ -35,85 +44,145 @@ class Instance {
 
   PP_Instance pp_instance() const { return pp_instance_; }
 
-  // Initializes this plugin with the given arguments. The argument count is in
-  // |argc|, the argument names are in |argn|, and the argument values are in
-  // |argv|. Returns true on success. Returning false will cause the plugin
-  // instance to be deleted and no other functions will be called.
+  /**
+   * Initializes this plugin with the given arguments.
+   * @param argc The argument count
+   * @param argn The argument names
+   * @param argv The argument values
+   * @return True on success. Returning false causes the plugin
+   * instance to be deleted and no other functions to be called.
+   */
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
 
-  // PPP_Instance methods for the plugin to override.
-  // See ppp_instance.h for details.
-  virtual bool HandleDocumentLoad(const URLLoader_Dev& url_loader);
-  virtual bool HandleEvent(const PP_Event& event);
-  virtual Var GetInstanceObject();
-  virtual void ViewChanged(const Rect& position, const Rect& clip);
-  virtual Var GetSelectedText(bool html);
 
-  // PPP_Printing methods for the plugin to override if it supports printing.
-  // See ppp_printing.h for details.
+  // @{
+  /** @name PPP_Instance methods for the plugin to override: */
+
+  /** See PPP_Instance.HandleDocumentLoad. */
+  virtual bool HandleDocumentLoad(const URLLoader_Dev& url_loader);
+
+  /** See PPP_Instance.HandleEvent. */
+  virtual bool HandleEvent(const PP_Event& event);
+
+  /** See PPP_Instance.GetInstanceObject. */
+  virtual Var GetInstanceObject();
+
+  /** See PPP_Instance.ViewChanged. */
+  virtual void ViewChanged(const Rect& position, const Rect& clip);
+
+  /** See PPP_Instance.GetSelectedText. */
+  virtual Var GetSelectedText(bool html);
+  // @}
+
+
+  // @{
+  /** @name PPP_Printing methods for the plugin to override if it supports printing (NOTE: this interface is subject to change): */
+
+  /** See ppp_printing.h. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual PP_PrintOutputFormat_Dev* QuerySupportedPrintOutputFormats(
       uint32_t* format_count);
+
+  /** See ppp_printing.h. */
   virtual int32_t PrintBegin(const PP_PrintSettings_Dev& print_settings);
+
+  /** See ppp_printing.h. */
   virtual Resource PrintPages(const PP_PrintPageNumberRange_Dev* page_ranges,
                               uint32_t page_range_count);
-  virtual void PrintEnd();
 
-  // Widget interface.
+  /** See ppp_printing.h. */
+  virtual void PrintEnd();
+  // @}
+
+
+  /** Widget interface. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void InvalidateWidget(Widget_Dev widget, const Rect& dirty_rect);
 
-  // Scrollbar interface.
+  /** Scrollbar interface. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void ScrollbarValueChanged(Scrollbar_Dev scrollbar, uint32_t value);
 
-  // Zoom interface.
+  /** Zoom interface. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void Zoom(float scale, bool text_only);
 
-  // Find interface.
+
+  // @{
+  /** @name Find interface (NOTE: this interface is subject to change): */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual bool StartFind(const char* text, bool case_sensitive);
   virtual void SelectFindResult(bool forward);
   virtual void StopFind();
+  // @}
 
-  // Graphics3D interface.
+
+  /** Graphics3D interface. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void Graphics3DContextLost();
 
-  // PPB_Instance methods for querying the browser.
-  // See ppb_instance.h for details.
-  Var GetWindowObject();
-  Var GetOwnerElementObject();
-  bool BindGraphics(const Graphics2D& graphics);
-  bool IsFullFrame();
-  Var ExecuteScript(const Var& script, Var* exception = NULL);
 
-  // Many optional interfaces are associated with a plugin instance. For
-  // example, the find in PPP_Find interface receives updates on a per-instance
-  // basis. This "per-instance" tracking allows such objects to associate
-  // themselves with an instance as "the" handler for that interface name.
-  //
-  // In the case of the find example, the find object registers with its
-  // associated instance in its constructor and unregisters in its destructor.
-  // Then whenever it gets updates with a PP_Instance parameter, it can
-  // map back to the find object corresponding to that given PP_Instance by
-  // calling GetPerInstanceObject.
-  //
-  // This lookup is done on a per-interface-name basis. This means you can
-  // only have one object of a given interface name associated with an
-  // instance.
-  //
-  // If you are adding a handler for an additional interface, be sure to
-  // register with the module (AddPluginInterface) for your interface name to
-  // get the C calls in the first place.
+  // @{
+  /** @name PPB_Instance methods for querying the browser: */
+
+  /** See PPB_Instance.GetWindowObject. */
+  Var GetWindowObject();
+
+  /** See PPB_Instance.GetOwnerElementObject. */
+  Var GetOwnerElementObject();
+
+  /** See PPB_Instance.BindGraphics. */
+  bool BindGraphics(const Graphics2D& graphics);
+
+  /** See PPB_Instance.IsFullFrame. */
+  bool IsFullFrame();
+
+  /** See PPB_Instance.ExecuteScript. */
+  Var ExecuteScript(const Var& script, Var* exception = NULL);
+  // @}
+
+  /**
+   * Associates a plugin instance with an interface,
+   * creating an object... {PENDING: clarify!}
+   *
+   * Many optional interfaces are associated with a plugin instance. For
+   * example, the find in PPP_Find interface receives updates on a per-instance
+   * basis. This "per-instance" tracking allows such objects to associate
+   * themselves with an instance as "the" handler for that interface name.
+   *
+   * In the case of the find example, the find object registers with its
+   * associated instance in its constructor and unregisters in its destructor.
+   * Then whenever it gets updates with a PP_Instance parameter, it can
+   * map back to the find object corresponding to that given PP_Instance by
+   * calling GetPerInstanceObject.
+   *
+   * This lookup is done on a per-interface-name basis. This means you can
+   * only have one object of a given interface name associated with an
+   * instance.
+   *
+   * If you are adding a handler for an additional interface, be sure to
+   * register with the module (AddPluginInterface) for your interface name to
+   * get the C calls in the first place.
+   *
+   * @see RemovePerInstanceObject
+   * @see GetPerInstanceObject
+   */
   void AddPerInstanceObject(const std::string& interface_name, void* object);
+
+  /**
+   * {PENDING: summarize Remove method here}
+   *
+   * @see AddPerInstanceObject
+   */
   void RemovePerInstanceObject(const std::string& interface_name, void* object);
 
-  // See comments for Add/RemovePerInstanceObject. This function is used to
-  // lookup an object previously associated with an instance. Returns NULL
-  // if the instance is invalid or there is no object for the given interface
-  // name on the instance.
+  /**
+   * Look up an object previously associated with an instance. Returns NULL
+   * if the instance is invalid or there is no object for the given interface
+   * name on the instance.
+   *
+   * @see AddPerInstanceObject
+   */
   static void* GetPerInstanceObject(PP_Instance instance,
                                     const std::string& interface_name);
 
@@ -126,4 +195,8 @@ class Instance {
 
 }  // namespace pp
 
+/**
+ * @}
+ * End addtogroup CPP
+ */
 #endif  // PPAPI_CPP_INSTANCE_H_

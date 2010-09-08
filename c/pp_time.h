@@ -5,9 +5,23 @@
 #ifndef PPAPI_C_PP_TIME_H_
 #define PPAPI_C_PP_TIME_H_
 
-// PP_Time represents the "wall clock time" according to the browser and is
-// defined as the number of seconds since the Epoch (00:00:00 UTC, January 1,
-// 1970).
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PP
+ * @{
+ */
+
+/**
+ * PP_Time represents the "wall clock time" according to the browser and is
+ * defined as the number of seconds since the Epoch (00:00:00 UTC, January 1,
+ * 1970).
+ */
 typedef double PP_Time;
 
+/**
+ * @}
+ * End addtogroup PP
+ */
 #endif  // PPAPI_C_PP_TIME_H_

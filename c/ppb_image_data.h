@@ -27,45 +27,67 @@ struct PP_ImageDataDesc {
 
 #define PPB_IMAGEDATA_INTERFACE "PPB_ImageData;1"
 
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PPB
+ * @{
+ */
+
 struct PPB_ImageData {
-  // Returns the browser's preferred format for image data. This format will be
-  // the format is uses internally for painting. Other formats may require
-  // internal conversions to paint or may have additional restrictions depending
-  // on the function.
+  /**
+   * Returns the browser's preferred format for image data. This format will be
+   * the format is uses internally for painting. Other formats may require
+   * internal conversions to paint or may have additional restrictions depending
+   * on the function.
+   */
   PP_ImageDataFormat (*GetNativeImageDataFormat)();
 
-  // Allocates an image data resource with the given format and size. The
-  // return value will have a nonzero ID on success, or zero on failure.
-  // Failure means the module handle, image size, or format was invalid.
-  //
-  // Set the init_to_zero flag if you want the bitmap initialized to
-  // transparent during the creation process. If this flag is not set, the
-  // current contents of the bitmap will be undefined, and the plugin should
-  // be sure to set all the pixels.
-  //
-  // For security reasons, if uninitialized, the bitmap will not contain random
-  // memory, but may contain data from a previous image produced by the same
-  // plugin if the bitmap was cached and re-used.
+  /**
+   * Allocates an image data resource with the given format and size. The
+   * return value will have a nonzero ID on success, or zero on failure.
+   * Failure means the module handle, image size, or format was invalid.
+   *
+   * Set the init_to_zero flag if you want the bitmap initialized to
+   * transparent during the creation process. If this flag is not set, the
+   * current contents of the bitmap will be undefined, and the plugin should
+   * be sure to set all the pixels.
+   *
+   * For security reasons, if uninitialized, the bitmap will not contain random
+   * memory, but may contain data from a previous image produced by the same
+   * plugin if the bitmap was cached and re-used.
+   */
   PP_Resource (*Create)(PP_Module module,
                         PP_ImageDataFormat format,
                         const struct PP_Size* size,
                         bool init_to_zero);
 
-  // Returns true if the given resource is an image data. Returns false if the
-  // resource is invalid or some type other than an image data.
+  /**
+   * Returns true if the given resource is an image data. Returns false if the
+   * resource is invalid or some type other than an image data.
+   */
   bool (*IsImageData)(PP_Resource resource);
 
-  // Computes the description of the image data. Returns true on success, false
-  // if the resource is not an image data. On false, the |desc| structure will
-  // be filled with 0.
+  /**
+   * Computes the description of the image data. Returns true on success, false
+   * if the resource is not an image data. On false, the |desc| structure will
+   * be filled with 0.
+   */
   bool (*Describe)(PP_Resource resource,
                    struct PP_ImageDataDesc* desc);
 
-  // Maps this bitmap into the plugin address space and returns a pointer to the
-  // beginning of the data.
+  /**
+   * Maps this bitmap into the plugin address space and returns a pointer to the
+   * beginning of the data.
+   */
   void* (*Map)(PP_Resource resource);
 
   void (*Unmap)(PP_Resource resource);
 };
 
+/**
+ * @}
+ * End addtogroup PPB
+ */
 #endif  // PPAPI_C_PPB_IMAGE_DATA_H_

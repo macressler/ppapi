@@ -5,6 +5,14 @@
 #ifndef PPAPI_C_PP_RECT_H_
 #define PPAPI_C_PP_RECT_H_
 
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PP
+ * @{
+ */
+
 #include "ppapi/c/pp_point.h"
 #include "ppapi/c/pp_size.h"
 #include "ppapi/c/pp_stdint.h"
@@ -24,4 +32,8 @@ inline struct PP_Rect PP_MakeRectFromXYWH(int32_t x, int32_t y,
   return ret;
 }
 
+/**
+ * @}
+ * End addtogroup PP
+ */
 #endif  // PPAPI_C_PP_RECT_H_

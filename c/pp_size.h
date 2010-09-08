@@ -5,6 +5,14 @@
 #ifndef PPAPI_C_PP_SIZE_H_
 #define PPAPI_C_PP_SIZE_H_
 
+/**
+ * @file
+ * Defines the API ...
+ *
+ * @addtogroup PP
+ * @{
+ */
+
 #include "ppapi/c/pp_stdint.h"
 
 struct PP_Size {
@@ -19,4 +27,8 @@ inline struct PP_Size PP_MakeSize(int32_t w, int32_t h) {
   return ret;
 }
 
+/**
+ * @}
+ * End addtogroup PP
+ */
 #endif  // PPAPI_C_PP_SIZE_H_
