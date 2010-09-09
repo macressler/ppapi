@@ -270,6 +270,13 @@ Var Var::Construct(uint32_t argc, Var* argv, Var* exception) const {
   }
 }
 
+Var Var::Call(const Var& method_name, Var* exception) {
+  if (!ppb_var_f)
+    return Var();
+  return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 0, NULL,
+                                        OutException(exception)));
+}
+
 Var Var::Call(const Var& method_name, const Var& arg1, Var* exception) {
   if (!ppb_var_f)
     return Var();

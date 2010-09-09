@@ -1,14 +1,19 @@
 <html><head>
 <link rel="stylesheet" href="test_page.css">
 <script>
-function AdjustHeight() {
-  // Called when a frame loads, so that we can adjust its height to the
-  // minimize size required to not have to show a scrollbar.  This works
-  // because tests run to completion during the ViewChanged notification.
-  var frame = event.target;
-  var div = frame.contentDocument.getElementsByTagName("div")[0];
-  var height = frame.contentWindow.getComputedStyle(div).height;
-  frame.style.height = height;
+function AdjustHeight(frameWin) {
+  var div = frameWin.document.getElementsByTagName("div")[0];
+  var height = frameWin.getComputedStyle(div).height;
+  frameWin.frameElement.style.height = height;
+}
+
+function DidExecuteTests() {
+  if (window == top)
+    return;
+
+  // Otherwise, we are in a subframe, so we can use this opportunity to resize
+  // ourselves.
+  AdjustHeight(window);
 }
 
 function AppendFrame(testcase, i) {
@@ -21,7 +26,7 @@ function AppendFrame(testcase, i) {
 
   var frame = document.createElement("IFRAME");
   frame.setAttribute("src", "?" + testcase);
-  frame.setAttribute("onload", "AdjustHeight(); LoadNext(" + (i + 1) + ")");
+  frame.setAttribute("onload", "LoadNext(" + (i + 1) + ")");
   p.appendChild(frame);
 
   document.body.appendChild(p);

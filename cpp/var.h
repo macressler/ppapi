@@ -109,6 +109,7 @@ class Var {
   Var Construct(uint32_t argc, Var* argv, Var* exception = NULL) const;
 
   // Convenience functions for calling functions with small # of args.
+  Var Call(const Var& method_name, Var* exception = NULL);
   Var Call(const Var& method_name, const Var& arg1, Var* exception = NULL);
   Var Call(const Var& method_name, const Var& arg1, const Var& arg2,
            Var* exception = NULL);

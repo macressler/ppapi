@@ -7,6 +7,7 @@
 
 #include <string>
 
+#include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/instance.h"
 
 class TestCase;
@@ -47,6 +48,8 @@ class TestingInstance : public pp::Instance {
   void AppendError(const std::string& message);
 
  private:
+  void ExecuteTests(int32_t unused);
+
   // Creates a new TestCase for the give test name, or NULL if there is no such
   // test. Ownership is passed to the caller.
   TestCase* CaseForTestName(const char* name);
@@ -62,6 +65,8 @@ class TestingInstance : public pp::Instance {
 
   // Sets the given cookie in the current document.
   void SetCookie(const std::string& name, const std::string& value);
+
+  pp::CompletionCallbackFactory<TestingInstance> callback_factory_;
 
   // Owning pointer to the current test case. Valid after Init has been called.
   TestCase* current_case_;

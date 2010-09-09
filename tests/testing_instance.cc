@@ -19,6 +19,7 @@ TestingInstance::TestingInstance(PP_Instance instance)
     : pp::Instance(instance),
       current_case_(NULL),
       executed_tests_(false) {
+  callback_factory_.Initialize(this);
 }
 
 bool TestingInstance::Init(uint32_t argc, const char* argn[], const char* argv[]) {
@@ -47,24 +48,9 @@ pp::Var TestingInstance::GetInstanceObject() {
 void TestingInstance::ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
   if (!executed_tests_) {
     executed_tests_ = true;
-
-    // Clear the console.
-    // This does: window.document.getElementById("console").innerHTML = "";
-    GetWindowObject().GetProperty("document").
-        Call("getElementById", "console").SetProperty("innerHTML", "");
-
-    if (!errors_.empty()) {
-      // Catch initialization errors and output the current error string to
-      // the console.
-      LogError("Plugin initialization failed: " + errors_);
-    } else if (!current_case_) {
-      LogAvailableTests();
-    } else {
-      current_case_->RunTest();
-    }
-
-    // Declare we're done by setting a cookie to either "PASS" or the errors.
-    SetCookie("COMPLETION_COOKIE", errors_.empty() ? "PASS" : errors_);
+    pp::Module::Get()->core()->CallOnMainThread(
+        0,
+        callback_factory_.NewCallback(&TestingInstance::ExecuteTests));
   }
 }
 
@@ -98,6 +84,29 @@ void TestingInstance::AppendError(const std::string& message) {
   if (!errors_.empty())
     errors_.append(", ");
   errors_.append(message);
+}
+
+void TestingInstance::ExecuteTests(int32_t unused) {
+  // Clear the console.
+  // This does: window.document.getElementById("console").innerHTML = "";
+  pp::Var window = GetWindowObject();
+  window.GetProperty("document").
+      Call("getElementById", "console").SetProperty("innerHTML", "");
+
+  if (!errors_.empty()) {
+    // Catch initialization errors and output the current error string to
+    // the console.
+    LogError("Plugin initialization failed: " + errors_);
+  } else if (!current_case_) {
+    LogAvailableTests();
+  } else {
+    current_case_->RunTest();
+  }
+
+  // Declare we're done by setting a cookie to either "PASS" or the errors.
+  SetCookie("COMPLETION_COOKIE", errors_.empty() ? "PASS" : errors_);
+
+  window.Call("DidExecuteTests");
 }
 
 TestCase* TestingInstance::CaseForTestName(const char* name) {
