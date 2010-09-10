@@ -30,6 +30,16 @@ ImageData::ImageData(const ImageData& other)
       data_(other.data_) {
 }
 
+ImageData::ImageData(PassRef, PP_Resource resource)
+    : data_(NULL) {
+  memset(&desc_, 0, sizeof(PP_ImageDataDesc));
+
+  if (!image_data_f)
+    return;
+
+  PassRefAndInitData(resource);
+}
+
 ImageData::ImageData(PP_ImageDataFormat format,
                      const Size& size,
                      bool init_to_zero)
@@ -39,12 +49,9 @@ ImageData::ImageData(PP_ImageDataFormat format,
   if (!image_data_f)
     return;
 
-  PassRefFromConstructor(image_data_f->Create(Module::Get()->pp_module(),
-                                              format, &size.pp_size(),
-                                              init_to_zero));
-  if (!image_data_f->Describe(pp_resource(), &desc_) ||
-      !(data_ = image_data_f->Map(pp_resource())))
-    *this = ImageData();
+  PassRefAndInitData(image_data_f->Create(Module::Get()->pp_module(),
+                                          format, &size.pp_size(),
+                                          init_to_zero));
 }
 
 ImageData::~ImageData() {
@@ -79,6 +86,13 @@ PP_ImageDataFormat ImageData::GetNativeImageDataFormat() {
   if (!image_data_f)
     return PP_IMAGEDATAFORMAT_BGRA_PREMUL;  // Default to something on failure.
   return image_data_f->GetNativeImageDataFormat();
+}
+
+void ImageData::PassRefAndInitData(PP_Resource resource) {
+  PassRefFromConstructor(resource);
+  if (!image_data_f->Describe(pp_resource(), &desc_) ||
+      !(data_ = image_data_f->Map(pp_resource())))
+    *this = ImageData();
 }
 
 }  // namespace pp

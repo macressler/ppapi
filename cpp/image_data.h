@@ -19,6 +19,11 @@ class ImageData : public Resource {
   // Creates an is_null() ImageData object.
   ImageData();
 
+  // This magic constructor is used when we've gotten a PP_Resource as a return
+  // value that has already been addref'ed for us.
+  struct PassRef {};
+  ImageData(PassRef, PP_Resource resource);
+
   ImageData(const ImageData& other);
 
   // Allocates a new ImageData in the browser with the given parameters. The
@@ -49,6 +54,8 @@ class ImageData : public Resource {
   uint32_t* GetAddr32(const Point& coord);
 
  private:
+  void PassRefAndInitData(PP_Resource resource);
+
   PP_ImageDataDesc desc_;
   void* data_;
 };
