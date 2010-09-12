@@ -105,7 +105,7 @@ TextRun_Dev& TextRun_Dev::operator=(const TextRun_Dev& other) {
 }
 
 void TextRun_Dev::swap(TextRun_Dev& other) {
-  text_.swap(other.text_);
+  std::swap(text_, other.text_);
 
   // Fix up both object's pp_text_run.text to point to their text_ member.
   pp_text_run_.text = text_.pp_var();

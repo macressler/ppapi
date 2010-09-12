@@ -5,6 +5,7 @@
 #ifndef PPAPI_C_PPB_VAR_H_
 #define PPAPI_C_PPB_VAR_H_
 
+#include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
@@ -55,7 +56,8 @@ struct PPB_Var {
    * On error (basically out of memory to allocate the string, or input that
    * is not valid UTF-8), this function will return a Null var.
    */
-  struct PP_Var (*VarFromUtf8)(const char* data, uint32_t len);
+  struct PP_Var (*VarFromUtf8)(PP_Module module,
+                               const char* data, uint32_t len);
 
   /**
    * Converts a string-type var to a char* encoded in UTF-8. This string is NOT
@@ -64,9 +66,11 @@ struct PPB_Var {
    * be 0.
    *
    * If the var is not a string, this function will return NULL and |*len| will
-   * be 0. Note that if the Var is corrupt or the string has been freed, this
-   * function may crash; it is the plugin's responsibility to manage the memory
-   * properly.
+   * be 0.
+   *
+   * The returned buffer will be valid as long as the underlying var is alive.
+   * If the plugin frees its reference, the string will be freed and the pointer
+   * will be to random memory.
    */
   const char* (*VarToUtf8)(struct PP_Var var, uint32_t* len);
 
@@ -204,6 +208,9 @@ struct PPB_Var {
    * The returned object will have a reference count of 1. When the reference
    * count reached 0, the class' Destruct function wlil be called.
    *
+   * On failure, this will return a null var. This probably means the module
+   * was invalid.
+   *
    * Example: Say we're implementing a "Point" object.
    * <pre>  void PointDestruct(void* object) {
    *     delete (Point*)object;
@@ -223,7 +230,8 @@ struct PPB_Var {
    *     return CreateObject(&point_class, new Point(x, y));
    *   }</pre>
    */
-  struct PP_Var (*CreateObject)(const struct PPP_Class* object_class,
+  struct PP_Var (*CreateObject)(PP_Module module,
+                                const struct PPP_Class* object_class,
                                 void* object_data);
 };
 

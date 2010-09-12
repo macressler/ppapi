@@ -4,6 +4,9 @@
 
 #include "ppapi/tests/test_var.h"
 
+#include <string.h>
+
+#include "ppapi/c/dev/ppb_testing_dev.h"
 #include "ppapi/c/ppb_var.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
@@ -17,16 +20,85 @@ REGISTER_TEST_CASE(Var);
 bool TestVar::Init() {
   var_interface_ = reinterpret_cast<PPB_Var const*>(
       pp::Module::Get()->GetBrowserInterface(PPB_VAR_INTERFACE));
-  return !!var_interface_;
+  testing_interface_ = reinterpret_cast<PPB_Testing_Dev const*>(
+      pp::Module::Get()->GetBrowserInterface(PPB_TESTING_DEV_INTERFACE));
+  if (!testing_interface_) {
+    // Give a more helpful error message for the testing interface being gone
+    // since that needs special enabling in Chrome.
+    instance_->AppendError("This test needs the testing interface, which is "
+        "not currently available. In Chrome, use --enable-pepper-testing when "
+        "launching.");
+  }
+  return var_interface_ && testing_interface_;
 }
 
 void TestVar::RunTest() {
-  instance_->LogTest("InvalidUtf8", TestInvalidUtf8());
-  instance_->LogTest("NullInputInUtf8Conversion",
-                     TestNullInputInUtf8Conversion());
-  instance_->LogTest("ValidUtf8", TestValidUtf8());
-  instance_->LogTest("Utf8WithEmbeddedNulls", TestUtf8WithEmbeddedNulls());
-  instance_->LogTest("VarToUtf8ForWrongType", TestVarToUtf8ForWrongType());
+  RUN_TEST(BasicString);
+  RUN_TEST(InvalidAndEmpty);
+  RUN_TEST(InvalidUtf8);
+  RUN_TEST(NullInputInUtf8Conversion);
+  RUN_TEST(ValidUtf8);
+  RUN_TEST(Utf8WithEmbeddedNulls);
+  RUN_TEST(VarToUtf8ForWrongType);
+  RUN_TEST(HasPropertyAndMethod);
+}
+
+std::string TestVar::TestBasicString() {
+  uint32_t before_object = testing_interface_->GetLiveObjectCount(
+      pp::Module::Get()->pp_module());
+  {
+    const uint32_t kStrLen = 5;
+    const char kStr[kStrLen + 1] = "Hello";
+    PP_Var str = var_interface_->VarFromUtf8(pp::Module::Get()->pp_module(),
+                                             kStr, sizeof(kStr) - 1);
+    ASSERT_TRUE(str.type == PP_VARTYPE_STRING);
+
+    // Reading back the string should work.
+    uint32_t len = 0;
+    const char* result = var_interface_->VarToUtf8(str, &len);
+    ASSERT_TRUE(len == kStrLen);
+    ASSERT_TRUE(strncmp(kStr, result, kStrLen) == 0);
+
+    // Destroy the string, readback should now fail.
+    var_interface_->Release(str);
+    result = var_interface_->VarToUtf8(str, &len);
+    ASSERT_TRUE(len == 0);
+    ASSERT_TRUE(result == NULL);
+  }
+
+  // Make sure nothing leaked.
+  ASSERT_TRUE(testing_interface_->GetLiveObjectCount(
+      pp::Module::Get()->pp_module()) == before_object);
+
+  return std::string();
+}
+
+std::string TestVar::TestInvalidAndEmpty() {
+  PP_Var invalid_string;
+  invalid_string.type = PP_VARTYPE_STRING;
+  invalid_string.value.as_id = 31415926535;
+
+  // Invalid strings should give NULL as the return value.
+  uint32_t len = std::numeric_limits<uint32_t>::max();
+  const char* result = var_interface_->VarToUtf8(invalid_string, &len);
+  ASSERT_TRUE(len == 0);
+  ASSERT_TRUE(result == NULL);
+
+  // Same with vars that are not strings.
+  len = std::numeric_limits<uint32_t>::max();
+  pp::Var int_var(42);
+  result = var_interface_->VarToUtf8(int_var.pp_var(), &len);
+  ASSERT_TRUE(len == 0);
+  ASSERT_TRUE(result == NULL);
+
+  // Empty strings should return non-NULL.
+  pp::Var empty_string("");
+  len = std::numeric_limits<uint32_t>::max();
+  result = var_interface_->VarToUtf8(empty_string.pp_var(), &len);
+  ASSERT_TRUE(len == 0);
+  ASSERT_TRUE(result != NULL);
+
+  return std::string();
 }
 
 std::string TestVar::TestInvalidUtf8() {
@@ -46,7 +118,8 @@ std::string TestVar::TestNullInputInUtf8Conversion() {
 
   // 0-length string should not dereference input string, and should produce
   // an empty string.
-  converted_string = var_interface_->VarFromUtf8(NULL, 0);
+  converted_string = var_interface_->VarFromUtf8(
+      pp::Module::Get()->pp_module(), NULL, 0);
   if (converted_string.type != PP_VARTYPE_STRING) {
     return "Expected 0 length to return empty string.";
   }
@@ -165,4 +238,81 @@ std::string TestVar::TestVarToUtf8ForWrongType() {
   }
 
   return "";
+}
+
+std::string TestVar::TestHasPropertyAndMethod() {
+  uint32_t before_objects = testing_interface_->GetLiveObjectCount(
+      pp::Module::Get()->pp_module());
+  {
+    pp::Var window = instance_->GetWindowObject();
+    ASSERT_TRUE(window.is_object());
+
+    // Regular property.
+    pp::Var exception;
+    ASSERT_TRUE(window.HasProperty("scrollX", &exception));
+    ASSERT_TRUE(exception.is_void());
+    ASSERT_FALSE(window.HasMethod("scrollX", &exception));
+    ASSERT_TRUE(exception.is_void());
+
+    // Regular method (also counts as HasProperty).
+    ASSERT_TRUE(window.HasProperty("find", &exception));
+    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(window.HasMethod("find", &exception));
+    ASSERT_TRUE(exception.is_void());
+
+    // Nonexistant ones should return false and not set the exception.
+    ASSERT_FALSE(window.HasProperty("superEvilBit", &exception));
+    ASSERT_TRUE(exception.is_void());
+    ASSERT_FALSE(window.HasMethod("superEvilBit", &exception));
+    ASSERT_TRUE(exception.is_void());
+
+    // Check exception and return false on invalid property name.
+    ASSERT_FALSE(window.HasProperty(3.14159, &exception));
+    ASSERT_FALSE(exception.is_void());
+    exception = pp::Var();
+
+    exception = pp::Var();
+    ASSERT_FALSE(window.HasMethod(3.14159, &exception));
+    ASSERT_FALSE(exception.is_void());
+
+    // Try to use something not an object.
+    exception = pp::Var();
+    pp::Var string_object("asdf");
+    ASSERT_FALSE(string_object.HasProperty("find", &exception));
+    ASSERT_FALSE(exception.is_void());
+    exception = pp::Var();
+    ASSERT_FALSE(string_object.HasMethod("find", &exception));
+    ASSERT_FALSE(exception.is_void());
+
+    // Try to use an invalid object (need to use the C API).
+    PP_Var invalid_object;
+    invalid_object.type = PP_VARTYPE_OBJECT;
+    invalid_object.value.as_id = static_cast<int64_t>(-1234567);
+    PP_Var exception2 = PP_MakeVoid();
+    ASSERT_FALSE(var_interface_->HasProperty(invalid_object,
+                                             pp::Var("find").pp_var(),
+                                             &exception2));
+    ASSERT_TRUE(exception2.type != PP_VARTYPE_VOID);
+    var_interface_->Release(exception2);
+
+    exception2 = PP_MakeVoid();
+    ASSERT_FALSE(var_interface_->HasMethod(invalid_object,
+                                           pp::Var("find").pp_var(),
+                                           &exception2));
+    ASSERT_TRUE(exception2.type != PP_VARTYPE_VOID);
+    var_interface_->Release(exception2);
+
+    // Get a valid property/method when the exception is set returns false.
+    exception = pp::Var("Bad something-or-other exception");
+    ASSERT_FALSE(window.HasProperty("find", &exception));
+    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(window.HasMethod("find", &exception));
+    ASSERT_FALSE(exception.is_void());
+  }
+
+  // Make sure nothing leaked.
+  ASSERT_TRUE(testing_interface_->GetLiveObjectCount(
+      pp::Module::Get()->pp_module()) == before_objects);
+
+  return std::string();
 }

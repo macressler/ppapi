@@ -136,7 +136,7 @@ Var Instance::ExecuteScript(const Var& script, Var* exception) {
     return Var();
   return Var(Var::PassRef(),
              ppb_instance_f->ExecuteScript(pp_instance(), script.pp_var(),
-                                           Var::OutException(exception)));
+                                           Var::OutException(exception).get()));
 }
 
 void Instance::AddPerInstanceObject(const std::string& interface_name,

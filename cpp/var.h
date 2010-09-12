@@ -54,7 +54,6 @@ class Var {
   virtual ~Var();
 
   Var& operator=(const Var& other);
-  void swap(Var& other);
 
   bool is_void() const { return var_.type == PP_VARTYPE_VOID; }
   bool is_null() const { return var_.type == PP_VARTYPE_NULL; }
@@ -99,6 +98,7 @@ class Var {
   ScriptableObject* AsScriptableObject() const;
 
   bool HasProperty(const Var& name, Var* exception = NULL) const;
+  bool HasMethod(const Var& name, Var* exception = NULL) const;
   Var GetProperty(const Var& name, Var* exception = NULL) const;
   void GetAllPropertyNames(std::vector<Var>* properties,
                            Var* exception = NULL) const;
@@ -140,15 +140,51 @@ class Var {
 
   // For use when calling the raw C PPAPI when using the C++ Var as a possibly
   // NULL exception. This will handle getting the address of the internal value
-  // out if it's non-NULL.
+  // out if it's non-NULL and fixing up the reference count.
+  //
+  // Danger: this will only work for things with exception semantics, i.e. that
+  // the value will not be changed if it's a non-void exception. Otherwise,
+  // this class will mess up the refcounting.
+  //
+  // This is a bit subtle:
+  // - If NULL is passed, we return NULL from get() and do nothing.
+  //
+  // - If a void value is passed, we return the address of a void var from
+  //   get and have the output value take ownership of that var.
+  //
+  // - If a non-void value is passed, we return the address of that var from
+  //   get, and nothing else should change.
   //
   // Example:
   //   void FooBar(a, b, Var* exception = NULL) {
-  //     foo_interface->Bar(a, b, Var::OutException(exception));
+  //     foo_interface->Bar(a, b, Var::OutException(exception).get());
   //   }
-  static inline PP_Var* OutException(Var* v) {
-    return v ? &v->var_ : 0;
-  }
+  class OutException {
+   public:
+    OutException(Var* v)
+        : output_(v),
+          originally_had_exception_(v && v->is_null()) {
+      if (output_)
+        temp_ = output_->var_;
+      else
+        temp_.type = PP_VARTYPE_VOID;
+    }
+    ~OutException() {
+      if (output_ && !originally_had_exception_)
+        *output_ = pp::Var(PassRef(), temp_);
+    }
+
+    PP_Var* get() {
+      if (output_)
+        return &temp_;
+      return NULL;
+    }
+
+   private:
+    Var* output_;
+    bool originally_had_exception_;
+    PP_Var temp_;
+  };
 
  private:
   // Prevent an arbitrary pointer argument from being implicitly converted to

@@ -83,7 +83,8 @@ Var::Var(double d) {
 
 Var::Var(const char* utf8_str) {
   if (ppb_var_f) {
-    var_ = ppb_var_f->VarFromUtf8(utf8_str,
+    var_ = ppb_var_f->VarFromUtf8(Module::Get()->pp_module(),
+                                  utf8_str,
                                   static_cast<uint32_t>(strlen(utf8_str)));
   } else {
     var_.type = PP_VARTYPE_NULL;
@@ -93,7 +94,8 @@ Var::Var(const char* utf8_str) {
 
 Var::Var(const std::string& utf8_str) {
   if (ppb_var_f) {
-    var_ = ppb_var_f->VarFromUtf8(utf8_str.c_str(),
+    var_ = ppb_var_f->VarFromUtf8(Module::Get()->pp_module(),
+                                  utf8_str.c_str(),
                                   static_cast<uint32_t>(utf8_str.size()));
   } else {
     var_.type = PP_VARTYPE_NULL;
@@ -103,7 +105,8 @@ Var::Var(const std::string& utf8_str) {
 
 Var::Var(ScriptableObject* object) {
   if (ppb_var_f) {
-    var_ = ppb_var_f->CreateObject(object->GetClass(), object);
+    var_ = ppb_var_f->CreateObject(Module::Get()->pp_module(),
+                                   object->GetClass(), object);
     needs_release_ = true;
   } else {
     var_.type = PP_VARTYPE_NULL;
@@ -132,17 +135,21 @@ Var::~Var() {
 }
 
 Var& Var::operator=(const Var& other) {
-  // Use the copy constructor to make a copy, then swap into that. This makes
-  // sure we call the correct init and destruct for everything, without actually
-  // needing to write the refcounting code here.
-  Var copy(other);
-  swap(copy);
+  if (needs_release_ && ppb_var_f)
+    ppb_var_f->Release(var_);
+  var_ = other.var_;
+  if (NeedsRefcounting(var_)) {
+    if (ppb_var_f) {
+      needs_release_ = true;
+      ppb_var_f->AddRef(var_);
+    } else {
+      var_.type = PP_VARTYPE_NULL;
+      needs_release_ = false;
+    }
+  } else {
+    needs_release_ = false;
+  }
   return *this;
-}
-
-void Var::swap(Var& other) {
-  std::swap(var_, other.var_);
-  std::swap(needs_release_, other.needs_release_);
 }
 
 bool Var::AsBool() const {
@@ -199,14 +206,20 @@ ScriptableObject* Var::AsScriptableObject() const {
 bool Var::HasProperty(const Var& name, Var* exception) const {
   if (!ppb_var_f)
     return false;
-  return ppb_var_f->HasProperty(var_, name.var_, OutException(exception));
+  return ppb_var_f->HasProperty(var_, name.var_, OutException(exception).get());
+}
+
+bool Var::HasMethod(const Var& name, Var* exception) const {
+  if (!ppb_var_f)
+    return false;
+  return ppb_var_f->HasMethod(var_, name.var_, OutException(exception).get());
 }
 
 Var Var::GetProperty(const Var& name, Var* exception) const {
   if (!ppb_var_f)
     return Var();
   return Var(PassRef(), ppb_var_f->GetProperty(var_, name.var_,
-                                               OutException(exception)));
+                                               OutException(exception).get()));
 }
 
 void Var::GetAllPropertyNames(std::vector<Var>* properties,
@@ -216,13 +229,13 @@ void Var::GetAllPropertyNames(std::vector<Var>* properties,
   PP_Var* props = NULL;
   uint32_t prop_count = 0;
   ppb_var_f->GetAllPropertyNames(var_, &prop_count, &props,
-                                 OutException(exception));
+                                 OutException(exception).get());
   if (!prop_count)
     return;
   properties->resize(prop_count);
   for (uint32_t i = 0; i < prop_count; ++i) {
     Var temp(PassRef(), props[i]);
-    (*properties)[i].swap(temp);
+    (*properties)[i] = temp;
   }
   Module::Get()->core()->MemFree(props);
 }
@@ -230,13 +243,14 @@ void Var::GetAllPropertyNames(std::vector<Var>* properties,
 void Var::SetProperty(const Var& name, const Var& value, Var* exception) {
   if (!ppb_var_f)
     return;
-  ppb_var_f->SetProperty(var_, name.var_, value.var_, OutException(exception));
+  ppb_var_f->SetProperty(var_, name.var_, value.var_,
+                         OutException(exception).get());
 }
 
 void Var::RemoveProperty(const Var& name, Var* exception) {
   if (!ppb_var_f)
     return;
-  ppb_var_f->RemoveProperty(var_, name.var_, OutException(exception));
+  ppb_var_f->RemoveProperty(var_, name.var_, OutException(exception).get());
 }
 
 Var Var::Call(const Var& method_name, uint32_t argc, Var* argv,
@@ -250,11 +264,11 @@ Var Var::Call(const Var& method_name, uint32_t argc, Var* argv,
       args.push_back(argv[i].var_);
     return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_,
                                           argc, &args[0],
-                                          OutException(exception)));
+                                          OutException(exception).get()));
   } else {
     // Don't try to get the address of a vector if it's empty.
     return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 0, NULL,
-                                          OutException(exception)));
+                                          OutException(exception).get()));
   }
 }
 
@@ -267,11 +281,11 @@ Var Var::Construct(uint32_t argc, Var* argv, Var* exception) const {
     for (size_t i = 0; i < argc; i++)
       args.push_back(argv[i].var_);
     return Var(PassRef(), ppb_var_f->Construct(var_, argc, &args[0],
-                                               OutException(exception)));
+                                               OutException(exception).get()));
   } else {
     // Don't try to get the address of a vector if it's empty.
     return Var(PassRef(), ppb_var_f->Construct(var_, 0, NULL,
-                                               OutException(exception)));
+                                               OutException(exception).get()));
   }
 }
 
@@ -279,7 +293,7 @@ Var Var::Call(const Var& method_name, Var* exception) {
   if (!ppb_var_f)
     return Var();
   return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 0, NULL,
-                                        OutException(exception)));
+                                        OutException(exception).get()));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, Var* exception) {
@@ -287,7 +301,7 @@ Var Var::Call(const Var& method_name, const Var& arg1, Var* exception) {
     return Var();
   PP_Var args[1] = {arg1.var_};
   return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 1, args,
-                                        OutException(exception)));
+                                        OutException(exception).get()));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
@@ -296,7 +310,7 @@ Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
     return Var();
   PP_Var args[2] = {arg1.var_, arg2.var_};
   return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 2, args,
-                                        OutException(exception)));
+                                        OutException(exception).get()));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
@@ -305,7 +319,7 @@ Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
     return Var();
   PP_Var args[3] = {arg1.var_, arg2.var_, arg3.var_};
   return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 3, args,
-                                        OutException(exception)));
+                                        OutException(exception).get()));
 }
 
 Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
@@ -314,7 +328,7 @@ Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
     return Var();
   PP_Var args[4] = {arg1.var_, arg2.var_, arg3.var_, arg4.var_};
   return Var(PassRef(), ppb_var_f->Call(var_, method_name.var_, 4, args,
-                                        OutException(exception)));
+                                        OutException(exception).get()));
 }
 
 std::string Var::DebugString() const {

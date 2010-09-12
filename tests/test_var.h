@@ -9,6 +9,7 @@
 
 #include "ppapi/tests/test_case.h"
 
+struct PPB_Testing_Dev;
 struct PPB_Var;
 
 class TestVar : public TestCase {
@@ -20,14 +21,18 @@ class TestVar : public TestCase {
   virtual void RunTest();
 
  private:
+  std::string TestBasicString();
+  std::string TestInvalidAndEmpty();
   std::string TestInvalidUtf8();
   std::string TestNullInputInUtf8Conversion();
   std::string TestValidUtf8();
   std::string TestUtf8WithEmbeddedNulls();
   std::string TestVarToUtf8ForWrongType();
+  std::string TestHasPropertyAndMethod();
 
   // Used by the tests that access the C API directly.
   const PPB_Var* var_interface_;
+  const PPB_Testing_Dev* testing_interface_;
 };
 
 #endif  // PPAPI_TEST_TEST_VAR_H_

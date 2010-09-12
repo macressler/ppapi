@@ -5,6 +5,7 @@
 #ifndef PPAPI_C_DEV_PPB_TESTING_DEV_H_
 #define PPAPI_C_DEV_PPB_TESTING_DEV_H_
 
+#include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
@@ -61,6 +62,9 @@ struct PPB_Testing_Dev {
   // exit and return back to the caller after you call RunMessageLoop.
   void (*QuitMessageLoop)();
 
+  // Returns the number of live objects (resources + strings + objects)
+  // associated with this plugin module. Used for detecting leaks.
+  uint32_t (*GetLiveObjectCount)(PP_Module module);
 };
 
 #endif  // PPAPI_C_DEV_PPB_TESTING_DEV_H_
