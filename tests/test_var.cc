@@ -6,6 +6,8 @@
 
 #include <string.h>
 
+#include <limits>
+
 #include "ppapi/c/dev/ppb_testing_dev.h"
 #include "ppapi/c/ppb_var.h"
 #include "ppapi/cpp/instance.h"
@@ -76,7 +78,7 @@ std::string TestVar::TestBasicString() {
 std::string TestVar::TestInvalidAndEmpty() {
   PP_Var invalid_string;
   invalid_string.type = PP_VARTYPE_STRING;
-  invalid_string.value.as_id = 31415926535;
+  invalid_string.value.as_id = 31415926;
 
   // Invalid strings should give NULL as the return value.
   uint32_t len = std::numeric_limits<uint32_t>::max();
