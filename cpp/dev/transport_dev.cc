@@ -20,7 +20,8 @@ namespace pp {
 Transport_Dev::Transport_Dev(const char* name,
                              const char* proto) {
   if (transport_f)
-    PassRefFromConstructor(transport_f->CreateTransport(name, proto));
+    PassRefFromConstructor(
+        transport_f->CreateTransport(Module::Get()->pp_module(), name, proto));
 }
 
 }  // namespace pp

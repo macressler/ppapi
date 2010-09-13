@@ -17,7 +17,8 @@
 struct PPB_Transport_Dev {
   // Creates a new transport object with the specified name
   // using the specified protocol.
-  PP_Resource (*CreateTransport)(const char* name,
+  PP_Resource (*CreateTransport)(PP_Module module,
+                                 const char* name,
                                  const char* proto);
 
   // Returns whether or not resource is a Transport
