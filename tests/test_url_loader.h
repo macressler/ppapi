@@ -22,7 +22,7 @@ class TestURLLoader : public TestCase {
   // TestCase implementation.
   virtual bool Init();
   virtual void RunTest();
-  
+
  private:
   std::string ReadEntireFile(pp::FileIO_Dev* file_io, std::string* data);
   std::string ReadEntireResponseBody(pp::URLLoader_Dev* loader,
@@ -36,6 +36,7 @@ class TestURLLoader : public TestCase {
   std::string TestEmptyDataPOST();
   std::string TestCustomRequestHeader();
   std::string TestIgnoresBogusContentLength();
+  std::string TestOpenBadFileRef();
   std::string TestStreamToFile();
 };
 
