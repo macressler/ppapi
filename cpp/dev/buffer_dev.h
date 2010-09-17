@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #ifndef PPAPI_CPP_DEV_BUFFER_DEV_H_
-#define PPAPI_DEV_CPP_BUFFER_DEV_H_
+#define PPAPI_CPP_DEV_BUFFER_DEV_H_
 
 #include "ppapi/cpp/resource.h"
 
