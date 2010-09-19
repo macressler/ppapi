@@ -38,6 +38,7 @@ class TestURLLoader : public TestCase {
   std::string TestIgnoresBogusContentLength();
   std::string TestOpenBadFileRef();
   std::string TestStreamToFile();
+  std::string TestSameOriginRestriction();
 };
 
 #endif  // PAPPI_TESTS_TEST_URL_LOADER_H_

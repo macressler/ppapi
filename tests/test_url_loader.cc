@@ -92,6 +92,7 @@ void TestURLLoader::RunTest() {
   RUN_TEST(CustomRequestHeader);
   RUN_TEST(IgnoresBogusContentLength);
   RUN_TEST(OpenBadFileRef);
+  RUN_TEST(SameOriginRestriction);
 
   // TODO(dumi): Enable this test once we have support for clearing the
   // temporary files created by the stream-to-file option.
@@ -304,3 +305,28 @@ std::string TestURLLoader::TestStreamToFile() {
 
   return "";
 }
+
+std::string TestURLLoader::TestSameOriginRestriction() {
+  pp::URLRequestInfo_Dev request;
+  request.SetURL("http://www.google.com/");
+
+  TestCompletionCallback callback;
+
+  pp::URLLoader_Dev loader(*instance_);
+  int32_t rv = loader.Open(request, callback);
+  if (rv == PP_ERROR_WOULDBLOCK)
+    rv = callback.WaitForResult();
+
+  // We expect a failure.
+  if (rv != PP_ERROR_NOACCESS) {
+    if (rv == PP_OK) {
+      return "URLLoader::Open() failed to block a cross-origin request.";
+    } else {
+      return ReportError("URLLoader::Open()", rv);
+    }
+  }
+
+  return "";
+}
+
+// TODO(darin): Add a test for GrantUniversalAccess.
