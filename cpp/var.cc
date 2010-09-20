@@ -2,23 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// To get inttypes.h to define PRId32, we have to define __STDC_FORMAT_MACROS
-// before it is included (C99). To make sure of this (in case any other headers
-// try to include inttypes.h), do this first.
-#if defined(__native_client__) && !defined(__GLIBC__)
-// This is a workaround for a broken <inttypes.h> in nacl-newlib.
-#  define PRId32 "ld"
-#elif defined(_WIN64)
-#  define PRId32 "I64d"
-#elif defined(_WIN32)
-#  define PRId32 "ld"
-#else
-#  if !defined(__STDC_FORMAT_MACROS)
-#    define __STDC_FORMAT_MACROS
-#  endif
-#  include <inttypes.h>
-#endif
-
 #include "ppapi/cpp/var.h"
 
 #include <string.h>
@@ -340,7 +323,10 @@ std::string Var::DebugString() const {
   else if (is_bool())
     snprintf(buf, sizeof(buf), AsBool() ? "Var<true>" : "Var<false>");
   else if (is_int())
-    snprintf(buf, sizeof(buf), "Var<%"PRId32">", AsInt());
+    // Note that the following static_cast is necessary because
+    // NativeClient's int32_t is actually "long".
+    // TODO(sehr,polina): remove this after newlib is changed.
+    snprintf(buf, sizeof(buf), "Var<%d>", static_cast<int>(AsInt()));
   else if (is_double())
     snprintf(buf, sizeof(buf), "Var<%f>", AsDouble());
   else if (is_string())
