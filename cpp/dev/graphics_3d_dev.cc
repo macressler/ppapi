@@ -56,7 +56,7 @@ bool Graphics3D_Dev::GetConfigAttrib(int32_t config, int32_t attribute,
 const char* Graphics3D_Dev::QueryString(int32_t name) {
   if (graphics_3d_f)
     return graphics_3d_f->QueryString(name);
-  return false;
+  return NULL;
 }
 
 // static
