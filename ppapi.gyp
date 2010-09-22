@@ -36,7 +36,7 @@
       'sources': [
         'c/pp_completion_callback.h',
         'c/pp_errors.h',
-        'c/pp_event.h',
+        'c/pp_input_event.h',
         'c/pp_instance.h',
         'c/pp_module.h',
         'c/pp_point.h',

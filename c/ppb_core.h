@@ -43,7 +43,7 @@ struct PPB_Core {
   /**
    * Returns the "wall clock time" according to the browser.  This clock is
    * used by the browser when passing time values to the plugin (e.g., via the
-   * PP_Event::time_stamp_seconds field).
+   * PP_InputEvent::time_stamp_seconds field).
    */
   PP_Time (*GetTime)();
 

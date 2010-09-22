@@ -97,15 +97,25 @@ bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
   return instance->HandleDocumentLoad(URLLoader_Dev(pp_url_loader));
 }
 
-bool Instance_HandleEvent(PP_Instance pp_instance,
-                          const PP_Event* event) {
+bool Instance_HandleInputEvent(PP_Instance pp_instance,
+                               const PP_InputEvent* event) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
     return false;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
     return false;
-  return instance->HandleEvent(*event);
+  return instance->HandleInputEvent(*event);
+}
+
+void Instance_FocusChanged(PP_Instance pp_instance, bool has_focus) {
+  Module* module_singleton = Module::Get();
+  if (!module_singleton)
+    return;
+  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
+  if (!instance)
+    return;
+  instance->FocusChanged(has_focus);
 }
 
 PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
@@ -146,7 +156,8 @@ static PPP_Instance instance_interface = {
   &Instance_Delete,
   &Instance_Initialize,
   &Instance_HandleDocumentLoad,
-  &Instance_HandleEvent,
+  &Instance_HandleInputEvent,
+  &Instance_FocusChanged,
   &Instance_GetInstanceObject,
   &Instance_ViewChanged,
   &Instance_GetSelectedText,

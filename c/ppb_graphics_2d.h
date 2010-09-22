@@ -35,6 +35,13 @@ struct PPB_Graphics2D {
    * Set the is_always_opaque flag if you know that you will be painting only
    * opaque data to this device. This will disable blending when compositing
    * the plugin with the web page, which will give slightly higher performance.
+   *
+   * If you set is_always_opaque, your alpha channel should always be set to
+   * 0xFF or there may be painting artifacts. Being opaque will allow the
+   * browser to do a memcpy rather than a blend to paint the plugin, and this
+   * means your alpha values will get set on the page backing store. If these
+   * values are incorrect, it could mess up future blending.
+   *
    * If you aren't sure, it is always correct to specify that it it not opaque.
    */
   PP_Resource (*Create)(PP_Module module,

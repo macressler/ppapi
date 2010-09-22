@@ -42,7 +42,7 @@ bool Widget_Dev::Paint(const Rect& rect, ImageData* image) {
       pp_resource(), &rect.pp_rect(), image->pp_resource());
 }
 
-bool Widget_Dev::HandleEvent(const PP_Event& event) {
+bool Widget_Dev::HandleEvent(const PP_InputEvent& event) {
   if (!widget_f)
     return false;
   return widget_f->HandleEvent(pp_resource(), &event);

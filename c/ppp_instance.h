@@ -8,7 +8,7 @@
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
 
-struct PP_Event;
+struct PP_InputEvent;
 struct PP_Var;
 
 #define PPP_INSTANCE_INTERFACE "PPP_Instance;1"
@@ -59,15 +59,37 @@ struct PPP_Instance {
   bool (*HandleDocumentLoad)(PP_Instance instance, PP_Resource url_loader);
 
   /**
-   * General handler for all event types. Returns true if the event was handled
-   * or false if it was not.
+   * General handler for input events. Returns true if the event was handled or
+   * false if it was not.
    *
    * If the event was handled, it will not be forwarded to the web page or
    * browser. If it was not handled, it will bubble according to the normal
    * rules. So it is important that a plugin respond accurately with whether
    * event propogation should continue.
+   * 
+   * Event propogation also controls focus. If you handle an event like a mouse
+   * event, typically your plugin will be given focus. Returning false means
+   * that the click will be given to a lower part of the page and the plugin
+   * will not receive focus. This allows a plugin to be partially transparent,
+   * where clicks on the transparent areas will behave like clicks to the
+   * underlying page.
    */
-  bool (*HandleEvent)(PP_Instance instance, const struct PP_Event* event);
+  bool (*HandleInputEvent)(PP_Instance instance,
+                           const struct PP_InputEvent* event);
+
+  /**
+   * Notification that the given plugin instance has gained or lost focus.
+   * Having focus means that keyboard events will be sent to your plugin
+   * instance. A plugin's default condition is that it will not have focus.
+   *
+   * Note: clicks on your plugins will give focus only if you handle the
+   * click event. You signal if you handled it by returning true from
+   * HandleInputEvent. Otherwise the browser will bubble the event and give
+   * focus to the element on the page that actually did end up consuming it.
+   * If you're not getting focus, check to make sure you're returning true from
+   * the mouse click in HandleInputEvent.
+   */
+  void (*FocusChanged)(PP_Instance instance, bool has_focus);
 
   /**
    * Returns a Var representing the instance object to the web page. Normally

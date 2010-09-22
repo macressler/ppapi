@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ppapi/c/pp_event.h"
+#include "ppapi/c/pp_input_event.h"
 #include "ppapi/cpp/graphics_2d.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/instance.h"
@@ -43,21 +43,21 @@ class MyInstance : public pp::Instance, public pp::PaintManager::Client {
     paint_manager_.Initialize(this, this, false);
   }
 
-  virtual bool HandleEvent(const PP_Event& event) {
+  virtual bool HandleEvent(const PP_InputEvent& event) {
     switch (event.type) {
-      case PP_EVENT_TYPE_MOUSEDOWN: {
-        const PP_Event_Mouse& mouse_event = event.u.mouse;
+      case PP_INPUTEVENT_TYPE_MOUSEDOWN: {
+        const PP_InputEvent_Mouse& mouse_event = event.u.mouse;
         // Update the square on a mouse down.
-        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT) {
+        if (mouse_event.button == PP_INPUTEVENT_MOUSEBUTTON_LEFT) {
           UpdateSquare(static_cast<int>(mouse_event.x),
                        static_cast<int>(mouse_event.y));
         }
         return true;
       }
-      case PP_EVENT_TYPE_MOUSEMOVE: {
-        const PP_Event_Mouse& mouse_event = event.u.mouse;
+      case PP_INPUTEVENT_TYPE_MOUSEMOVE: {
+        const PP_InputEvent_Mouse& mouse_event = event.u.mouse;
         // Update the square on a drag.
-        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT) {
+        if (mouse_event.button == PP_INPUTEVENT_MOUSEBUTTON_LEFT) {
           UpdateSquare(static_cast<int>(mouse_event.x),
                        static_cast<int>(mouse_event.y));
         }

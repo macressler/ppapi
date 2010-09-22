@@ -47,8 +47,11 @@ bool Instance::HandleDocumentLoad(const URLLoader_Dev& /*url_loader*/) {
   return false;
 }
 
-bool Instance::HandleEvent(const PP_Event& /*event*/) {
+bool Instance::HandleInputEvent(const PP_InputEvent& /*event*/) {
   return false;
+}
+
+void Instance::FocusChanged(bool /*has_focus*/) {
 }
 
 Var Instance::GetInstanceObject() {

@@ -13,7 +13,7 @@
 
 #include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/pp_errors.h"
-#include "ppapi/c/pp_event.h"
+#include "ppapi/c/pp_input_event.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/dev/url_loader_dev.h"
@@ -176,14 +176,14 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     return true;
   }
 
-  virtual bool HandleEvent(const PP_Event& event) {
+  virtual bool HandleInputEvent(const PP_InputEvent& event) {
     switch (event.type) {
-      case PP_EVENT_TYPE_MOUSEDOWN:
-        SayHello();
+      case PP_INPUTEVENT_TYPE_MOUSEDOWN:
+        //SayHello();
         return true;
-      case PP_EVENT_TYPE_MOUSEMOVE:
+      case PP_INPUTEVENT_TYPE_MOUSEMOVE:
         return true;
-      case PP_EVENT_TYPE_KEYDOWN:
+      case PP_INPUTEVENT_TYPE_KEYDOWN:
         return true;
       default:
         return false;

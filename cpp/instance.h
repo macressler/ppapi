@@ -21,7 +21,7 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-struct PP_Event;
+struct PP_InputEvent;
 
 /** The C++ interface to the Pepper API. */
 namespace pp {
@@ -61,8 +61,11 @@ class Instance {
   /** See PPP_Instance.HandleDocumentLoad. */
   virtual bool HandleDocumentLoad(const URLLoader_Dev& url_loader);
 
-  /** See PPP_Instance.HandleEvent. */
-  virtual bool HandleEvent(const PP_Event& event);
+  /** See PPP_Instance.HandleInputEvent. */
+  virtual bool HandleInputEvent(const PP_InputEvent& event);
+
+  /** See PPP_Instance.FocusChanged. */
+  virtual void FocusChanged(bool has_focus);
 
   /** See PPP_Instance.GetInstanceObject. */
   virtual Var GetInstanceObject();

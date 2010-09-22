@@ -109,6 +109,13 @@ class PaintManager {
   // non-opqaue pixels or aren't sure, set this to false for more general
   // blending.
   //
+  // If you set is_always_opaque, your alpha channel should always be set to
+  // 0xFF or there may be painting artifacts. Being opaque will allow the
+  // browser to do a memcpy rather than a blend to paint the plugin, and this
+  // means your alpha values will get set on the page backing store. If these
+  // values are incorrect, it could mess up future blending. If you aren't
+  // sure, it is always correct to specify that it it not opaque.
+  //
   // You will need to call SetSize before this class will do anything. Normally
   // you do this from the ViewChanged method of your plugin instance.
   PaintManager(Instance* instance, Client* client, bool is_always_opaque);

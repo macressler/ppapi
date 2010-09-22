@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #include "ppapi/c/dev/ppb_file_chooser_dev.h"
-#include "ppapi/c/pp_event.h"
+#include "ppapi/c/pp_input_event.h"
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/dev/file_chooser_dev.h"
 #include "ppapi/cpp/dev/file_ref_dev.h"
@@ -18,13 +18,13 @@ class MyInstance : public pp::Instance {
     callback_factory_.Initialize(this);
   }
 
-  virtual bool HandleEvent(const PP_Event& event) {
+  virtual bool HandleEvent(const PP_InputEvent& event) {
     switch (event.type) {
-      case PP_EVENT_TYPE_MOUSEDOWN: {
-        const PP_Event_Mouse& mouse_event = event.u.mouse;
-        if (mouse_event.button == PP_EVENT_MOUSEBUTTON_LEFT)
+      case PP_INPUTEVENT_TYPE_MOUSEDOWN: {
+        const PP_InputEvent_Mouse& mouse_event = event.u.mouse;
+        if (mouse_event.button == PP_INPUTEVENT_MOUSEBUTTON_LEFT)
           ShowFileChooser(false);
-        else if (mouse_event.button == PP_EVENT_MOUSEBUTTON_RIGHT)
+        else if (mouse_event.button == PP_INPUTEVENT_MOUSEBUTTON_RIGHT)
           ShowFileChooser(true);
         else
           return false;

@@ -25,11 +25,11 @@ struct PPB_CursorControl_Dev {
   // instance and be locked, preventing the user from moving it.
   // The cursor is implicitly hidden from the user while locked.
   // Cursor lock may only be requested in response to a
-  // PP_Event_MouseDown, and then only if the event was generated via
+  // PP_InputEvent_MouseDown, and then only if the event was generated via
   // user gesture.
   //
   // While the cursor is locked, any movement of the mouse will
-  // generate a PP_Event_Type_MouseMove, whose x and y values
+  // generate a PP_InputEvent_Type_MouseMove, whose x and y values
   // indicate the position the cursor would have been moved to had
   // the cursor not been locked, and had the screen been infinite in size.
   //

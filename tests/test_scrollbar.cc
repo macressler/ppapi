@@ -4,7 +4,7 @@
 
 #include "ppapi/tests/test_scrollbar.h"
 
-#include "ppapi/c/pp_event.h"
+#include "ppapi/c/pp_input_event.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/rect.h"
 #include "ppapi/tests/testing_instance.h"
@@ -35,10 +35,9 @@ std::string TestScrollbar::TestHandleEvent() {
 
   scrollbar_.SetDocumentSize(10000);
 
-  PP_Event event;
-  event.size = sizeof(event);
-  event.type = PP_EVENT_TYPE_KEYDOWN;
-  event.u.key.normalizedKeyCode = 0x28; // VKEY_DOWN
+  PP_InputEvent event;
+  event.type = PP_INPUTEVENT_TYPE_KEYDOWN;
+  event.u.key.key_code = 0x28; // VKEY_DOWN
   scrollbar_.HandleEvent(event);
 
   return scrollbar_value_changed_ ?

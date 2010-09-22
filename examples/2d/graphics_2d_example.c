@@ -21,10 +21,10 @@
 PP_Module g_module_id;
 PPB_GetInterface g_get_browser_interface = NULL;
 
-const PPB_Core* g_core_interface;
-const PPB_Graphics2D* g_graphics_2d_interface;
-const PPB_ImageData* g_image_data_interface;
-const PPB_Instance* g_instance_interface;
+const struct PPB_Core* g_core_interface;
+const struct PPB_Graphics2D* g_graphics_2d_interface;
+const struct PPB_ImageData* g_image_data_interface;
+const struct PPB_Instance* g_instance_interface;
 
 // PPP_Instance implementation -------------------------------------------------
 
@@ -40,7 +40,7 @@ InstanceInfo* all_instances = NULL;
 
 // Returns a refed resource corresponding to the created device context.
 PP_Resource MakeAndBindDeviceContext(PP_Instance instance,
-                                     const PP_Size* size) {
+                                     const struct PP_Size* size) {
   PP_Resource device_context;
 
   device_context = g_graphics_2d_interface->Create(g_module_id, size, false);
@@ -58,7 +58,7 @@ void FlushCompletionCallback(void* user_data, int32_t result) {
   // Don't need to do anything here.
 }
 
-void Repaint(InstanceInfo* instance, const PP_Size* size) {
+void Repaint(InstanceInfo* instance, const struct PP_Size* size) {
   PP_Resource image, device_context;
   PP_ImageDataDesc image_desc;
   uint32_t* image_data;
@@ -144,10 +144,13 @@ bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
   return false;
 }
 
-bool Instance_HandleEvent(PP_Instance pp_instance,
-                          const PP_Event* event) {
+bool Instance_HandleInputEvent(PP_Instance pp_instance,
+                               const struct PP_InputEvent* event) {
   // We don't handle any events.
   return false;
+}
+
+void Instance_HandleFocusChanged(bool /*has_focus*/) {
 }
 
 PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
@@ -155,8 +158,8 @@ PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
 }
 
 void Instance_ViewChanged(PP_Instance pp_instance,
-                          const PP_Rect* position,
-                          const PP_Rect* clip) {
+                          const struct PP_Rect* position,
+                          const struct PP_Rect* clip) {
   InstanceInfo* info = FindInstance(pp_instance);
   if (!info)
     return;
@@ -180,7 +183,8 @@ static PPP_Instance instance_interface = {
   &Instance_Delete,
   &Instance_Initialize,
   &Instance_HandleDocumentLoad,
-  &Instance_HandleEvent,
+  &Instance_HandleInputEvent,
+  &Instance_HandleFocusChanged,
   &Instance_GetInstanceObject,
   &Instance_ViewChanged,
   &Instance_GetSelectedText,
@@ -195,13 +199,13 @@ PP_EXPORT int32_t PPP_InitializeModule(PP_Module module,
   g_module_id = module;
   g_get_browser_interface = get_browser_interface;
 
-  g_core_interface = (const PPB_Core*)
+  g_core_interface = (const struct PPB_Core*)
       get_browser_interface(PPB_CORE_INTERFACE);
-  g_instance_interface = (const PPB_Instance*)
+  g_instance_interface = (const struct PPB_Instance*)
       get_browser_interface(PPB_INSTANCE_INTERFACE);
-  g_image_data_interface = (const PPB_ImageData*)
+  g_image_data_interface = (const struct PPB_ImageData*)
       get_browser_interface(PPB_IMAGEDATA_INTERFACE);
-  g_graphics_2d_interface = (const PPB_Graphics2D*)
+  g_graphics_2d_interface = (const struct PPB_Graphics2D*)
       get_browser_interface(PPB_GRAPHICS_2D_INTERFACE);
   if (!g_core_interface || !g_instance_interface || !g_image_data_interface ||
       !g_graphics_2d_interface)

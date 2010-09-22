@@ -8,7 +8,7 @@
 #include "ppapi/c/pp_resource.h"
 
 struct PP_Rect;
-struct PP_Event;
+struct PP_InputEvent;
 
 #define PPB_WIDGET_DEV_INTERFACE "PPB_Widget(Dev);1"
 
@@ -26,7 +26,7 @@ struct PPB_Widget_Dev {
 
   // Pass in an event to a widget.  It'll return true if the event was consumed.
   bool (*HandleEvent)(PP_Resource widget,
-                      const struct PP_Event* event);
+                      const struct PP_InputEvent* event);
 
   // Get/set the location of the widget.
   bool (*GetLocation)(PP_Resource widget,
