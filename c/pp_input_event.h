@@ -34,7 +34,7 @@ typedef enum {
   PP_INPUTEVENT_TYPE_RAWKEYDOWN = 6,
   PP_INPUTEVENT_TYPE_KEYDOWN    = 7,
   PP_INPUTEVENT_TYPE_KEYUP      = 8,
-  PP_INPUTEVENT_TYPE_CHAR       = 9,
+  PP_INPUTEVENT_TYPE_CHAR       = 9
 } PP_InputEvent_Type;
 
 typedef enum {
