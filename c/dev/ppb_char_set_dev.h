@@ -5,6 +5,7 @@
 #ifndef PPAPI_C_DEV_PPB_CHAR_SET_DEV_H_
 #define PPAPI_C_DEV_PPB_CHAR_SET_DEV_H_
 
+#include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
@@ -71,7 +72,7 @@ struct PPB_CharSet_Dev {
   // WARNING: You really shouldn't be using this function unless you're dealing
   // with legacy data. You should be using UTF-8 or UTF-16 and you don't have
   // to worry about the character sets.
-  PP_Var (*GetDefaultCodePageForUILanguage)();
+  PP_Var (*GetDefaultCodePageForUILanguage)(PP_Module module);
 };
 
 #endif  // PPAPI_C_DEV_PPB_CHAR_SET_DEV_H_
