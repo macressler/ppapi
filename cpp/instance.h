@@ -106,19 +106,6 @@ class Instance {
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void ScrollbarValueChanged(Scrollbar_Dev scrollbar, uint32_t value);
 
-  /** Zoom interface. */
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  virtual void Zoom(float scale, bool text_only);
-
-
-  // @{
-  /** @name Find interface (NOTE: this interface is subject to change): */
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  virtual bool StartFind(const char* text, bool case_sensitive);
-  virtual void SelectFindResult(bool forward);
-  virtual void StopFind();
-  // @}
-
 
   /** Graphics3D interface. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.

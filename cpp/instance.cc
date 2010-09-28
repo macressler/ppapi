@@ -93,19 +93,6 @@ void Instance::ScrollbarValueChanged(Scrollbar_Dev /* scrollbar */,
                                      uint32_t /* value */) {
 }
 
-void Instance::Zoom(float /* scale */, bool /* text_only */) {
-}
-
-bool Instance::StartFind(const char* /* text */, bool /* case_sensitive */) {
-  return false;
-}
-
-void Instance::SelectFindResult(bool /* forward */) {
-}
-
-void Instance::StopFind() {
-}
-
 void Instance::Graphics3DContextLost() {
 }
 

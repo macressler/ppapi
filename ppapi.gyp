@@ -86,6 +86,7 @@
         'c/dev/ppb_url_response_info_dev.h',
         'c/dev/ppb_url_util_dev.h',
         'c/dev/ppb_video_decoder_dev.h',
+        'c/dev/ppb_zoom_dev.h',
         'c/dev/ppp_cursor_control_dev.h',
         'c/dev/ppp_find_dev.h',
         'c/dev/ppp_graphics_3d_dev.h',
@@ -175,6 +176,8 @@
         'cpp/dev/video_decoder_dev.h',
         'cpp/dev/widget_dev.cc',
         'cpp/dev/widget_dev.h',
+        'cpp/dev/zoom_dev.cc',
+        'cpp/dev/zoom_dev.h',
       ],
       'conditions': [
         ['OS=="win"', {

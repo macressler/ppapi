@@ -25,12 +25,10 @@
 
 #include <string.h>
 
-#include "ppapi/c/dev/ppb_find_dev.h"
 #include "ppapi/c/dev/ppp_graphics_3d_dev.h"
 #include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/dev/ppp_scrollbar_dev.h"
 #include "ppapi/c/dev/ppp_widget_dev.h"
-#include "ppapi/c/dev/ppp_zoom_dev.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppp_instance.h"
@@ -268,22 +266,6 @@ static PPP_Scrollbar_Dev scrollbar_interface = {
   &Scrollbar_ValueChanged,
 };
 
-// PPP_Zoom implementation -----------------------------------------------------
-
-void Zoom(PP_Instance instance_id, float scale, bool text_only) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return;
-  Instance* instance = module_singleton->InstanceForPPInstance(instance_id);
-  if (!instance)
-    return;
-  return instance->Zoom(scale, text_only);
-}
-
-static PPP_Zoom_Dev zoom_interface = {
-  &Zoom,
-};
-
 // PPP_Graphics3D implementation -----------------------------------------------
 
 void Graphics3D_ContextLost(PP_Instance pp_instance) {
@@ -319,8 +301,6 @@ const void* Module::GetPluginInterface(const char* interface_name) {
     return &widget_interface;
   if (strcmp(interface_name, PPP_SCROLLBAR_DEV_INTERFACE) == 0)
     return &scrollbar_interface;
-  if (strcmp(interface_name, PPP_ZOOM_DEV_INTERFACE) == 0)
-    return &zoom_interface;
   if (strcmp(interface_name, PPP_GRAPHICS_3D_DEV_INTERFACE) == 0)
     return &graphics_3d_interface;
 

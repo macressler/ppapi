@@ -11,10 +11,11 @@
 #define PPP_ZOOM_DEV_INTERFACE "PPP_Zoom(Dev);1"
 
 struct PPP_Zoom_Dev {
-  // Instruct plug-in to zoom according to |scale| factor and whether the
-  // zoom only applies to text only.
+  // Instruct plug-in to zoom according to the given factor and whether the zoom
+  // only applies to text only.  The scale factor is the percentage divided by
+  // 100, i.e. 150% zoom is 1.5.
   void (*Zoom)(PP_Instance instance,
-               float scale,
+               double factor,
                bool text_only);
 };
 
