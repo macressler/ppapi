@@ -66,9 +66,8 @@ Var::Var(double d) {
 
 Var::Var(const char* utf8_str) {
   if (ppb_var_f) {
-    var_ = ppb_var_f->VarFromUtf8(Module::Get()->pp_module(),
-                                  utf8_str,
-                                  static_cast<uint32_t>(strlen(utf8_str)));
+    uint32_t len = utf8_str ? static_cast<uint32_t>(strlen(utf8_str)) : 0;
+    var_ = ppb_var_f->VarFromUtf8(Module::Get()->pp_module(), utf8_str, len);
   } else {
     var_.type = PP_VARTYPE_NULL;
   }
