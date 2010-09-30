@@ -66,25 +66,6 @@ Var Instance::GetSelectedText(bool /* html */) {
   return Var();
 }
 
-PP_PrintOutputFormat_Dev* Instance::QuerySupportedPrintOutputFormats(
-    uint32_t* format_count) {
-  *format_count = 0;
-  return NULL;
-}
-
-int32_t Instance::PrintBegin(const PP_PrintSettings_Dev&) {
-  return 0;
-}
-
-Resource Instance::PrintPages(
-    const PP_PrintPageNumberRange_Dev* /*page_ranges*/,
-    uint32_t /*page_range_count*/) {
-  return Resource();
-}
-
-void Instance::PrintEnd() {
-}
-
 void Instance::InvalidateWidget(Widget_Dev /* widget */,
                                 const Rect& /* dirty_rect */) {
 }

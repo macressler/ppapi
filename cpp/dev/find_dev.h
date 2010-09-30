@@ -38,6 +38,7 @@ class Instance;
 //   };
 class Find_Dev {
  public:
+  // The instance parameter must outlive this class.
   Find_Dev(Instance* instance);
   virtual ~Find_Dev();
 

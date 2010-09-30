@@ -160,6 +160,8 @@
         'cpp/dev/fullscreen_dev.h',
         'cpp/dev/graphics_3d_dev.cc',
         'cpp/dev/graphics_3d_dev.h',
+        'cpp/dev/printing_dev.cc',
+        'cpp/dev/printing_dev.h',
         'cpp/dev/scrollbar_dev.cc',
         'cpp/dev/scrollbar_dev.h',
         'cpp/dev/transport_dev.cc',

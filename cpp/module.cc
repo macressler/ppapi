@@ -26,7 +26,6 @@
 #include <string.h>
 
 #include "ppapi/c/dev/ppp_graphics_3d_dev.h"
-#include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/dev/ppp_scrollbar_dev.h"
 #include "ppapi/c/dev/ppp_widget_dev.h"
 #include "ppapi/c/pp_instance.h"
@@ -161,75 +160,6 @@ static PPP_Instance instance_interface = {
   &Instance_GetSelectedText,
 };
 
-// PPP_Printing implementation -------------------------------------------------
-
-PP_PrintOutputFormat_Dev* Printing_QuerySupportedFormats(
-    PP_Instance pp_instance,
-    uint32_t* format_count) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton) {
-    *format_count = 0;
-    return NULL;
-  }
-  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
-  if (!instance) {
-    *format_count = 0;
-    return NULL;
-  }
-  return instance->QuerySupportedPrintOutputFormats(format_count);
-}
-
-int32_t Printing_Begin(PP_Instance pp_instance,
-                       const struct PP_PrintSettings_Dev* print_settings) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return 0;
-  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
-  if (!instance)
-    return 0;
-
-  // See if we support the specified print output format.
-  uint32_t format_count = 0;
-  const PP_PrintOutputFormat_Dev* formats =
-      instance->QuerySupportedPrintOutputFormats(&format_count);
-  if (!formats)
-    return 0;
-  for (uint32_t index = 0; index < format_count; index++) {
-    if (formats[index] == print_settings->format)
-      return instance->PrintBegin(*print_settings);
-  }
-  return 0;
-}
-
-PP_Resource Printing_PrintPages(PP_Instance pp_instance,
-                                const PP_PrintPageNumberRange_Dev* page_ranges,
-                                uint32_t page_range_count) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return Resource().detach();
-  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
-  if (!instance)
-    return Resource().detach();
-  return instance->PrintPages(page_ranges, page_range_count).detach();
-}
-
-void Printing_End(PP_Instance pp_instance) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return;
-  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
-  if (!instance)
-    return;
-  return instance->PrintEnd();
-}
-
-static PPP_Printing_Dev printing_interface = {
-  &Printing_QuerySupportedFormats,
-  &Printing_Begin,
-  &Printing_PrintPages,
-  &Printing_End,
-};
-
 // PPP_Widget implementation ---------------------------------------------------
 
 void Widget_Invalidate(PP_Instance instance_id,
@@ -295,8 +225,6 @@ Module::~Module() {
 const void* Module::GetPluginInterface(const char* interface_name) {
   if (strcmp(interface_name, PPP_INSTANCE_INTERFACE) == 0)
     return &instance_interface;
-  if (strcmp(interface_name, PPP_PRINTING_DEV_INTERFACE) == 0)
-    return &printing_interface;
   if (strcmp(interface_name, PPP_WIDGET_DEV_INTERFACE) == 0)
     return &widget_interface;
   if (strcmp(interface_name, PPP_SCROLLBAR_DEV_INTERFACE) == 0)

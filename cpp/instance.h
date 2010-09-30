@@ -77,27 +77,6 @@ class Instance {
   virtual Var GetSelectedText(bool html);
   // @}
 
-
-  // @{
-  /** @name PPP_Printing methods for the plugin to override if it supports printing (NOTE: this interface is subject to change): */
-
-  /** See ppp_printing.h. */
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  virtual PP_PrintOutputFormat_Dev* QuerySupportedPrintOutputFormats(
-      uint32_t* format_count);
-
-  /** See ppp_printing.h. */
-  virtual int32_t PrintBegin(const PP_PrintSettings_Dev& print_settings);
-
-  /** See ppp_printing.h. */
-  virtual Resource PrintPages(const PP_PrintPageNumberRange_Dev* page_ranges,
-                              uint32_t page_range_count);
-
-  /** See ppp_printing.h. */
-  virtual void PrintEnd();
-  // @}
-
-
   /** Widget interface. */
   // TODO(brettw) http://crbug.com/53718 don't expose this here.
   virtual void InvalidateWidget(Widget_Dev widget, const Rect& dirty_rect);
