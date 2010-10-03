@@ -45,6 +45,11 @@ struct PPB_ImageData {
   PP_ImageDataFormat (*GetNativeImageDataFormat)();
 
   /**
+   * Returns true if the given image data format is supported by the browser.
+   */
+  bool (*IsImageDataFormatSupported)(PP_ImageDataFormat format);
+
+  /**
    * Allocates an image data resource with the given format and size. The
    * return value will have a nonzero ID on success, or zero on failure.
    * Failure means the module handle, image size, or format was invalid.
@@ -67,23 +72,23 @@ struct PPB_ImageData {
    * Returns true if the given resource is an image data. Returns false if the
    * resource is invalid or some type other than an image data.
    */
-  bool (*IsImageData)(PP_Resource resource);
+  bool (*IsImageData)(PP_Resource image_data);
 
   /**
    * Computes the description of the image data. Returns true on success, false
    * if the resource is not an image data. On false, the |desc| structure will
    * be filled with 0.
    */
-  bool (*Describe)(PP_Resource resource,
+  bool (*Describe)(PP_Resource image_data,
                    struct PP_ImageDataDesc* desc);
 
   /**
    * Maps this bitmap into the plugin address space and returns a pointer to the
    * beginning of the data.
    */
-  void* (*Map)(PP_Resource resource);
+  void* (*Map)(PP_Resource image_data);
 
-  void (*Unmap)(PP_Resource resource);
+  void (*Unmap)(PP_Resource image_data);
 };
 
 /**

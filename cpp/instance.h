@@ -58,20 +58,20 @@ class Instance {
   // @{
   /** @name PPP_Instance methods for the plugin to override: */
 
-  /** See PPP_Instance.HandleDocumentLoad. */
-  virtual bool HandleDocumentLoad(const URLLoader_Dev& url_loader);
+  /** See PPP_Instance.DidChangeView. */
+  virtual void DidChangeView(const Rect& position, const Rect& clip);
+
+  /** See PPP_Instance.DidChangeFocus. */
+  virtual void DidChangeFocus(bool has_focus);
 
   /** See PPP_Instance.HandleInputEvent. */
   virtual bool HandleInputEvent(const PP_InputEvent& event);
 
-  /** See PPP_Instance.FocusChanged. */
-  virtual void FocusChanged(bool has_focus);
+  /** See PPP_Instance.HandleDocumentLoad. */
+  virtual bool HandleDocumentLoad(const URLLoader_Dev& url_loader);
 
   /** See PPP_Instance.GetInstanceObject. */
   virtual Var GetInstanceObject();
-
-  /** See PPP_Instance.ViewChanged. */
-  virtual void ViewChanged(const Rect& position, const Rect& clip);
 
   /** See PPP_Instance.GetSelectedText. */
   virtual Var GetSelectedText(bool html);

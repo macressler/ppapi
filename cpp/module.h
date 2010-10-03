@@ -93,8 +93,11 @@ class Module {
   virtual Instance* CreateInstance(PP_Instance instance) = 0;
 
  private:
-  friend bool Instance_New(PP_Instance instance);
-  friend void Instance_Delete(PP_Instance instance);
+  friend bool Instance_DidCreate(PP_Instance pp_instance,
+                                 uint32_t argc,
+                                 const char* argn[],
+                                 const char* argv[]);
+  friend void Instance_DidDestroy(PP_Instance instance);
 
   // Unimplemented (disallow copy and assign).
   Module(const Module&);

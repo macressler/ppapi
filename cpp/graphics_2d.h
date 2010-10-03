@@ -21,11 +21,11 @@ class Graphics2D : public Resource {
   // Creates an is_null() ImageData object.
   Graphics2D();
 
-  // The copied device will refer to the original (since this is just a wrapper
+  // The copied context will refer to the original (since this is just a wrapper
   // around a refcounted resource).
   Graphics2D(const Graphics2D& other);
 
-  // Allocates a new 2D device context with the given size in the browser,
+  // Allocates a new 2D graphics context with the given size in the browser,
   // resulting object will be is_null() if the allocation failed.
   Graphics2D(const Size& size, bool is_always_opaque);
 
@@ -42,13 +42,13 @@ class Graphics2D : public Resource {
   // If you call the version with no source rect, the entire image will be
   // painted.
   //
-  // Please see PPB_DeviceContext2D.PaintImageData / .Scroll for more details.
-  bool PaintImageData(const ImageData& image,
+  // Please see PPB_Graphics2D.PaintImageData / .Scroll for more details.
+  void PaintImageData(const ImageData& image,
                       const Point& top_left);
-  bool PaintImageData(const ImageData& image,
+  void PaintImageData(const ImageData& image,
                       const Point& top_left,
                       const Rect& src_rect);
-  bool Scroll(const Rect& clip, const Point& amount);
+  void Scroll(const Rect& clip, const Point& amount);
 
   // The browser will take ownership of the given image data. The object
   // pointed to by the parameter will be cleared. To avoid horrible artifacts,
@@ -56,14 +56,14 @@ class Graphics2D : public Resource {
   // resource will no longer be usable. THIS COMMAND HAS NO EFFECT UNTIL YOU
   // CALL Flush().
   //
-  // Please see PPB_DeviceContext2D.Swap for more details.
-  bool ReplaceContents(ImageData* image);
+  // Please see PPB_Graphics2D.ReplaceContents for more details.
+  void ReplaceContents(ImageData* image);
 
   // Flushes all the currently enqueued Paint, Scroll, and Replace commands.
   // Can be used in synchronous mode (NULL callback pointer) from background
   // threads.
   //
-  // Please see PPB_DeviceContext2D.Flush for more details.
+  // Please see PPB_Graphics2D.Flush for more details.
   int32_t Flush(const CompletionCallback& cc);
 
  private:

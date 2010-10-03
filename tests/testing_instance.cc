@@ -37,7 +37,7 @@ bool TestingInstance::Init(uint32_t argc, const char* argn[], const char* argv[]
     }
   }
 
-  // In ViewChanged, we'll dump out a list of all available tests.
+  // In DidChangeView, we'll dump out a list of all available tests.
   return true;
 }
 
@@ -45,7 +45,8 @@ pp::Var TestingInstance::GetInstanceObject() {
   return current_case_->GetTestObject();
 }
 
-void TestingInstance::ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
+void TestingInstance::DidChangeView(const pp::Rect& position,
+                                    const pp::Rect& clip) {
   if (!executed_tests_) {
     executed_tests_ = true;
     pp::Module::Get()->core()->CallOnMainThread(

@@ -56,42 +56,37 @@ void Graphics2D::swap(Graphics2D& other) {
   size_.swap(other.size_);
 }
 
-bool Graphics2D::PaintImageData(const ImageData& image,
+void Graphics2D::PaintImageData(const ImageData& image,
                                 const Point& top_left) {
   if (!graphics_2d_f)
-    return false;
-  return graphics_2d_f->PaintImageData(pp_resource(), image.pp_resource(),
-                                       &top_left.pp_point(), NULL);
+    return;
+  graphics_2d_f->PaintImageData(pp_resource(), image.pp_resource(),
+                                &top_left.pp_point(), NULL);
 }
 
-bool Graphics2D::PaintImageData(const ImageData& image,
+void Graphics2D::PaintImageData(const ImageData& image,
                                 const Point& top_left,
                                 const Rect& src_rect) {
   if (!graphics_2d_f)
-    return false;
-  return graphics_2d_f->PaintImageData(pp_resource(), image.pp_resource(),
-                                       &top_left.pp_point(),
-                                       &src_rect.pp_rect());
+    return;
+  graphics_2d_f->PaintImageData(pp_resource(), image.pp_resource(),
+                                &top_left.pp_point(), &src_rect.pp_rect());
 }
 
-bool Graphics2D::Scroll(const Rect& clip, const Point& amount) {
+void Graphics2D::Scroll(const Rect& clip, const Point& amount) {
   if (!graphics_2d_f)
-    return false;
-  return graphics_2d_f->Scroll(pp_resource(), &clip.pp_rect(),
-                               &amount.pp_point());
+    return;
+  graphics_2d_f->Scroll(pp_resource(), &clip.pp_rect(), &amount.pp_point());
 }
 
-bool Graphics2D::ReplaceContents(ImageData* image) {
+void Graphics2D::ReplaceContents(ImageData* image) {
   if (!graphics_2d_f)
-    return false;
-  if (graphics_2d_f->ReplaceContents(pp_resource(),
-                                     image->pp_resource())) {
-    // On success, reset the image data. This is to help prevent people
-    // from continuing to use the resource which will result in artifacts.
-    *image = ImageData();
-    return true;
-  }
-  return false;
+    return;
+  graphics_2d_f->ReplaceContents(pp_resource(), image->pp_resource());
+
+  // On success, reset the image data. This is to help prevent people
+  // from continuing to use the resource which will result in artifacts.
+  *image = ImageData();
 }
 
 int32_t Graphics2D::Flush(const CompletionCallback& cc) {

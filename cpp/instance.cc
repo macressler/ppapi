@@ -43,6 +43,14 @@ bool Instance::Init(uint32_t /*argc*/, const char* /*argn*/[],
   return true;
 }
 
+void Instance::DidChangeView(const pp::Rect& /*position*/,
+                             const pp::Rect& /*clip*/) {
+}
+
+void Instance::DidChangeFocus(bool /*has_focus*/) {
+}
+
+
 bool Instance::HandleDocumentLoad(const URLLoader_Dev& /*url_loader*/) {
   return false;
 }
@@ -51,15 +59,8 @@ bool Instance::HandleInputEvent(const PP_InputEvent& /*event*/) {
   return false;
 }
 
-void Instance::FocusChanged(bool /*has_focus*/) {
-}
-
 Var Instance::GetInstanceObject() {
   return Var();
-}
-
-void Instance::ViewChanged(const pp::Rect& /*position*/,
-                           const pp::Rect& /*clip*/) {
 }
 
 Var Instance::GetSelectedText(bool /* html */) {

@@ -173,7 +173,8 @@ bool TestGraphics2D::IsSquareInDC(const pp::Graphics2D& dc,
   return IsSquareInImage(readback, background_color, square, square_color);
 }
 
-// Test all the functions with an invalid handle.
+// Test all the functions with an invalid handle. Most of these just check for
+// a crash since the browser don't return a value.
 std::string TestGraphics2D::TestInvalidResource() {
   pp::Graphics2D null_context;
   pp::ImageData image(PP_IMAGEDATAFORMAT_BGRA_PREMUL, pp::Size(16, 16), true);
@@ -181,42 +182,34 @@ std::string TestGraphics2D::TestInvalidResource() {
   // Describe.
   PP_Size size;
   bool opaque;
-  if (graphics_2d_interface_->Describe(image.pp_resource(), &size, &opaque))
-    return "Describe succeeded with a different resource";
-  if (graphics_2d_interface_->Describe(null_context.pp_resource(),
-                                       &size, &opaque))
-    return "Describe succeeded with a NULL resource";
+  graphics_2d_interface_->Describe(image.pp_resource(), &size, &opaque);
+  graphics_2d_interface_->Describe(null_context.pp_resource(),
+                                   &size, &opaque);
 
   // PaintImageData.
   PP_Point zero_zero;
   zero_zero.x = 0;
   zero_zero.y = 0;
-  if (graphics_2d_interface_->PaintImageData(image.pp_resource(),
-                                             image.pp_resource(),
-                                             &zero_zero, NULL))
-    return "PaintImageData succeeded with a different resource";
-  if (graphics_2d_interface_->PaintImageData(null_context.pp_resource(),
-                                             image.pp_resource(),
-                                             &zero_zero, NULL))
-    return "PaintImageData succeeded with a NULL resource";
+  graphics_2d_interface_->PaintImageData(image.pp_resource(),
+                                         image.pp_resource(),
+                                         &zero_zero, NULL);
+  graphics_2d_interface_->PaintImageData(null_context.pp_resource(),
+                                         image.pp_resource(),
+                                         &zero_zero, NULL);
 
   // Scroll.
   PP_Point zero_ten;
   zero_ten.x = 0;
   zero_ten.y = 10;
-  if (graphics_2d_interface_->Scroll(image.pp_resource(), NULL, &zero_ten))
-    return "Scroll succeeded with a different resource";
-  if (graphics_2d_interface_->Scroll(null_context.pp_resource(),
-                                     NULL, &zero_ten))
-    return "Scroll succeeded with a NULL resource";
+  graphics_2d_interface_->Scroll(image.pp_resource(), NULL, &zero_ten);
+  graphics_2d_interface_->Scroll(null_context.pp_resource(),
+                                 NULL, &zero_ten);
 
   // ReplaceContents.
-  if (graphics_2d_interface_->ReplaceContents(image.pp_resource(),
-                                              image.pp_resource()))
-    return "ReplaceContents succeeded with a different resource";
-  if (graphics_2d_interface_->ReplaceContents(null_context.pp_resource(),
-                                              image.pp_resource()))
-    return "ReplaceContents succeeded with a NULL resource";
+  graphics_2d_interface_->ReplaceContents(image.pp_resource(),
+                                          image.pp_resource());
+  graphics_2d_interface_->ReplaceContents(null_context.pp_resource(),
+                                          image.pp_resource());
 
   // Flush.
   if (graphics_2d_interface_->Flush(
@@ -328,34 +321,19 @@ std::string TestGraphics2D::TestPaint() {
   pp::ImageData background(PP_IMAGEDATAFORMAT_BGRA_PREMUL, pp::Size(w, h),
                            false);
   FillRectInImage(&background, pp::Rect(0, 0, w, h), background_color);
-  if (!dc.PaintImageData(background, pp::Point(0, 0)))
-    return "Couldn't fill background";
+  dc.PaintImageData(background, pp::Point(0, 0));
   if (!FlushAndWaitForDone(&dc))
     return "Couldn't flush to fill backing store";
 
-  // Try painting where the dirty rect is outside of the bitmap bounds, this
-  // should fail.
-  const int fill_w = 2, fill_h = 3;
-  pp::ImageData invalid_clip(PP_IMAGEDATAFORMAT_BGRA_PREMUL,
-                             pp::Size(fill_w, fill_h), false);
-  if (invalid_clip.is_null())
-    return "Failure to allocate invalid_clip image";
-  if (dc.PaintImageData(invalid_clip, pp::Point(0, 0),
-                        pp::Rect(-1, 0, fill_w, fill_h)))
-    return "Accepted a negative dirty rect";
-  if (dc.PaintImageData(invalid_clip, pp::Point(0, 0),
-                        pp::Rect(0, 0, fill_w, fill_h + 1)))
-    return "Accepted a too-big dirty rect";
-
   // Make an image to paint with that's opaque white and enqueue a paint.
+  const int fill_w = 2, fill_h = 3;
   pp::ImageData fill(PP_IMAGEDATAFORMAT_BGRA_PREMUL, pp::Size(fill_w, fill_h),
                      true);
   if (fill.is_null())
     return "Failure to allocate fill image";
   FillRectInImage(&fill, pp::Rect(fill.size()), background_color);
   const int paint_x = 4, paint_y = 5;
-  if (!dc.PaintImageData(fill, pp::Point(paint_x, paint_y)))
-    return "Couldn't paint the rect.";
+  dc.PaintImageData(fill, pp::Point(paint_x, paint_y));
 
   // Validate that nothing has been actually painted.
   if (!IsDCUniformColor(dc, background_color))
@@ -377,14 +355,11 @@ std::string TestGraphics2D::TestPaint() {
   // Reset the DC to blank white & paint our image slightly off the buffer.
   // This should succeed. We also try painting the same thing where the
   // dirty rect falls outeside of the device, which should fail.
-  if (!dc.PaintImageData(background, pp::Point(0, 0)))
-    return "Couldn't fill background";
+  dc.PaintImageData(background, pp::Point(0, 0));
   const int second_paint_x = -1, second_paint_y = -2;
-  if (dc.PaintImageData(fill, pp::Point(second_paint_x, second_paint_y)))
-    return "Trying to paint outside of the image.";
-  if (!dc.PaintImageData(fill, pp::Point(second_paint_x, second_paint_y),
-                         pp::Rect(-second_paint_x, -second_paint_y, 1, 1)))
-    return "Painting failed.";
+  dc.PaintImageData(fill, pp::Point(second_paint_x, second_paint_y));
+  dc.PaintImageData(fill, pp::Point(second_paint_x, second_paint_y),
+                    pp::Rect(-second_paint_x, -second_paint_y, 1, 1));
   if (!FlushAndWaitForDone(&dc))
     return "Couldn't flush second paint";
 
@@ -398,9 +373,8 @@ std::string TestGraphics2D::TestPaint() {
   uint32_t subset_color = 0x80808080;
   const int subset_x = 2, subset_y = 1;
   *subset.GetAddr32(pp::Point(subset_x, subset_y)) = subset_color;
-  if (!dc.PaintImageData(subset, pp::Point(-subset_x, -subset_y),
-                         pp::Rect(subset_x, subset_y, 1, 1)))
-    return "Couldn't paint the subset.";
+  dc.PaintImageData(subset, pp::Point(-subset_x, -subset_y),
+                    pp::Rect(subset_x, subset_y, 1, 1));
   if (!FlushAndWaitForDone(&dc))
     return "Couldn't flush repaint";
   if (!IsSquareInDC(dc, background_color, pp::Rect(0, 0, 1, 1),
@@ -426,8 +400,7 @@ std::string TestGraphics2D::TestScroll() {
   FillImageWithGradient(&test_image);
 
   int image_x = 51, image_y = 72;
-  if (!dc.PaintImageData(test_image, pp::Point(image_x, image_y)))
-    return "Couldn't paint image.";
+  dc.PaintImageData(test_image, pp::Point(image_x, image_y));
   if (!FlushAndWaitForDone(&dc))
     return "Couldn't flush to fill backing store.";
 
@@ -435,8 +408,7 @@ std::string TestGraphics2D::TestScroll() {
   int dx = -40, dy = -48;
   pp::Rect clip = pp::Rect(image_x, image_y, test_image.size().width(),
                            test_image.size().height());
-  if (!dc.Scroll(clip, pp::Point(dx, dy)))
-    return "TC1, Couldn't scroll to a free space.";
+  dc.Scroll(clip, pp::Point(dx, dy));
 
   if (!FlushAndWaitForDone(&dc))
     return "TC1, Couldn't flush to scroll.";
@@ -457,8 +429,7 @@ std::string TestGraphics2D::TestScroll() {
   dy = 9;
   clip = pp::Rect(image_x, image_y, test_image.size().width(),
                   test_image.size().height());
-  if (!dc.Scroll(clip, pp::Point(dx, dy)))
-    return "TC2, Couldn't scroll to an overlapping space.";
+  dc.Scroll(clip, pp::Point(dx, dy));
 
   if (!FlushAndWaitForDone(&dc))
     return "TC2, Couldn't flush to scroll.";
@@ -471,21 +442,6 @@ std::string TestGraphics2D::TestScroll() {
 
   if (!CompareImages(test_image, readback))
     return "TC2, Read back image is not the same as test image.";
-
-  // TC3, Scroll image partially outside of dc.
-  dx = -image_x - 5;
-  dy = -image_y - 7;
-  clip = pp::Rect(image_x, image_y, test_image.size().width(),
-                  test_image.size().height());
-
-  // This should fail. Check for false here.
-  if (dc.Scroll(clip, pp::Point(dx, dy)))
-    return "TC3, Scroll should fail scrolling partially outside of dc.";
-
-  // TC4, Scroll image completely outside of dc.
-  clip = pp::Rect(0, 0, -image_x - dx, -image_y - dy);
-  if (dc.Scroll(clip, pp::Point(dx, dy)))
-    return "TC4, Scroll should fail scrolling completely outside of dc.";
 
   return "";
 }
@@ -501,8 +457,7 @@ std::string TestGraphics2D::TestReplace() {
                            pp::Size(w - 1, h), true);
   if (weird_size.is_null())
     return "Failure allocating the weird sized image";
-  if (dc.ReplaceContents(&weird_size))
-    return "Could replace a DC with a different size background";
+  dc.ReplaceContents(&weird_size);
 
   // Fill the background with blue but don't flush yet.
   const int32_t background_color = 0xFF0000FF;
@@ -511,8 +466,7 @@ std::string TestGraphics2D::TestReplace() {
   if (background.is_null())
     return "Failure to allocate background image";
   FillRectInImage(&background, pp::Rect(0, 0, w, h), background_color);
-  if (!dc.PaintImageData(background, pp::Point(0, 0)))
-    return "Couldn't paint the background.";
+  dc.PaintImageData(background, pp::Point(0, 0));
 
   // Replace with a green background but don't flush yet.
   const int32_t swapped_color = 0xFF0000FF;
@@ -520,8 +474,7 @@ std::string TestGraphics2D::TestReplace() {
   if (swapped.is_null())
     return "Failure to allocate swapped image";
   FillRectInImage(&swapped, pp::Rect(0, 0, w, h), swapped_color);
-  if (!dc.ReplaceContents(&swapped))
-    return "Couldn't replace.";
+  dc.ReplaceContents(&swapped);
 
   // The background should be unchanged since we didn't flush yet.
   if (!IsDCUniformColor(dc, 0))
@@ -533,8 +486,7 @@ std::string TestGraphics2D::TestReplace() {
     return "Size of the swapped image should be reset.";
 
   // Painting with the swapped image should fail.
-  if (dc.PaintImageData(swapped, pp::Point(0, 0)))
-    return "Painting with the swapped image should fail.";
+  dc.PaintImageData(swapped, pp::Point(0, 0));
 
   // Flush and make sure the result is correct.
   if (!FlushAndWaitForDone(&dc))
@@ -560,8 +512,7 @@ std::string TestGraphics2D::TestFlush() {
                            true);
   if (background.is_null())
     return "Failure to allocate background image";
-  if (!dc.PaintImageData(background, pp::Point(0, 0)))
-    return "Couldn't paint the background.";
+  dc.PaintImageData(background, pp::Point(0, 0));
 
   int32_t rv = dc.Flush(pp::CompletionCallback::Block());
   if (rv == PP_OK || rv == PP_ERROR_WOULDBLOCK)

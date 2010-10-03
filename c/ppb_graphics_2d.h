@@ -27,13 +27,13 @@ struct PP_Size;
 /** {PENDING: describe PPB_Graphics2D. */
 struct PPB_Graphics2D {
   /**
-   * The returned device context will not be bound to any plugin instance on
-   * creation (call BindGraphicsDeviceContext on the plugin instance to do
-   * that. The device context has a lifetime that can exceed that of the given
-   * plugin instance.
+   * The returned graphics context will not be bound to any plugin instance on
+   * creation (call BindGraphics on the plugin instance to do that. The
+   * graphics context has a lifetime that can exceed that of the given plugin
+   * instance.
    *
    * Set the is_always_opaque flag if you know that you will be painting only
-   * opaque data to this device. This will disable blending when compositing
+   * opaque data to this context. This will disable blending when compositing
    * the plugin with the web page, which will give slightly higher performance.
    *
    * If you set is_always_opaque, your alpha channel should always be set to
@@ -49,51 +49,48 @@ struct PPB_Graphics2D {
                         bool is_always_opaque);
 
   /**
-   * Returns true if the given resource is a valid DeviceContext2D, false if it
+   * Returns true if the given resource is a valid Graphics2D, false if it
    * is an invalid resource or is a resource of another type.
    */
-  bool (*IsDeviceContext2D)(PP_Resource resource);
+  bool (*IsGraphics2D)(PP_Resource resource);
 
   /**
-   * Retrieves the configuration for the given device context, filling the
+   * Retrieves the configuration for the given graphics context, filling the
    * given values (which must not be NULL). On success, returns true. If the
    * resource is invalid, the output parameters will be set to 0 and it will
    * return false.
    */
-  bool (*Describe)(PP_Resource device_context,
+  bool (*Describe)(PP_Resource graphics_2d,
                    struct PP_Size* size,
                    bool* is_always_opqaue);
 
   /**
-   * Enqueues a paint of the given image into the device. THIS HAS NO EFFECT
+   * Enqueues a paint of the given image into the context. THIS HAS NO EFFECT
    * UNTIL YOU CALL Flush(). As a result, what counts is the contents of the
    * bitmap when you call Flush, not when you call this function.
    *
    * The given image will be placed at |top_left| from the top left of the
-   * device's internal backing store. Then the src_rect will be copied into the
+   * context's internal backing store. Then the src_rect will be copied into the
    * backing store. This parameter may not be NULL.
    *
    * The src_rect is specified in the coordinate system of the image being
-   * painted, not the device. For the common case of copying the entire image,
+   * painted, not the context. For the common case of copying the entire image,
    * you may specify a NULL |src_rect| pointer. If you are frequently updating
    * the entire image, consider using SwapImageData which will give slightly
    * higher performance.
    *
    * The painted area of the source bitmap must fall entirely within the
-   * device. Attempting to paint outside of the device will result in an error.
-   * However, the source bitmap may fall outside the device, as long as the
-   * src_rect subset of it falls entirely within the device.
-   *
-   * Returns true on success, false on failure. Failure means one of the
-   * resources was invalid, or the coordinates were out of bounds.
+   * context. Attempting to paint outside of the context will result in an
+   * error. However, the source bitmap may fall outside the context, as long
+   * as the src_rect subset of it falls entirely within the context.
    */
-  bool (*PaintImageData)(PP_Resource device_context,
-                         PP_Resource image,
+  void (*PaintImageData)(PP_Resource graphics_2d,
+                         PP_Resource image_data,
                          const struct PP_Point* top_left,
                          const struct PP_Rect* src_rect);
 
   /**
-   * Enqueues a scroll of the device's backing store. THIS HAS NO EFFECT UNTIL
+   * Enqueues a scroll of the context's backing store. THIS HAS NO EFFECT UNTIL
    * YOU CALL Flush(). The data within the given clip rect (you may specify
    * NULL to scroll the entire region) will be shifted by (dx, dy) pixels.
    *
@@ -104,22 +101,19 @@ struct PPB_Graphics2D {
    * The scroll can be larger than the area of the clip rect, which means the
    * current image will be scrolled out of the rect. This is not an error but
    * will be a no-op.
-   *
-   * Returns true on success, false on failure. Failure means one of the
-   * devices was invalid, or the clip rect went out of bounds of the device.
    */
-  bool (*Scroll)(PP_Resource device_context,
+  void (*Scroll)(PP_Resource graphics_2d,
                  const struct PP_Rect* clip_rect,
                  const struct PP_Point* amount);
 
   /**
    * This function provides a slightly more efficient way to paint the entire
    * plugin's image. Normally, calling PaintImageData requires that the browser
-   * copy the pixels out of the image and into the device context's backing
-   * store. This function replaces the device context's backing store with the
+   * copy the pixels out of the image and into the graphics context's backing
+   * store. This function replaces the graphics context's backing store with the
    * given image, avoiding the copy.
    *
-   * The new image must be the exact same size as this device context and
+   * The new image must be the exact same size as this graphics context and
    * must be in the browser's native bitmap format (use
    * PPB_ImageData.GetNativeImageDataFormat to retrieve this).
    *
@@ -137,17 +131,13 @@ struct PPB_Graphics2D {
    * the sizes match). In the optimal case, this means no bitmaps are allocated
    * during the animation, and the backing store and "front buffer" (which the
    * plugin is painting into) are just being swapped back and forth.
-   *
-   * Returns true on success. Failure indicates the device context or image is
-   * invalid, or the input image is a different size than the device context.
-   * In the failure case, the image will still be valid.
    */
-  bool (*ReplaceContents)(PP_Resource device_context, PP_Resource image);
+  void (*ReplaceContents)(PP_Resource graphics_2d, PP_Resource image_data);
 
   /**
    * Flushes any enqueued paint, scroll, and swap commands for the backing
    * store. This actually executes the updates, and causes a repaint of the
-   * webpage, assuming this device context is bound to a plugin instance. This
+   * webpage, assuming this graphics context is bound to a plugin instance. This
    * can run in two modes:
    *
    * - In synchronous mode, you specify NULL for the callback and the callback
@@ -168,9 +158,9 @@ struct PPB_Graphics2D {
    * updates faster than the screen can be updated.
    *
    * <dl>
-   * <dt>Unbound devices</dt>
+   * <dt>Unbound contexts</dt>
    * <dd>
-   *   If the device is not bound to a plugin instance, you will
+   *   If the context is not bound to a plugin instance, you will
    *   still get a callback. It will execute after the Flush function returns
    *   to avoid reentrancy. Of course, it will not wait until anything is
    *   painted to the screen because there will be nothing on the screen. The
@@ -180,26 +170,27 @@ struct PPB_Graphics2D {
    *
    * <dt>Off-screen instances</dt>
    * <dd>
-   *   If the device is bound to an instance that is
+   *   If the context is bound to an instance that is
    *   currently not visible (for example, scrolled out of view) it will behave
-   *   like the "unbound device" case.
+   *   like the "unbound context" case.
    * </dd>
    *
-   * <dt>Detaching a device</dt>
+   * <dt>Detaching a context</dt>
    * <dd>
-   *   If you detach a device from a plugin instance, any
-   *   pending flush callbacks will be converted into the "unbound device" case.
+   *   If you detach a context from a plugin instance, any
+   *   pending flush callbacks will be converted into the "unbound context"
+   *   case.
    * </dd>
    *
-   * <dt>Released devices</dt>
+   * <dt>Released contexts</dt>
    * <dd>
-   *   A callback may or may not still get called even if you
-   *   have released all of your references to the device. This can occur if
-   *   there are internal references to the device that means it has not been
-   *   internally destroyed (for example, if it is still bound to an instance)
-   *   or due to other implementation details. As a result, you should be
-   *   careful to check that flush callbacks are for the device you expect and
-   *   that you're capable of handling callbacks for devices that you may have
+   *   A callback may or may not still get called even if you have released all
+   *   of your references to the context. This can occur if there are internal
+   *   references to the context that means it has not been internally
+   *   destroyed (for example, if it is still bound to an instance) or due to
+   *   other implementation details. As a result, you should be careful to
+   *   check that flush callbacks are for the context you expect and that
+   *   you're capable of handling callbacks for context that you may have
    *   released your reference to.
    * </dd>
    *
@@ -210,7 +201,7 @@ struct PPB_Graphics2D {
    * </dd>
    * </dl>
    *
-   * Returns PP_OK on success, PP_Error_BadResource if the device context is
+   * Returns PP_OK on success, PP_Error_BadResource if the graphics context is
    * invalid, PP_Error_BadArgument if the callback is null and Flush is being
    * called from the main thread of the plugin, or PP_Error_InProgress if a
    * Flush is already pending that has not issued its callback yet.  In the
@@ -218,7 +209,7 @@ struct PPB_Graphics2D {
    */
   // TODO(darin): We should ensure that the completion callback always runs, so
   // that it is easier for consumers to manage memory referenced by a callback.
-  int32_t (*Flush)(PP_Resource device_context,
+  int32_t (*Flush)(PP_Resource graphics_2d,
                    struct PP_CompletionCallback callback);
 
 };

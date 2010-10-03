@@ -232,7 +232,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
     }
   }
 
-  virtual void ViewChanged(const pp::Rect& position, const pp::Rect& clip) {
+  virtual void DidChangeView(const pp::Rect& position, const pp::Rect& clip) {
     if (position.size().width() == width_ &&
         position.size().height() == height_)
       return;  // We don't care about the position, only the size.

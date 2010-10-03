@@ -41,11 +41,24 @@ struct PPB_Core {
   void (*MemFree)(void* ptr);
 
   /**
-   * Returns the "wall clock time" according to the browser.  This clock is
-   * used by the browser when passing time values to the plugin (e.g., via the
-   * PP_InputEvent::time_stamp_seconds field).
+   * Returns the "wall clock time" according to the browser.
+   *
+   * See the definition of PP_Time.
    */
   PP_Time (*GetTime)();
+
+  /**
+   * Returns the "tick time" according to the browser. This clock is used by
+   * the browser when passing some event times to the plugin (e.g., via the
+   * PP_InputEvent::time_stamp_seconds field). It is not correlated to any
+   * actual wall clock time (like GetTime()). Because of this, it will not run
+   * change if the user changes their computer clock.
+   *
+   * TODO(brettw) http://code.google.com/p/chromium/issues/detail?id=57448
+   * This currently does change with wall clock time, but will be fixed in
+   * a future release.
+   */
+  PP_TimeTicks (*GetTimeTicks)();
 
   /**
    * Schedules work to be executed on the main plugin thread after the

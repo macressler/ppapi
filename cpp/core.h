@@ -38,6 +38,10 @@ class Core {
     return interface_->GetTime();
   }
 
+  PP_TimeTicks GetTimeTicks() {
+    return interface_->GetTimeTicks();
+  }
+
   void CallOnMainThread(int32_t delay_in_milliseconds,
                         const CompletionCallback& callback,
                         int32_t result = 0);

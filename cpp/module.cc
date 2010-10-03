@@ -43,19 +43,22 @@ namespace pp {
 
 // PPP_Instance implementation -------------------------------------------------
 
-bool Instance_New(PP_Instance instance) {
+bool Instance_DidCreate(PP_Instance pp_instance,
+                        uint32_t argc,
+                        const char* argn[],
+                        const char* argv[]) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
     return false;
-  Instance* obj = module_singleton->CreateInstance(instance);
-  if (obj) {
-    module_singleton->current_instances_[instance] = obj;
-    return true;
-  }
-  return false;
+
+  Instance* instance = module_singleton->CreateInstance(pp_instance);
+  if (!instance)
+    return false;
+  module_singleton->current_instances_[pp_instance] = instance;
+  return instance->Init(argc, argn, argv);
 }
 
-void Instance_Delete(PP_Instance instance) {
+void Instance_DidDestroy(PP_Instance instance) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
     return;
@@ -70,28 +73,26 @@ void Instance_Delete(PP_Instance instance) {
   delete obj;
 }
 
-bool Instance_Initialize(PP_Instance pp_instance,
-                         uint32_t argc,
-                         const char* argn[],
-                         const char* argv[]) {
+void Instance_DidChangeView(PP_Instance pp_instance,
+                            const PP_Rect* position,
+                            const PP_Rect* clip) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
-    return false;
+    return;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
-    return false;
-  return instance->Init(argc, argn, argv);
+    return;
+  instance->DidChangeView(*position, *clip);
 }
 
-bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
-                                 PP_Resource pp_url_loader) {
+void Instance_DidChangeFocus(PP_Instance pp_instance, bool has_focus) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
-    return false;
+    return;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
-    return false;
-  return instance->HandleDocumentLoad(URLLoader_Dev(pp_url_loader));
+    return;
+  instance->DidChangeFocus(has_focus);
 }
 
 bool Instance_HandleInputEvent(PP_Instance pp_instance,
@@ -105,14 +106,15 @@ bool Instance_HandleInputEvent(PP_Instance pp_instance,
   return instance->HandleInputEvent(*event);
 }
 
-void Instance_FocusChanged(PP_Instance pp_instance, bool has_focus) {
+bool Instance_HandleDocumentLoad(PP_Instance pp_instance,
+                                 PP_Resource pp_url_loader) {
   Module* module_singleton = Module::Get();
   if (!module_singleton)
-    return;
+    return false;
   Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
   if (!instance)
-    return;
-  instance->FocusChanged(has_focus);
+    return false;
+  return instance->HandleDocumentLoad(URLLoader_Dev(pp_url_loader));
 }
 
 PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
@@ -123,18 +125,6 @@ PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
   if (!instance)
     return Var().Detach();
   return instance->GetInstanceObject().Detach();
-}
-
-void Instance_ViewChanged(PP_Instance pp_instance,
-                          const PP_Rect* position,
-                          const PP_Rect* clip) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return;
-  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
-  if (!instance)
-    return;
-  instance->ViewChanged(*position, *clip);
 }
 
 PP_Var Instance_GetSelectedText(PP_Instance pp_instance,
@@ -149,14 +139,13 @@ PP_Var Instance_GetSelectedText(PP_Instance pp_instance,
 }
 
 static PPP_Instance instance_interface = {
-  &Instance_New,
-  &Instance_Delete,
-  &Instance_Initialize,
-  &Instance_HandleDocumentLoad,
+  &Instance_DidCreate,
+  &Instance_DidDestroy,
+  &Instance_DidChangeView,
+  &Instance_DidChangeFocus,
   &Instance_HandleInputEvent,
-  &Instance_FocusChanged,
+  &Instance_HandleDocumentLoad,
   &Instance_GetInstanceObject,
-  &Instance_ViewChanged,
   &Instance_GetSelectedText,
 };
 
