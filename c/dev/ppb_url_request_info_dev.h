@@ -39,13 +39,12 @@ struct PPB_URLRequestInfo_Dev {
                       PP_URLRequestProperty_Dev property,
                       struct PP_Var value);
 
-  // Append data to the request body.  The data parameter must be of type
-  // PP_VarType_String.
+  // Append data to the request body.
   //
   // A Content-Length request header will be automatically generated.
   //
   // Returns false if any of the parameters are invalid.
-  bool (*AppendDataToBody)(PP_Resource request, struct PP_Var data);
+  bool (*AppendDataToBody)(PP_Resource request, const char* data, uint32_t len);
 
   // Append a file reference to be uploaded.
   //

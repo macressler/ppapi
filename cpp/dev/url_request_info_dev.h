@@ -23,7 +23,7 @@ class URLRequestInfo_Dev : public Resource {
 
   // PPB_URLRequestInfo_Dev methods:
   bool SetProperty(PP_URLRequestProperty_Dev property, const Var& value);
-  bool AppendDataToBody(const Var& data);
+  bool AppendDataToBody(const char* data, uint32_t len);
   bool AppendFileToBody(const FileRef_Dev& file_ref,
                         PP_Time expected_last_modified_time = 0);
   bool AppendFileRangeToBody(const FileRef_Dev& file_ref,

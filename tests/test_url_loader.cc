@@ -89,6 +89,7 @@ void TestURLLoader::RunTest() {
   RUN_TEST(BasicPOST);
   RUN_TEST(CompoundBodyPOST);
   RUN_TEST(EmptyDataPOST);
+  RUN_TEST(BinaryDataPOST);
   RUN_TEST(CustomRequestHeader);
   RUN_TEST(IgnoresBogusContentLength);
   RUN_TEST(OpenBadFileRef);
@@ -183,25 +184,40 @@ std::string TestURLLoader::TestBasicPOST() {
   pp::URLRequestInfo_Dev request;
   request.SetURL("/echo");
   request.SetMethod("POST");
-  request.AppendDataToBody("postdata");
-  return LoadAndCompareBody(request, "postdata");
+  std::string postdata("postdata");
+  request.AppendDataToBody(postdata.data(), postdata.length());
+  return LoadAndCompareBody(request, postdata);
 }
 
 std::string TestURLLoader::TestCompoundBodyPOST() {
   pp::URLRequestInfo_Dev request;
   request.SetURL("/echo");
   request.SetMethod("POST");
-  request.AppendDataToBody("post");
-  request.AppendDataToBody("data");
-  return LoadAndCompareBody(request, "postdata");
+  std::string postdata1("post");
+  request.AppendDataToBody(postdata1.data(), postdata1.length());
+  std::string postdata2("data");
+  request.AppendDataToBody(postdata2.data(), postdata2.length());
+  return LoadAndCompareBody(request, postdata1 + postdata2);
 }
 
 std::string TestURLLoader::TestEmptyDataPOST() {
   pp::URLRequestInfo_Dev request;
   request.SetURL("/echo");
   request.SetMethod("POST");
-  request.AppendDataToBody("");
+  request.AppendDataToBody("", 0);
   return LoadAndCompareBody(request, "");
+}
+
+std::string TestURLLoader::TestBinaryDataPOST() {
+  pp::URLRequestInfo_Dev request;
+  request.SetURL("/echo");
+  request.SetMethod("POST");
+  const char postdata_chars[] =
+      "\x00\x01\x02\x03\x04\x05postdata\xfa\xfb\xfc\xfd\xfe\xff";
+  std::string postdata(postdata_chars,
+                       sizeof(postdata_chars) / sizeof(postdata_chars[0]));
+  request.AppendDataToBody(postdata.data(), postdata.length());
+  return LoadAndCompareBody(request, postdata);
 }
 
 std::string TestURLLoader::TestCustomRequestHeader() {
@@ -216,8 +232,9 @@ std::string TestURLLoader::TestIgnoresBogusContentLength() {
   request.SetURL("/echo");
   request.SetMethod("POST");
   request.SetHeaders("Content-Length: 400");
-  request.AppendDataToBody("postdata");
-  return LoadAndCompareBody(request, "postdata");
+  std::string postdata("postdata");
+  request.AppendDataToBody(postdata.data(), postdata.length());
+  return LoadAndCompareBody(request, postdata);
 }
 
 std::string TestURLLoader::TestOpenBadFileRef() {

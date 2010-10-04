@@ -48,10 +48,10 @@ bool URLRequestInfo_Dev::SetProperty(PP_URLRequestProperty_Dev property,
                                          value.pp_var());
 }
 
-bool URLRequestInfo_Dev::AppendDataToBody(const Var& data) {
+bool URLRequestInfo_Dev::AppendDataToBody(const char* data, uint32_t len) {
   if (!url_request_info_f)
     return false;
-  return url_request_info_f->AppendDataToBody(pp_resource(), data.pp_var());
+  return url_request_info_f->AppendDataToBody(pp_resource(), data, len);
 }
 
 bool URLRequestInfo_Dev::AppendFileToBody(
