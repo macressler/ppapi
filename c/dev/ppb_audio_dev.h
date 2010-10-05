@@ -13,18 +13,24 @@
 #define PPB_AUDIO_DEV_INTERFACE "PPB_Audio(Dev);1"
 
 // Callback function type for SetCallback.
-typedef void (*PPB_Audio_Callback)(void* sample_buffer, void* user_data);
+typedef void (*PPB_Audio_Callback)(void* sample_buffer,
+                                   size_t buffer_size_in_bytes,
+                                   void* user_data);
 
 // Callback-based audio interface. User of audio must set the callback that will
 // be called each time that the buffer needs to be filled.
 //
 // A C++ example:
 //
-// void audio_callback(void* sample_buffer, void* user_data) {
+// void audio_callback(void* sample_buffer,
+//                     size_t buffer_size_in_bytes,
+//                     void* user_data) {
 //   ... fill in the buffer with samples ...
 // }
 //
-// Audio audio(AudioConfig(44100, 0), audio_callback, NULL);
+// uint32_t obtained;
+// AudioConfig config(PP_AUDIOSAMPLERATE_44100, 4096, &obtained);
+// Audio audio(config, audio_callback, NULL);
 // audio.StartPlayback();
 //
 struct PPB_Audio_Dev {

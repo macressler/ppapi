@@ -12,17 +12,23 @@ DeviceFuncs<PPB_AudioConfig_Dev> audio_cfg_f(PPB_AUDIO_CONFIG_DEV_INTERFACE);
 namespace pp {
 
 AudioConfig_Dev::AudioConfig_Dev()
-    : sample_rate_(0),
+    : sample_rate_(PP_AUDIOSAMPLERATE_NONE),
       sample_frame_count_(0) {
 }
 
-AudioConfig_Dev::AudioConfig_Dev(uint32_t sample_rate,
-                                 uint32_t sample_frame_count)
-    : sample_rate_(sample_rate),
-      sample_frame_count_(sample_frame_count) {
+AudioConfig_Dev::AudioConfig_Dev(PP_AudioSampleRate_Dev sample_rate,
+                                 uint32_t requested_sample_frame_count,
+                                 uint32_t *obtained_sample_frame_count)
+    : sample_rate_(sample_rate) {
+  uint32_t obtained = 0;
   if (audio_cfg_f) {
     PassRefFromConstructor(audio_cfg_f->CreateStereo16Bit(
-        Module::Get()->pp_module(), sample_rate, sample_frame_count));
+        Module::Get()->pp_module(), sample_rate, 
+        requested_sample_frame_count, &obtained));
+  }
+  sample_frame_count_ = obtained;
+  if (NULL != obtained_sample_frame_count) {
+    *obtained_sample_frame_count = obtained;
   }
 }
 

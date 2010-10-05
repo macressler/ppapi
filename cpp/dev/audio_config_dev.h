@@ -14,13 +14,15 @@ namespace pp {
 class AudioConfig_Dev : public Resource {
  public:
   AudioConfig_Dev();
-  AudioConfig_Dev(uint32_t sample_rate, uint32_t sample_count);
+  AudioConfig_Dev(PP_AudioSampleRate_Dev sample_rate,
+                  uint32_t requested_sample_count,
+                  uint32_t *obtained_sample_count);
 
-  uint32_t sample_rate() const { return sample_rate_; }
+  PP_AudioSampleRate_Dev sample_rate() const { return sample_rate_; }
   uint32_t sample_frame_count() { return sample_frame_count_; }
 
  private:
-  uint32_t sample_rate_;
+  PP_AudioSampleRate_Dev sample_rate_;
   uint32_t sample_frame_count_;
 };
 
