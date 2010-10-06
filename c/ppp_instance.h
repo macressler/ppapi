@@ -7,6 +7,7 @@
 
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
+#include "ppapi/c/pp_resource.h"
 
 struct PP_InputEvent;
 struct PP_Var;

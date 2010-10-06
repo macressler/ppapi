@@ -6,6 +6,7 @@
 #define PPAPI_C_TRUSTED_PPB_IMAGE_DATA_TRUSTED_H_
 
 #include "ppapi/c/pp_stdint.h"
+#include "ppapi/c/pp_resource.h"
 
 #define PPB_IMAGEDATA_TRUSTED_INTERFACE "PPB_ImageDataTrusted;1"
 
