@@ -16,7 +16,7 @@
 #include "ppapi/c/pp_stdint.h"
 
 typedef enum {
-  PP_VARTYPE_VOID,
+  PP_VARTYPE_UNDEFINED,
   PP_VARTYPE_NULL,
   PP_VARTYPE_BOOL,
   PP_VARTYPE_INT32,
@@ -53,8 +53,8 @@ struct PP_Var {
   } value;
 };
 
-inline struct PP_Var PP_MakeVoid() {
-  struct PP_Var result = { PP_VARTYPE_VOID, {0} };
+inline struct PP_Var PP_MakeUndefined() {
+  struct PP_Var result = { PP_VARTYPE_UNDEFINED, {0} };
   return result;
 }
 

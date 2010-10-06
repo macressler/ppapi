@@ -2,20 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PPB_VAR_H_
-#define PPAPI_C_PPB_VAR_H_
+#ifndef PPAPI_C_PPB_VAR_DEPRECATED_H_
+#define PPAPI_C_PPB_VAR_DEPRECATED_H_
 
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
-struct PPP_Class;
+struct PPP_Class_Deprecated;
 
-#define PPB_VAR_INTERFACE "PPB_Var;0.1"
+#define PPB_VAR_DEPRECATED_INTERFACE "PPB_Var(Deprecated);0.1"
 
 /**
  * @file
- * Defines the PPB_Var struct.
+ * Defines the PPB_Var_Deprecated struct.
  * See http://code.google.com/p/ppapi/wiki/InterfacingWithJavaScript
  * for general information on using this interface.
  * {PENDING: Should the generated doc really be pointing to methods?}
@@ -24,7 +24,7 @@ struct PPP_Class;
  * @{
  */
 
-struct PPB_Var {
+struct PPB_Var_Deprecated {
   /**
    * Adds a reference to the given var. If this is not a refcounted object,
    * this function will do nothing so you can always call it no matter what the
@@ -197,7 +197,7 @@ struct PPB_Var {
    * object_data is non-NULL. Otherwise, this method returns false.
    */
   bool (*IsInstanceOf)(struct PP_Var var,
-                       const struct PPP_Class* object_class,
+                       const struct PPP_Class_Deprecated* object_class,
                        void** object_data);
 
   /**
@@ -216,7 +216,7 @@ struct PPB_Var {
    *     delete (Point*)object;
    *   }
    *
-   *   const PPP_Class point_class = {
+   *   const PPP_Class_Deprecated point_class = {
    *     ... all the other class functions go here ...
    *     &PointDestruct
    *   };
@@ -231,7 +231,7 @@ struct PPB_Var {
    *   }</pre>
    */
   struct PP_Var (*CreateObject)(PP_Module module,
-                                const struct PPP_Class* object_class,
+                                const struct PPP_Class_Deprecated* object_class,
                                 void* object_data);
 };
 
@@ -239,4 +239,5 @@ struct PPB_Var {
  * @}
  * End addtogroup PPB
  */
-#endif  // PPAPI_C_PPB_VAR_H_
+#endif  // PPAPI_C_PPB_VAR_DEPRECATED_H_
+

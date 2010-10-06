@@ -333,7 +333,7 @@ class MyInstance : public pp::Instance, public MyFetcherClient {
  private:
   void Log(const pp::Var& var) {
     pp::Var doc = GetWindowObject().GetProperty("document");
-    if (console_.is_void()) {
+    if (console_.is_undefined()) {
       pp::Var body = doc.GetProperty("body");
       console_ = doc.Call("createElement", "pre");
       console_.GetProperty("style").SetProperty("backgroundColor", "lightgray");

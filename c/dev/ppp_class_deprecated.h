@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_C_PPP_CLASS_H_
-#define PPAPI_C_PPP_CLASS_H_
+#ifndef PPAPI_C_PPP_CLASS_DEPRECATED_H_
+#define PPAPI_C_PPP_CLASS_DEPRECATED_H_
 
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
 /**
  * @file
- * Defines the PPP_Class struct.
+ * Defines the PPP_Class_Deprecated struct.
  *
  * @addtogroup PPP
  * @{
@@ -22,10 +22,10 @@ struct PP_Var;
  * Interface for the plugin to implement JavaScript-accessible objects.
  *
  * This interface has no interface name. Instead, the plugin passes a pointer
- * to this interface to PPB_Var.CreateObject that corresponds to the object
- * being implemented.
+ * to this interface to PPB_Var_Deprecated.CreateObject that corresponds to the
+ * object being implemented.
  *
- * See the PPB_Var interface for more information on these functions.
+ * See the PPB_Var_Deprecated interface for more information on these functions.
  * This interface just allows you to implement the "back end" of those
  * functions, so most of the contract is specified in that interface.
  *
@@ -33,7 +33,7 @@ struct PP_Var;
  *   http://code.google.com/p/ppapi/wiki/InterfacingWithJavaScript
  * for general information on using and implementing vars.
  */
-struct PPP_Class {
+struct PPP_Class_Deprecated {
   /**
    * |name| is guaranteed to be an integer or string type var. Exception is
    * guaranteed non-NULL. An integer is used for |name| when implementing
@@ -130,4 +130,5 @@ struct PPP_Class {
  * @}
  * End addtogroup PPP
  */
-#endif  // PPAPI_C_PPP_CLASS_H_
+#endif  // PPAPI_C_PPP_CLASS_DEPRECATED_H_
+

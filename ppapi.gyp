@@ -51,9 +51,7 @@
         'c/ppb_graphics_2d.h',
         'c/ppb_image_data.h',
         'c/ppb_instance.h',
-        'c/ppb_var.h',
         'c/ppp.h',
-        'c/ppp_class.h',
         'c/ppp_instance.h',
 
         # Dev interfaces.
@@ -93,6 +91,10 @@
         'c/dev/ppp_printing_dev.h',
         'c/dev/ppp_widget_dev.h',
         'c/dev/ppp_zoom_dev.h',
+
+        # Deprecated interfaces.
+        'c/dev/ppb_var_deprecated.h',
+        'c/dev/ppp_class_deprecated.h',
       ],
     },
     {
@@ -127,8 +129,6 @@
         'cpp/rect.h',
         'cpp/resource.cc',
         'cpp/resource.h',
-        'cpp/scriptable_object.cc',
-        'cpp/scriptable_object.h',
         'cpp/size.h',
         'cpp/var.cc',
         'cpp/var.h',
@@ -180,6 +180,10 @@
         'cpp/dev/widget_dev.h',
         'cpp/dev/zoom_dev.cc',
         'cpp/dev/zoom_dev.h',
+
+        # Deprecated interfaces.
+        'cpp/dev/scriptable_object_deprecated.h',
+        'cpp/dev/scriptable_object_deprecated.cc'        
       ],
       'conditions': [
         ['OS=="win"', {
@@ -305,8 +309,6 @@
         'tests/test_graphics_2d.h',
         'tests/test_image_data.cc',
         'tests/test_image_data.h',
-        'tests/test_instance.cc',
-        'tests/test_instance.h',
         'tests/test_paint_aggregator.cc',
         'tests/test_paint_aggregator.h',
         'tests/test_scrollbar.cc',
@@ -319,6 +321,10 @@
         'tests/test_url_util.h',
         'tests/test_var.cc',
         'tests/test_var.h',
+
+        # Deprecated test cases.
+        'tests/test_instance_deprecated.cc',
+        'tests/test_instance_deprecated.h',
       ],
       'dependencies': [
         'ppapi_cpp'

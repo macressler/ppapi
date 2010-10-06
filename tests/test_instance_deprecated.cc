@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ppapi/tests/test_instance.h"
+#include "ppapi/tests/test_instance_deprecated.h"
 
 #include "ppapi/cpp/module.h"
-#include "ppapi/cpp/scriptable_object.h"
+#include "ppapi/cpp/dev/scriptable_object_deprecated.h"
 #include "ppapi/tests/testing_instance.h"
 
 namespace {
@@ -15,11 +15,11 @@ static const char kSetExceptionFunction[] = "SetException";
 static const char kReturnValueFunction[] = "ReturnValue";
 
 // ScriptableObject used by instance.
-class InstanceSO : public pp::ScriptableObject {
+class InstanceSO : public pp::deprecated::ScriptableObject {
  public:
   InstanceSO(TestInstance* i) : test_instance_(i) {}
 
-  // pp::ScriptableObject overrides.
+  // pp::deprecated::ScriptableObject overrides.
   bool HasMethod(const pp::Var& name, pp::Var* exception);
   pp::Var Call(const pp::Var& name,
                const std::vector<pp::Var>& args,
@@ -81,7 +81,7 @@ void TestInstance::RunTest() {
   RUN_TEST(ExecuteScript);
 }
 
-pp::ScriptableObject* TestInstance::CreateTestObject() {
+pp::deprecated::ScriptableObject* TestInstance::CreateTestObject() {
   return new InstanceSO(this);
 }
 
@@ -91,8 +91,8 @@ std::string TestInstance::TestExecuteScript() {
   pp::Var ret = instance_->ExecuteScript(
       "document.getElementById('plugin').SetValue('hello, world');",
       &exception);
-  ASSERT_TRUE(ret.is_void());
-  ASSERT_TRUE(exception.is_void());
+  ASSERT_TRUE(ret.is_undefined());
+  ASSERT_TRUE(exception.is_undefined());
   ASSERT_TRUE(string_ == "hello, world");
 
   // Return values from the plugin should be returned.
@@ -100,13 +100,13 @@ std::string TestInstance::TestExecuteScript() {
       "document.getElementById('plugin').ReturnValue('return value');",
       &exception);
   ASSERT_TRUE(ret.is_string() && ret.AsString() == "return value");
-  ASSERT_TRUE(exception.is_void());
+  ASSERT_TRUE(exception.is_undefined());
 
   // Exception thrown by the plugin should be caught.
   ret = instance_->ExecuteScript(
       "document.getElementById('plugin').SetException('plugin exception');",
       &exception);
-  ASSERT_TRUE(ret.is_void());
+  ASSERT_TRUE(ret.is_undefined());
   ASSERT_TRUE(exception.is_string());
   // TODO(brettw) bug 54011: The TryCatch isn't working properly and
   // doesn't actually pass the exception text up.
@@ -115,7 +115,7 @@ std::string TestInstance::TestExecuteScript() {
   // Exception caused by string evaluation should be caught.
   exception = pp::Var();
   ret = instance_->ExecuteScript("document.doesntExist()", &exception);
-  ASSERT_TRUE(ret.is_void());
+  ASSERT_TRUE(ret.is_undefined());
   ASSERT_TRUE(exception.is_string());  // Don't know exactly what it will say.
 
   return std::string();

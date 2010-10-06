@@ -2,16 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_CPP_SCRIPTABLE_OBJECT_H_
-#define PPAPI_CPP_SCRIPTABLE_OBJECT_H_
+#ifndef PPAPI_CPP_SCRIPTABLE_OBJECT_DEPRECATED_H_
+#define PPAPI_CPP_SCRIPTABLE_OBJECT_DEPRECATED_H_
 
 #include <vector>
 
-struct PPP_Class;
+struct PPP_Class_Deprecated;
+
+namespace pp {
+class Var;
+}
+using pp::Var;
 
 namespace pp {
 
-class Var;
+namespace deprecated {
 
 // This class allows you to implement objects accessible by JavaScript. Derive
 // from this class and override the virtual functions you support. pp::Var has
@@ -71,14 +76,17 @@ class ScriptableObject {
                         Var* exception);
 
  private:
-  friend class Var;
-  static const PPP_Class* GetClass();
+  friend class ::pp::Var;
+  static const PPP_Class_Deprecated* GetClass();
 
   // Unimplemented, copy and assigmnent is not allowed.
   ScriptableObject(const ScriptableObject& other);
   ScriptableObject& operator=(const ScriptableObject& other);
 };
 
+}  // namespace deprecated
+
 }  // namespace pp
 
-#endif  // PPAPI_CPP_SCRIPTABLE_OBJECT_H_
+#endif  // PPAPI_CPP_SCRIPTABLE_OBJECT_DEPRECATED_H_
+

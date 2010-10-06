@@ -2,13 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "ppapi/cpp/scriptable_object.h"
+#include "ppapi/cpp/dev/scriptable_object_deprecated.h"
 
-#include "ppapi/c/ppp_class.h"
+#include "ppapi/c/dev/ppp_class_deprecated.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
+
+namespace deprecated {
 
 namespace {
 
@@ -20,7 +22,7 @@ class ExceptionConverter {
   ExceptionConverter(PP_Var* out) : out_(out) {
   }
   ~ExceptionConverter() {
-    if (!exception_.is_void())
+    if (!exception_.is_undefined())
       *out_ = exception_.Detach();
   }
 
@@ -120,7 +122,7 @@ void Deallocate(void* object) {
   delete static_cast<ScriptableObject*>(object);
 }
 
-PPP_Class plugin_class = {
+PPP_Class_Deprecated plugin_class = {
   &HasProperty,
   &HasMethod,
   &GetProperty,
@@ -177,8 +179,10 @@ Var ScriptableObject::Construct(const std::vector<Var>& /*args*/,
 }
 
 // static
-const PPP_Class* ScriptableObject::GetClass() {
+const PPP_Class_Deprecated* ScriptableObject::GetClass() {
   return &plugin_class;
 }
+
+}  // namespace deprecated
 
 }  // namespace pp

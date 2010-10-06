@@ -10,7 +10,7 @@
 #include "ppapi/tests/test_case.h"
 
 struct PPB_Testing_Dev;
-struct PPB_Var;
+struct PPB_Var_Deprecated;
 
 class TestVar : public TestCase {
  public:
@@ -31,7 +31,7 @@ class TestVar : public TestCase {
   std::string TestHasPropertyAndMethod();
 
   // Used by the tests that access the C API directly.
-  const PPB_Var* var_interface_;
+  const PPB_Var_Deprecated* var_interface_;
   const PPB_Testing_Dev* testing_interface_;
 };
 

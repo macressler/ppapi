@@ -14,7 +14,9 @@
 class TestingInstance;
 
 namespace pp {
+namespace deprecated {
 class ScriptableObject;
+}
 }
 
 // Individual classes of tests derive from this generic test case.
@@ -46,7 +48,7 @@ class TestCase {
   //
   // This object should be created on the heap. Ownership will be passed to the
   // caller. Return NULL if there is no supported test object (the default).
-  virtual pp::ScriptableObject* CreateTestObject();
+  virtual pp::deprecated::ScriptableObject* CreateTestObject();
 
   // Pointer to the instance that owns us.
   TestingInstance* instance_;

@@ -68,7 +68,7 @@ class MyInstance : public pp::Instance {
   void RecreateConsole() {
     pp::Var doc = GetWindowObject().GetProperty("document");
     pp::Var body = doc.GetProperty("body");
-    if (!console_.is_void())
+    if (!console_.is_undefined())
       body.Call("removeChild", console_);
 
     console_ = doc.Call("createElement", "pre");

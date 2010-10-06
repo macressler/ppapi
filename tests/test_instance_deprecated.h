@@ -22,7 +22,7 @@ class TestInstance : public TestCase {
 
  protected:
   // Test case protected overrides.
-  virtual pp::ScriptableObject* CreateTestObject();
+  virtual pp::deprecated::ScriptableObject* CreateTestObject();
 
  private:
   std::string TestExecuteScript();

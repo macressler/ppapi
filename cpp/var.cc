@@ -9,11 +9,11 @@
 #include <algorithm>
 
 #include "ppapi/c/pp_var.h"
-#include "ppapi/c/ppb_var.h"
+#include "ppapi/c/dev/ppb_var_deprecated.h"
 #include "ppapi/cpp/logging.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/module_impl.h"
-#include "ppapi/cpp/scriptable_object.h"
+#include "ppapi/cpp/dev/scriptable_object_deprecated.h"
 
 // Defining snprintf
 #include <stdio.h>
@@ -23,7 +23,7 @@
 
 namespace {
 
-DeviceFuncs<PPB_Var> ppb_var_f(PPB_VAR_INTERFACE);
+DeviceFuncs<PPB_Var_Deprecated> ppb_var_f(PPB_VAR_DEPRECATED_INTERFACE);
 
 // Technically you can call AddRef and Release on any Var, but it may involve
 // cross-process calls depending on the plugin. This is an optimization so we
@@ -36,8 +36,10 @@ inline bool NeedsRefcounting(const PP_Var& var) {
 
 namespace pp {
 
+using namespace deprecated;
+
 Var::Var() {
-  var_.type = PP_VARTYPE_VOID;
+  var_.type = PP_VARTYPE_UNDEFINED;
   needs_release_ = false;
 }
 
@@ -315,8 +317,8 @@ Var Var::Call(const Var& method_name, const Var& arg1, const Var& arg2,
 
 std::string Var::DebugString() const {
   char buf[256];
-  if (is_void())
-    snprintf(buf, sizeof(buf), "Var<VOID>");
+  if (is_undefined())
+    snprintf(buf, sizeof(buf), "Var<UNDEFINED>");
   else if (is_null())
     snprintf(buf, sizeof(buf), "Var<NULL>");
   else if (is_bool())

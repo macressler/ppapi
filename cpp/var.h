@@ -12,13 +12,15 @@
 
 namespace pp {
 
+namespace deprecated {
 class ScriptableObject;
+}
 
 class Var {
  public:
   struct Null {};  // Special value passed to constructor to make NULL.
 
-  Var();  // PP_Var of type Void.
+  Var();  // PP_Var of type Undefined.
   Var(Null);  // PP_Var of type Null.
   Var(bool b);
   Var(int32_t i);
@@ -47,7 +49,7 @@ class Var {
   }
 
   // Takes ownership of the given pointer.
-  Var(ScriptableObject* object);
+  Var(deprecated::ScriptableObject* object);
 
   Var(const Var& other);
 
@@ -55,7 +57,7 @@ class Var {
 
   Var& operator=(const Var& other);
 
-  bool is_void() const { return var_.type == PP_VARTYPE_VOID; }
+  bool is_undefined() const { return var_.type == PP_VARTYPE_UNDEFINED; }
   bool is_null() const { return var_.type == PP_VARTYPE_NULL; }
   bool is_bool() const { return var_.type == PP_VARTYPE_BOOL; }
   bool is_string() const { return var_.type == PP_VARTYPE_STRING; }
@@ -95,7 +97,7 @@ class Var {
   // This assumes the object is of type object. If it's not, it will assert in
   // debug mode. If it is not an object or not a ScriptableObject type, returns
   // NULL.
-  ScriptableObject* AsScriptableObject() const;
+  deprecated::ScriptableObject* AsScriptableObject() const;
 
   bool HasProperty(const Var& name, Var* exception = NULL) const;
   bool HasMethod(const Var& name, Var* exception = NULL) const;
@@ -128,14 +130,14 @@ class Var {
   // where the caller expects the return value to be AddRef'ed for it.
   PP_Var Detach() {
     PP_Var ret = var_;
-    var_ = PP_MakeVoid();
+    var_ = PP_MakeUndefined();
     needs_release_ = false;
     return ret;
   }
 
   // Prints a short description "Var<X>" that can be used for logging, where
-  // "X" is the underlying scalar or "VOID" or "OBJ" as it does not call into
-  // the browser to get the object description.
+  // "X" is the underlying scalar or "UNDEFINED" or "OBJ" as it does not call
+  // into the browser to get the object description.
   std::string DebugString() const;
 
   // For use when calling the raw C PPAPI when using the C++ Var as a possibly
@@ -143,17 +145,17 @@ class Var {
   // out if it's non-NULL and fixing up the reference count.
   //
   // Danger: this will only work for things with exception semantics, i.e. that
-  // the value will not be changed if it's a non-void exception. Otherwise,
+  // the value will not be changed if it's a non-undefined exception. Otherwise,
   // this class will mess up the refcounting.
   //
   // This is a bit subtle:
   // - If NULL is passed, we return NULL from get() and do nothing.
   //
-  // - If a void value is passed, we return the address of a void var from
-  //   get and have the output value take ownership of that var.
+  // - If a undefined value is passed, we return the address of a undefined var
+  //   from get and have the output value take ownership of that var.
   //
-  // - If a non-void value is passed, we return the address of that var from
-  //   get, and nothing else should change.
+  // - If a non-undefined value is passed, we return the address of that var
+  //   from get, and nothing else should change.
   //
   // Example:
   //   void FooBar(a, b, Var* exception = NULL) {
@@ -167,11 +169,11 @@ class Var {
       if (output_)
         temp_ = output_->var_;
       else
-        temp_.type = PP_VARTYPE_VOID;
+        temp_.type = PP_VARTYPE_UNDEFINED;
     }
     ~OutException() {
       if (output_ && !originally_had_exception_)
-        *output_ = pp::Var(PassRef(), temp_);
+        *output_ = Var(PassRef(), temp_);
     }
 
     PP_Var* get() {

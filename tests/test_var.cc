@@ -8,8 +8,9 @@
 
 #include <limits>
 
+#include "ppapi/c/pp_var.h"
 #include "ppapi/c/dev/ppb_testing_dev.h"
-#include "ppapi/c/ppb_var.h"
+#include "ppapi/c/dev/ppb_var_deprecated.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
@@ -20,8 +21,8 @@ static uint32_t kInvalidLength = static_cast<uint32_t>(-1);
 REGISTER_TEST_CASE(Var);
 
 bool TestVar::Init() {
-  var_interface_ = reinterpret_cast<PPB_Var const*>(
-      pp::Module::Get()->GetBrowserInterface(PPB_VAR_INTERFACE));
+  var_interface_ = reinterpret_cast<PPB_Var_Deprecated const*>(
+      pp::Module::Get()->GetBrowserInterface(PPB_VAR_DEPRECATED_INTERFACE));
   testing_interface_ = reinterpret_cast<PPB_Testing_Dev const*>(
       pp::Module::Get()->GetBrowserInterface(PPB_TESTING_DEV_INTERFACE));
   if (!testing_interface_) {
@@ -198,7 +199,7 @@ std::string TestVar::TestUtf8WithEmbeddedNulls() {
 std::string TestVar::TestVarToUtf8ForWrongType() {
   uint32_t length = kInvalidLength;
   const char* result = NULL;
-  result = var_interface_->VarToUtf8(PP_MakeVoid(), &length);
+  result = var_interface_->VarToUtf8(PP_MakeUndefined(), &length);
   if (length != 0) {
     return "Expected 0 on string conversion from Void var.";
   }
@@ -259,64 +260,64 @@ std::string TestVar::TestHasPropertyAndMethod() {
     // Regular property.
     pp::Var exception;
     ASSERT_TRUE(window.HasProperty("scrollX", &exception));
-    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(exception.is_undefined());
     ASSERT_FALSE(window.HasMethod("scrollX", &exception));
-    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(exception.is_undefined());
 
     // Regular method (also counts as HasProperty).
     ASSERT_TRUE(window.HasProperty("find", &exception));
-    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(exception.is_undefined());
     ASSERT_TRUE(window.HasMethod("find", &exception));
-    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(exception.is_undefined());
 
     // Nonexistant ones should return false and not set the exception.
     ASSERT_FALSE(window.HasProperty("superEvilBit", &exception));
-    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(exception.is_undefined());
     ASSERT_FALSE(window.HasMethod("superEvilBit", &exception));
-    ASSERT_TRUE(exception.is_void());
+    ASSERT_TRUE(exception.is_undefined());
 
     // Check exception and return false on invalid property name.
     ASSERT_FALSE(window.HasProperty(3.14159, &exception));
-    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(exception.is_undefined());
     exception = pp::Var();
 
     exception = pp::Var();
     ASSERT_FALSE(window.HasMethod(3.14159, &exception));
-    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(exception.is_undefined());
 
     // Try to use something not an object.
     exception = pp::Var();
     pp::Var string_object("asdf");
     ASSERT_FALSE(string_object.HasProperty("find", &exception));
-    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(exception.is_undefined());
     exception = pp::Var();
     ASSERT_FALSE(string_object.HasMethod("find", &exception));
-    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(exception.is_undefined());
 
     // Try to use an invalid object (need to use the C API).
     PP_Var invalid_object;
     invalid_object.type = PP_VARTYPE_OBJECT;
     invalid_object.value.as_id = static_cast<int64_t>(-1234567);
-    PP_Var exception2 = PP_MakeVoid();
+    PP_Var exception2 = PP_MakeUndefined();
     ASSERT_FALSE(var_interface_->HasProperty(invalid_object,
                                              pp::Var("find").pp_var(),
                                              &exception2));
-    ASSERT_TRUE(exception2.type != PP_VARTYPE_VOID);
+    ASSERT_TRUE(exception2.type != PP_VARTYPE_UNDEFINED);
     var_interface_->Release(exception2);
 
-    exception2 = PP_MakeVoid();
+    exception2 = PP_MakeUndefined();
     ASSERT_FALSE(var_interface_->HasMethod(invalid_object,
                                            pp::Var("find").pp_var(),
                                            &exception2));
-    ASSERT_TRUE(exception2.type != PP_VARTYPE_VOID);
+    ASSERT_TRUE(exception2.type != PP_VARTYPE_UNDEFINED);
     var_interface_->Release(exception2);
 
     // Get a valid property/method when the exception is set returns false.
     exception = pp::Var("Bad something-or-other exception");
     ASSERT_FALSE(window.HasProperty("find", &exception));
-    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(exception.is_undefined());
     ASSERT_FALSE(window.HasMethod("find", &exception));
-    ASSERT_FALSE(exception.is_void());
+    ASSERT_FALSE(exception.is_undefined());
   }
 
   // Make sure nothing leaked.
