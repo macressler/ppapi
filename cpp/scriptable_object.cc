@@ -24,7 +24,7 @@ class ExceptionConverter {
       *out_ = exception_.Detach();
   }
 
-  Var* Get() { return &exception_; };
+  Var* Get() { return &exception_; }
 
  private:
   PP_Var* out_;

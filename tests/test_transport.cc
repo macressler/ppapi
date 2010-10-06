@@ -18,18 +18,6 @@
 
 REGISTER_TEST_CASE(Transport);
 
-namespace {
-
-// A NOP flush callback for use in various tests.
-void FlushCallbackNOP(void* data, int32_t result) {
-}
-
-void FlushCallbackQuitMessageLoop(void* data, int32_t result) {
-  reinterpret_cast<TestTransport*>(data)->QuitMessageLoop();
-}
-
-}  // namespace
-
 bool TestTransport::Init() {
   transport_interface_ = reinterpret_cast<PPB_Transport_Dev const*>(
       pp::Module::Get()->GetBrowserInterface(PPB_TRANSPORT_DEV_INTERFACE));
