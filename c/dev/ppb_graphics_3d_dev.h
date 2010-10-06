@@ -24,7 +24,7 @@
 // // Shutdown.
 // core->ReleaseResource(context);
 
-#define PPB_GRAPHICS_3D_DEV_INTERFACE "PPB_Graphics3D(Dev);1"
+#define PPB_GRAPHICS_3D_DEV_INTERFACE "PPB_Graphics3D(Dev);0.1"
 
 // These are the same error codes as used by EGL.
 enum {

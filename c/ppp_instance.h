@@ -12,7 +12,7 @@
 struct PP_InputEvent;
 struct PP_Var;
 
-#define PPP_INSTANCE_INTERFACE "PPP_Instance;1"
+#define PPP_INSTANCE_INTERFACE "PPP_Instance;0.1"
 
 /**
  * @file

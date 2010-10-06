@@ -12,7 +12,7 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
-#define PPB_TRANSPORT_DEV_INTERFACE "PPB_Transport;1"
+#define PPB_TRANSPORT_DEV_INTERFACE "PPB_Transport;0.1"
 
 struct PPB_Transport_Dev {
   // Creates a new transport object with the specified name

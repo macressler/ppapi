@@ -11,7 +11,7 @@
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_completion_callback.h"
 
-#define PPB_VIDEODECODER_DEV_INTERFACE "PPB_VideoDecoder(Dev);1"
+#define PPB_VIDEODECODER_DEV_INTERFACE "PPB_VideoDecoder(Dev);0.1"
 
 struct PPB_VideoDecoder_Dev {
   // Queries capability of the decoder for |codec|.

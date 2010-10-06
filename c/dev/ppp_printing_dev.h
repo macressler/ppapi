@@ -40,7 +40,7 @@ struct PP_PrintPageNumberRange_Dev {
 };
 
 // Interface for the plugin to implement printing.
-#define PPP_PRINTING_DEV_INTERFACE "PPP_Printing(Dev);1"
+#define PPP_PRINTING_DEV_INTERFACE "PPP_Printing(Dev);0.1"
 
 struct PPP_Printing_Dev {
   // Returns array of supported print output formats. The array is allocated

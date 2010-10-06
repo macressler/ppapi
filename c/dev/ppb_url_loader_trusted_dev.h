@@ -7,7 +7,7 @@
 
 #include "ppapi/c/pp_resource.h"
 
-#define PPB_URLLOADERTRUSTED_DEV_INTERFACE "PPB_URLLoaderTrusted(Dev);1"
+#define PPB_URLLOADERTRUSTED_DEV_INTERFACE "PPB_URLLoaderTrusted(Dev);0.1"
 
 // Available only to trusted implementations.
 struct PPB_URLLoaderTrusted_Dev {

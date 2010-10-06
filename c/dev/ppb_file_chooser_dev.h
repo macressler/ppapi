@@ -27,7 +27,7 @@ struct PP_FileChooserOptions_Dev {
   const char* accept_mime_types;
 };
 
-#define PPB_FILECHOOSER_DEV_INTERFACE "PPB_FileChooser(Dev);1"
+#define PPB_FILECHOOSER_DEV_INTERFACE "PPB_FileChooser(Dev);0.1"
 
 struct PPB_FileChooser_Dev {
   // Creates a file chooser dialog with the specified options.  The chooser is

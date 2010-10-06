@@ -11,7 +11,7 @@
 
 struct PPP_Class;
 
-#define PPB_VAR_INTERFACE "PPB_Var;1"
+#define PPB_VAR_INTERFACE "PPB_Var;0.1"
 
 /**
  * @file

@@ -17,7 +17,7 @@ typedef enum {
   PP_URLRESPONSEPROPERTY_HEADERS          // string, \n-delim
 } PP_URLResponseProperty_Dev;
 
-#define PPB_URLRESPONSEINFO_DEV_INTERFACE "PPB_URLResponseInfo(Dev);1"
+#define PPB_URLRESPONSEINFO_DEV_INTERFACE "PPB_URLResponseInfo(Dev);0.1"
 
 struct PPB_URLResponseInfo_Dev {
   // Returns true if the given resource is an URLResponseInfo. Returns false if

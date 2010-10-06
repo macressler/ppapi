@@ -10,7 +10,7 @@
 struct PP_Rect;
 struct PP_InputEvent;
 
-#define PPB_WIDGET_DEV_INTERFACE "PPB_Widget(Dev);1"
+#define PPB_WIDGET_DEV_INTERFACE "PPB_Widget(Dev);0.1"
 
 // The interface for reusing browser widgets.
 struct PPB_Widget_Dev {

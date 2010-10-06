@@ -16,7 +16,7 @@ struct PP_DirectoryEntry_Dev {
   PP_FileType_Dev file_type;
 };
 
-#define PPB_DIRECTORYREADER_DEV_INTERFACE "PPB_DirectoryReader(Dev);1"
+#define PPB_DIRECTORYREADER_DEV_INTERFACE "PPB_DirectoryReader(Dev);0.1"
 
 struct PPB_DirectoryReader_Dev {
   // Creates a DirectoryReader for the given directory.  Upon success, the

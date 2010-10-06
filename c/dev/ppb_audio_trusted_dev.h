@@ -7,7 +7,7 @@
 
 #include "ppapi/c/pp_resource.h"
 
-#define PPB_AUDIO_TRUSTED_DEV_INTERFACE "PPB_AudioTrusted(Dev);1"
+#define PPB_AUDIO_TRUSTED_DEV_INTERFACE "PPB_AudioTrusted(Dev);0.1"
 
 // This interface is used to get access to the audio buffer and a socket on
 // which the client can block until the audio is ready to accept more data.

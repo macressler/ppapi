@@ -7,7 +7,7 @@
 
 #include "ppapi/c/pp_instance.h"
 
-#define PPP_FIND_DEV_INTERFACE "PPP_Find(Dev);1"
+#define PPP_FIND_DEV_INTERFACE "PPP_Find(Dev);0.1"
 
 struct PPP_Find_Dev {
   // Finds the given UTF-8 text starting at the current selection. The number of

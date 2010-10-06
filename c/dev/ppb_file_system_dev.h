@@ -12,7 +12,7 @@
 struct PP_CompletionCallback;
 struct PP_FileInfo_Dev;
 
-#define PPB_FILESYSTEM_DEV_INTERFACE "PPB_FileSystem(Dev);1"
+#define PPB_FILESYSTEM_DEV_INTERFACE "PPB_FileSystem(Dev);0.1"
 
 struct PPB_FileSystem_Dev {
   // Makes a new directory in the filesystem as well as any parent directories

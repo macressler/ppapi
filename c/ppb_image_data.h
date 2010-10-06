@@ -25,7 +25,7 @@ struct PP_ImageDataDesc {
   int32_t stride;
 };
 
-#define PPB_IMAGEDATA_INTERFACE "PPB_ImageData;1"
+#define PPB_IMAGEDATA_INTERFACE "PPB_ImageData;0.1"
 
 /**
  * @file

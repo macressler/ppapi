@@ -18,7 +18,7 @@ typedef enum {
   PP_SCROLLBY_DOCUMENT = 3
 } PP_ScrollBy_Dev;
 
-#define PPB_SCROLLBAR_DEV_INTERFACE "PPB_Scrollbar(Dev);1"
+#define PPB_SCROLLBAR_DEV_INTERFACE "PPB_Scrollbar(Dev);0.1"
 
 // The interface for a scrollbar.  A scrollbar is a widget, so the functions
 // in PPB_Widget can also be used with scrollbar objects.

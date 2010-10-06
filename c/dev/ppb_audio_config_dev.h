@@ -9,7 +9,7 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-#define PPB_AUDIO_CONFIG_DEV_INTERFACE "PPB_AudioConfig(Dev);1"
+#define PPB_AUDIO_CONFIG_DEV_INTERFACE "PPB_AudioConfig(Dev);0.1"
 
 enum {
   PP_AUDIOMINSAMPLEFRAMECOUNT = 64,

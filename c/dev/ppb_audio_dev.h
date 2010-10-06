@@ -10,7 +10,7 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-#define PPB_AUDIO_DEV_INTERFACE "PPB_Audio(Dev);1"
+#define PPB_AUDIO_DEV_INTERFACE "PPB_Audio(Dev);0.1"
 
 // Callback function type for SetCallback.
 typedef void (*PPB_Audio_Callback)(void* sample_buffer,

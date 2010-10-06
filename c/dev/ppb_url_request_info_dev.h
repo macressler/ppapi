@@ -22,7 +22,7 @@ typedef enum {
   // TODO(darin): Add security/privacy options?
 } PP_URLRequestProperty_Dev;
 
-#define PPB_URLREQUESTINFO_DEV_INTERFACE "PPB_URLRequestInfo(Dev);1"
+#define PPB_URLREQUESTINFO_DEV_INTERFACE "PPB_URLRequestInfo(Dev);0.1"
 
 struct PPB_URLRequestInfo_Dev {
   // Create a new URLRequestInfo object.  Returns 0 if the module is invalid.
