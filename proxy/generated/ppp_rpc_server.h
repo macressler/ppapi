@@ -122,22 +122,28 @@ class PppRpcServer {
 
 class PppInstanceRpcServer {
  public:
-  static NaClSrpcError PPP_Instance_New(
-      NaClSrpcChannel* channel,
-      int64_t instance,
-      int32_t* success
-  );
-  static NaClSrpcError PPP_Instance_Delete(
-      NaClSrpcChannel* channel,
-      int64_t instance
-  );
-  static NaClSrpcError PPP_Instance_Initialize(
+  static NaClSrpcError PPP_Instance_DidCreate(
       NaClSrpcChannel* channel,
       int64_t instance,
       int32_t argc,
       nacl_abi_size_t argn_bytes, char* argn,
       nacl_abi_size_t argv_bytes, char* argv,
       int32_t* success
+  );
+  static NaClSrpcError PPP_Instance_DidDestroy(
+      NaClSrpcChannel* channel,
+      int64_t instance
+  );
+  static NaClSrpcError PPP_Instance_DidChangeView(
+      NaClSrpcChannel* channel,
+      int64_t instance,
+      nacl_abi_size_t position_bytes, int32_t* position,
+      nacl_abi_size_t clip_bytes, int32_t* clip
+  );
+  static NaClSrpcError PPP_Instance_DidChangeFocus(
+      NaClSrpcChannel* channel,
+      int64_t instance,
+      bool has_focus
   );
   static NaClSrpcError PPP_Instance_HandleDocumentLoad(
       NaClSrpcChannel* channel,
@@ -151,21 +157,10 @@ class PppInstanceRpcServer {
       nacl_abi_size_t event_data_bytes, char* event_data,
       int32_t* success
   );
-  static NaClSrpcError PPP_Instance_FocusChanged(
-      NaClSrpcChannel* channel,
-      int64_t instance,
-      bool has_focus
-  );
   static NaClSrpcError PPP_Instance_GetInstanceObject(
       NaClSrpcChannel* channel,
       int64_t instance,
       nacl_abi_size_t* capability_bytes, char* capability
-  );
-  static NaClSrpcError PPP_Instance_ViewChanged(
-      NaClSrpcChannel* channel,
-      int64_t instance,
-      nacl_abi_size_t position_bytes, int32_t* position,
-      nacl_abi_size_t clip_bytes, int32_t* clip
   );
   static NaClSrpcError PPP_Instance_GetSelectedText(
       NaClSrpcChannel* channel,

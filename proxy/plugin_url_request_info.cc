@@ -36,7 +36,7 @@ bool SetProperty(PP_Resource request,
   return false;
 }
 
-bool AppendDataToBody(PP_Resource request, struct PP_Var data) {
+bool AppendDataToBody(PP_Resource request, const char* data, uint32_t len) {
   UNREFERENCED_PARAMETER(request);
   UNREFERENCED_PARAMETER(data);
   return false;

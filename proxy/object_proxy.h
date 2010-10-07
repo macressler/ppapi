@@ -6,10 +6,10 @@
 #define PPAPI_PROXY_OBJECT_PROXY_H_
 
 #include "native_client/src/include/nacl_macros.h"
-#include "native_client/src/shared/ppapi_proxy/object.h"
-#include "native_client/src/shared/ppapi_proxy/object_capability.h"
+#include "ppapi/proxy/object.h"
+#include "ppapi/proxy/object_capability.h"
 #include "ppapi/c/pp_var.h"
-#include "ppapi/c/ppp_class.h"
+#include "ppapi/c/dev/ppp_class_deprecated.h"
 
 struct NaClSrpcChannel;
 

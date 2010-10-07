@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "native_client/src/shared/ppapi_proxy/plugin_var.h"
+#include "ppapi/proxy/plugin_var.h"
 
 #include <map>
 #include <string>
@@ -10,8 +10,8 @@
 #include "native_client/src/include/nacl_macros.h"
 #include "native_client/src/include/portability.h"
 #include "native_client/src/include/portability_io.h"
-#include "ppapi/c/ppb_var.h"
-#include "ppapi/c/ppp_class.h"
+#include "ppapi/c/dev/ppb_var_deprecated.h"
+#include "ppapi/c/dev/ppp_class_deprecated.h"
 #include "ppapi/c/pp_var.h"
 #include "ppapi/proxy/utility.h"
 
@@ -21,7 +21,7 @@ namespace {
 
 class ObjImpl {
  public:
-  ObjImpl(const PPP_Class* object_class,
+  ObjImpl(const PPP_Class_Deprecated* object_class,
           void* object_data) : object_class_(object_class),
                                object_data_(object_data),
                                ref_count_(1) {
@@ -31,13 +31,13 @@ class ObjImpl {
   ~ObjImpl() { }
   void AddRef() { ++ref_count_; }
   void Release() { --ref_count_; }
-  const PPP_Class* object_class() const { return object_class_; }
+  const PPP_Class_Deprecated* object_class() const { return object_class_; }
   void* object_data() const { return object_data_; }
   uint64_t ref_count() const { return ref_count_; }
   uint64_t id() const { return id_; }
 
  private:
-  const PPP_Class* object_class_;
+  const PPP_Class_Deprecated* object_class_;
   void* object_data_;
   uint64_t ref_count_;
   uint64_t id_;
@@ -144,7 +144,7 @@ bool HasProperty(PP_Var object,
   }
   DebugPrintf("PluginVar::HasProperty: %"NACL_PRIu64"\n", impl->id());
   DebugPrintf("  object.type = %d; name.type = %d\n", object.type, name.type);
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->HasProperty == NULL) {
     return false;
   }
@@ -159,7 +159,7 @@ bool HasMethod(PP_Var object,
     return false;
   }
   DebugPrintf("PluginVar::HasMethod: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->HasMethod == NULL) {
     return false;
   }
@@ -171,12 +171,12 @@ PP_Var GetProperty(PP_Var object,
                    PP_Var* exception) {
   ObjImpl* impl = VarToObjImpl(object);
   if (impl == NULL) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   DebugPrintf("PluginVar::GetProperty: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->GetProperty == NULL) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   return object_class->GetProperty(impl->object_data(), name, exception);
 }
@@ -190,7 +190,7 @@ void GetAllPropertyNames(PP_Var object,
     return;
   }
   DebugPrintf("PluginVar::GetAllPropertyNames: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->GetAllPropertyNames == NULL) {
     return;
   }
@@ -209,7 +209,7 @@ void SetProperty(PP_Var object,
     return;
   }
   DebugPrintf("PluginVar::SetProperty: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->SetProperty == NULL) {
     return;
   }
@@ -224,7 +224,7 @@ void RemoveProperty(PP_Var object,
     return;
   }
   DebugPrintf("PluginVar::RemoveProperty: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->RemoveProperty == NULL) {
     return;
   }
@@ -238,12 +238,12 @@ PP_Var Call(PP_Var object,
             PP_Var* exception) {
   ObjImpl* impl = VarToObjImpl(object);
   if (impl == NULL) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   DebugPrintf("PluginVar::Call: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->Call == NULL) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   return object_class->Call(impl->object_data(),
                             method_name,
@@ -258,18 +258,18 @@ PP_Var Construct(PP_Var object,
                  PP_Var* exception) {
   ObjImpl* impl = VarToObjImpl(object);
   if (impl == NULL) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   DebugPrintf("PluginVar::Construct: %"NACL_PRIu64"\n", impl->id());
-  const PPP_Class* object_class = impl->object_class();
+  const PPP_Class_Deprecated* object_class = impl->object_class();
   if (object_class == NULL || object_class->Construct == NULL) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   return object_class->Construct(impl->object_data(), argc, argv, exception);
 }
 
 bool IsInstanceOf(PP_Var var,
-                  const PPP_Class* object_class,
+                  const PPP_Class_Deprecated* object_class,
                   void** object_data) {
   ObjImpl* impl = VarToObjImpl(var);
   *object_data = NULL;
@@ -300,7 +300,7 @@ uint64_t GetVarId(PP_Var var) {
 }
 
 PP_Var CreateObject(PP_Module module_id,
-                    const PPP_Class* object_class,
+                    const PPP_Class_Deprecated* object_class,
                     void* object_data) {
   UNREFERENCED_PARAMETER(module_id);
   PP_Var result;
@@ -312,8 +312,8 @@ PP_Var CreateObject(PP_Module module_id,
 
 }  // namespace
 
-const PPB_Var* PluginVar::GetInterface() {
-  static const PPB_Var intf = {
+const PPB_Var_Deprecated* PluginVar::GetInterface() {
+  static const PPB_Var_Deprecated intf = {
     AddRef,
     Release,
     VarFromUtf8,
@@ -334,7 +334,7 @@ const PPB_Var* PluginVar::GetInterface() {
 
 std::string PluginVar::VarToString(PP_Var var) {
   switch (var.type) {
-    case PP_VARTYPE_VOID:
+    case PP_VARTYPE_UNDEFINED:
       return "##VOID##";
     case PP_VARTYPE_NULL:
       return "##NULL##";
@@ -374,7 +374,7 @@ std::string PluginVar::VarToString(PP_Var var) {
 
 void PluginVar::Print(PP_Var var) {
   switch (var.type) {
-    case PP_VARTYPE_VOID:
+    case PP_VARTYPE_UNDEFINED:
       DebugPrintf("PP_Var(void)");
       break;
     case PP_VARTYPE_NULL:

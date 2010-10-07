@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef PPAPI_PROXY_OBJ_CAPABILITY_H_
-#define PPAPI_PROXY_OBJ_CAPABILITY_H_
+#ifndef PPAPI_PROXY_OBJECT_CAPABILITY_H_
+#define PPAPI_PROXY_OBJECT_CAPABILITY_H_
 
 #ifdef __native_client__
 #include <stdint.h>
@@ -67,4 +67,4 @@ inline bool operator==(const ObjectCapability& c1, const ObjectCapability& c2) {
 
 }  // namespace ppapi_proxy
 
-#endif  // PPAPI_PROXY_OBJ_CAPABILITY_H_
+#endif  // PPAPI_PROXY_OBJECT_CAPABILITY_H_

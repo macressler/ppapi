@@ -31,7 +31,7 @@ PP_Resource Create(PP_Module module,
   return kInvalidResourceId;
 }
 
-bool IsDeviceContext2D(PP_Resource resource) {
+bool IsGraphics2D(PP_Resource resource) {
   UNREFERENCED_PARAMETER(resource);
   return false;
 }
@@ -45,7 +45,7 @@ bool Describe(PP_Resource device_context,
   return false;
 }
 
-bool PaintImageData(PP_Resource device_context,
+void PaintImageData(PP_Resource device_context,
                     PP_Resource image,
                     const struct PP_Point* top_left,
                     const struct PP_Rect* src_rect) {
@@ -53,22 +53,19 @@ bool PaintImageData(PP_Resource device_context,
   UNREFERENCED_PARAMETER(image);
   UNREFERENCED_PARAMETER(top_left);
   UNREFERENCED_PARAMETER(src_rect);
-  return false;
 }
 
-bool Scroll(PP_Resource device_context,
+void Scroll(PP_Resource device_context,
             const struct PP_Rect* clip_rect,
             const struct PP_Point* amount) {
   UNREFERENCED_PARAMETER(device_context);
   UNREFERENCED_PARAMETER(clip_rect);
   UNREFERENCED_PARAMETER(amount);
-  return false;
 }
 
-bool ReplaceContents(PP_Resource device_context, PP_Resource image) {
+void ReplaceContents(PP_Resource device_context, PP_Resource image) {
   UNREFERENCED_PARAMETER(device_context);
   UNREFERENCED_PARAMETER(image);
-  return false;
 }
 
 int32_t Flush(PP_Resource device_context,
@@ -82,7 +79,7 @@ int32_t Flush(PP_Resource device_context,
 const PPB_Graphics2D* PluginGraphics2D::GetInterface() {
   static const PPB_Graphics2D intf = {
     Create,
-    IsDeviceContext2D,
+    IsGraphics2D,
     Describe,
     PaintImageData,
     Scroll,

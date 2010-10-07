@@ -31,7 +31,7 @@ static const uint32_t kStringRoundBase = 8;
 
 }  // namespace
 
-// The basic serialization structure.  Used alone for PP_VARTYPE_VOID,
+// The basic serialization structure.  Used alone for PP_VARTYPE_UNDEFINED,
 // PP_VARTYPE_NULL, and PP_VARTYPE_INT32.
 struct SerializedFixed {
   uint32_t type;
@@ -95,7 +95,7 @@ uint32_t RoundedStringBytes(uint32_t string_length) {
 
 uint32_t PpVarSize(const PP_Var& var) {
   switch (var.type) {
-    case PP_VARTYPE_VOID:
+    case PP_VARTYPE_UNDEFINED:
     case PP_VARTYPE_NULL:
     case PP_VARTYPE_BOOL:
     case PP_VARTYPE_INT32:
@@ -163,7 +163,7 @@ bool SerializePpVar(const PP_Var* vars,
     s->u.int32_value = 0;
 
     switch (vars[i].type) {
-      case PP_VARTYPE_VOID:
+      case PP_VARTYPE_UNDEFINED:
       case PP_VARTYPE_NULL:
         element_size = sizeof(SerializedFixed);
         break;
@@ -270,7 +270,7 @@ bool DeserializePpVar(NaClSrpcChannel* channel,
 
     vars[i].type = static_cast<PP_VarType>(s->type);
     switch (vars[i].type) {
-      case PP_VARTYPE_VOID:
+      case PP_VARTYPE_UNDEFINED:
       case PP_VARTYPE_NULL:
         element_size = sizeof(SerializedFixed);
         break;

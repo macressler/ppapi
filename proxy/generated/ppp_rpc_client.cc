@@ -249,35 +249,7 @@ NaClSrpcError PppRpcClient::PPP_GetInterface(
   return retval;
 }
 
-NaClSrpcError PppInstanceRpcClient::PPP_Instance_New(
-    NaClSrpcChannel* channel,
-    int64_t instance,
-    int32_t* success
-)  {
-  NaClSrpcError retval;
-  retval = NaClSrpcInvokeBySignature(
-      channel,
-      "PPP_Instance_New:l:i",
-      instance,
-      success
-  );
-  return retval;
-}
-
-NaClSrpcError PppInstanceRpcClient::PPP_Instance_Delete(
-    NaClSrpcChannel* channel,
-    int64_t instance
-)  {
-  NaClSrpcError retval;
-  retval = NaClSrpcInvokeBySignature(
-      channel,
-      "PPP_Instance_Delete:l:",
-      instance
-  );
-  return retval;
-}
-
-NaClSrpcError PppInstanceRpcClient::PPP_Instance_Initialize(
+NaClSrpcError PppInstanceRpcClient::PPP_Instance_DidCreate(
     NaClSrpcChannel* channel,
     int64_t instance,
     int32_t argc,
@@ -288,12 +260,57 @@ NaClSrpcError PppInstanceRpcClient::PPP_Instance_Initialize(
   NaClSrpcError retval;
   retval = NaClSrpcInvokeBySignature(
       channel,
-      "PPP_Instance_Initialize:liCC:i",
+      "PPP_Instance_DidCreate:liCC:i",
       instance,
       argc,
       argn_bytes, argn,
       argv_bytes, argv,
       success
+  );
+  return retval;
+}
+
+NaClSrpcError PppInstanceRpcClient::PPP_Instance_DidDestroy(
+    NaClSrpcChannel* channel,
+    int64_t instance
+)  {
+  NaClSrpcError retval;
+  retval = NaClSrpcInvokeBySignature(
+      channel,
+      "PPP_Instance_DidDestroy:l:",
+      instance
+  );
+  return retval;
+}
+
+NaClSrpcError PppInstanceRpcClient::PPP_Instance_DidChangeView(
+    NaClSrpcChannel* channel,
+    int64_t instance,
+    nacl_abi_size_t position_bytes, int32_t* position,
+    nacl_abi_size_t clip_bytes, int32_t* clip
+)  {
+  NaClSrpcError retval;
+  retval = NaClSrpcInvokeBySignature(
+      channel,
+      "PPP_Instance_DidChangeView:lII:",
+      instance,
+      position_bytes, position,
+      clip_bytes, clip
+  );
+  return retval;
+}
+
+NaClSrpcError PppInstanceRpcClient::PPP_Instance_DidChangeFocus(
+    NaClSrpcChannel* channel,
+    int64_t instance,
+    bool has_focus
+)  {
+  NaClSrpcError retval;
+  retval = NaClSrpcInvokeBySignature(
+      channel,
+      "PPP_Instance_DidChangeFocus:lb:",
+      instance,
+      has_focus
   );
   return retval;
 }
@@ -332,21 +349,6 @@ NaClSrpcError PppInstanceRpcClient::PPP_Instance_HandleInputEvent(
   return retval;
 }
 
-NaClSrpcError PppInstanceRpcClient::PPP_Instance_FocusChanged(
-    NaClSrpcChannel* channel,
-    int64_t instance,
-    bool has_focus
-)  {
-  NaClSrpcError retval;
-  retval = NaClSrpcInvokeBySignature(
-      channel,
-      "PPP_Instance_FocusChanged:lb:",
-      instance,
-      has_focus
-  );
-  return retval;
-}
-
 NaClSrpcError PppInstanceRpcClient::PPP_Instance_GetInstanceObject(
     NaClSrpcChannel* channel,
     int64_t instance,
@@ -358,23 +360,6 @@ NaClSrpcError PppInstanceRpcClient::PPP_Instance_GetInstanceObject(
       "PPP_Instance_GetInstanceObject:l:C",
       instance,
       capability_bytes, capability
-  );
-  return retval;
-}
-
-NaClSrpcError PppInstanceRpcClient::PPP_Instance_ViewChanged(
-    NaClSrpcChannel* channel,
-    int64_t instance,
-    nacl_abi_size_t position_bytes, int32_t* position,
-    nacl_abi_size_t clip_bytes, int32_t* clip
-)  {
-  NaClSrpcError retval;
-  retval = NaClSrpcInvokeBySignature(
-      channel,
-      "PPP_Instance_ViewChanged:lII:",
-      instance,
-      position_bytes, position,
-      clip_bytes, clip
   );
   return retval;
 }

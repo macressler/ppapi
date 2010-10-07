@@ -10,7 +10,7 @@
 
 #include "native_client/src/include/nacl_macros.h"
 #include "ppapi/c/pp_var.h"
-#include "ppapi/c/ppp_class.h"
+#include "ppapi/c/dev/ppp_class_deprecated.h"
 
 namespace ppapi_proxy {
 
@@ -48,7 +48,7 @@ class Object {
   virtual void Deallocate() = 0;
 
   // For use by derived classes in constructing ObjectProxies.
-  static const PPP_Class object_class;
+  static const PPP_Class_Deprecated object_class;
 
  private:
   NACL_DISALLOW_COPY_AND_ASSIGN(Object);

@@ -215,47 +215,64 @@ static NaClSrpcError PPP_GetInterfaceDispatcher(
   return retval;
 }
 
-static NaClSrpcError PPP_Instance_NewDispatcher(
+static NaClSrpcError PPP_Instance_DidCreateDispatcher(
     NaClSrpcChannel* channel,
     NaClSrpcArg** inputs,
     NaClSrpcArg** outputs
 ) {
   NaClSrpcError retval;
-  retval = PppInstanceRpcServer::PPP_Instance_New(
-      channel,
-      inputs[0]->u.lval,
-      &(outputs[0]->u.ival)
-  );
-  return retval;
-}
-
-static NaClSrpcError PPP_Instance_DeleteDispatcher(
-    NaClSrpcChannel* channel,
-    NaClSrpcArg** inputs,
-    NaClSrpcArg** outputs
-) {
-  UNREFERENCED_PARAMETER(outputs);
-  NaClSrpcError retval;
-  retval = PppInstanceRpcServer::PPP_Instance_Delete(
-      channel,
-      inputs[0]->u.lval
-  );
-  return retval;
-}
-
-static NaClSrpcError PPP_Instance_InitializeDispatcher(
-    NaClSrpcChannel* channel,
-    NaClSrpcArg** inputs,
-    NaClSrpcArg** outputs
-) {
-  NaClSrpcError retval;
-  retval = PppInstanceRpcServer::PPP_Instance_Initialize(
+  retval = PppInstanceRpcServer::PPP_Instance_DidCreate(
       channel,
       inputs[0]->u.lval,
       inputs[1]->u.ival,
       inputs[2]->u.caval.count, inputs[2]->u.caval.carr,
       inputs[3]->u.caval.count, inputs[3]->u.caval.carr,
       &(outputs[0]->u.ival)
+  );
+  return retval;
+}
+
+static NaClSrpcError PPP_Instance_DidDestroyDispatcher(
+    NaClSrpcChannel* channel,
+    NaClSrpcArg** inputs,
+    NaClSrpcArg** outputs
+) {
+  UNREFERENCED_PARAMETER(outputs);
+  NaClSrpcError retval;
+  retval = PppInstanceRpcServer::PPP_Instance_DidDestroy(
+      channel,
+      inputs[0]->u.lval
+  );
+  return retval;
+}
+
+static NaClSrpcError PPP_Instance_DidChangeViewDispatcher(
+    NaClSrpcChannel* channel,
+    NaClSrpcArg** inputs,
+    NaClSrpcArg** outputs
+) {
+  UNREFERENCED_PARAMETER(outputs);
+  NaClSrpcError retval;
+  retval = PppInstanceRpcServer::PPP_Instance_DidChangeView(
+      channel,
+      inputs[0]->u.lval,
+      inputs[1]->u.iaval.count, inputs[1]->u.iaval.iarr,
+      inputs[2]->u.iaval.count, inputs[2]->u.iaval.iarr
+  );
+  return retval;
+}
+
+static NaClSrpcError PPP_Instance_DidChangeFocusDispatcher(
+    NaClSrpcChannel* channel,
+    NaClSrpcArg** inputs,
+    NaClSrpcArg** outputs
+) {
+  UNREFERENCED_PARAMETER(outputs);
+  NaClSrpcError retval;
+  retval = PppInstanceRpcServer::PPP_Instance_DidChangeFocus(
+      channel,
+      inputs[0]->u.lval,
+      inputs[1]->u.bval
   );
   return retval;
 }
@@ -290,21 +307,6 @@ static NaClSrpcError PPP_Instance_HandleInputEventDispatcher(
   return retval;
 }
 
-static NaClSrpcError PPP_Instance_FocusChangedDispatcher(
-    NaClSrpcChannel* channel,
-    NaClSrpcArg** inputs,
-    NaClSrpcArg** outputs
-) {
-  UNREFERENCED_PARAMETER(outputs);
-  NaClSrpcError retval;
-  retval = PppInstanceRpcServer::PPP_Instance_FocusChanged(
-      channel,
-      inputs[0]->u.lval,
-      inputs[1]->u.bval
-  );
-  return retval;
-}
-
 static NaClSrpcError PPP_Instance_GetInstanceObjectDispatcher(
     NaClSrpcChannel* channel,
     NaClSrpcArg** inputs,
@@ -315,22 +317,6 @@ static NaClSrpcError PPP_Instance_GetInstanceObjectDispatcher(
       channel,
       inputs[0]->u.lval,
       &(outputs[0]->u.caval.count), outputs[0]->u.caval.carr
-  );
-  return retval;
-}
-
-static NaClSrpcError PPP_Instance_ViewChangedDispatcher(
-    NaClSrpcChannel* channel,
-    NaClSrpcArg** inputs,
-    NaClSrpcArg** outputs
-) {
-  UNREFERENCED_PARAMETER(outputs);
-  NaClSrpcError retval;
-  retval = PppInstanceRpcServer::PPP_Instance_ViewChanged(
-      channel,
-      inputs[0]->u.lval,
-      inputs[1]->u.iaval.count, inputs[1]->u.iaval.iarr,
-      inputs[2]->u.iaval.count, inputs[2]->u.iaval.iarr
   );
   return retval;
 }
@@ -365,14 +351,13 @@ NACL_SRPC_METHOD_ARRAY(PppRpcs::srpc_methods) = {
   { "PPP_InitializeModule:ilhs:ii", PPP_InitializeModuleDispatcher },
   { "PPP_ShutdownModule::", PPP_ShutdownModuleDispatcher },
   { "PPP_GetInterface:s:i", PPP_GetInterfaceDispatcher },
-  { "PPP_Instance_New:l:i", PPP_Instance_NewDispatcher },
-  { "PPP_Instance_Delete:l:", PPP_Instance_DeleteDispatcher },
-  { "PPP_Instance_Initialize:liCC:i", PPP_Instance_InitializeDispatcher },
+  { "PPP_Instance_DidCreate:liCC:i", PPP_Instance_DidCreateDispatcher },
+  { "PPP_Instance_DidDestroy:l:", PPP_Instance_DidDestroyDispatcher },
+  { "PPP_Instance_DidChangeView:lII:", PPP_Instance_DidChangeViewDispatcher },
+  { "PPP_Instance_DidChangeFocus:lb:", PPP_Instance_DidChangeFocusDispatcher },
   { "PPP_Instance_HandleDocumentLoad:ll:i", PPP_Instance_HandleDocumentLoadDispatcher },
   { "PPP_Instance_HandleInputEvent:lC:i", PPP_Instance_HandleInputEventDispatcher },
-  { "PPP_Instance_FocusChanged:lb:", PPP_Instance_FocusChangedDispatcher },
   { "PPP_Instance_GetInstanceObject:l:C", PPP_Instance_GetInstanceObjectDispatcher },
-  { "PPP_Instance_ViewChanged:lII:", PPP_Instance_ViewChangedDispatcher },
   { "PPP_Instance_GetSelectedText:li:C", PPP_Instance_GetSelectedTextDispatcher },
   { NULL, NULL }
 };  // NACL_SRPC_METHOD_ARRAY

@@ -31,24 +31,6 @@ namespace ppapi_proxy {
 
 namespace {
 
-bool New(PP_Instance instance) {
-  DebugPrintf("BrowserInstance::New(%"NACL_PRId64")\n", instance);
-  int32_t success;
-  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
-  NaClSrpcError retval =
-      PppInstanceRpcClient::PPP_Instance_New(channel, instance, &success);
-  if (retval != NACL_SRPC_RESULT_OK) {
-    return false;
-  }
-  return success != 0;
-}
-
-void Delete(PP_Instance instance) {
-  DebugPrintf("BrowserInstance::Delete(%"NACL_PRId64")\n");
-  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
-  (void) PppInstanceRpcClient::PPP_Instance_Delete(channel, instance);
-}
-
 char* ArgArraySerialize(int argc,
                         const char* array[],
                         uint32_t* serial_size) {
@@ -82,11 +64,12 @@ char* ArgArraySerialize(int argc,
   return serial_array;
 }
 
-bool Initialize(PP_Instance instance,
-                uint32_t argc,
-                const char* argn[],
-                const char* argv[]) {
-  DebugPrintf("BrowserInstance::Initialize(%"NACL_PRId64")\n");
+
+bool DidCreate(PP_Instance instance,
+               uint32_t argc,
+               const char* argn[],
+               const char* argv[]) {
+  DebugPrintf("BrowserInstance::DidCreate(%"NACL_PRId64")\n");
   uint32_t argn_size;
   scoped_array<char> argn_serial(ArgArraySerialize(argc, argn, &argn_size));
   if (argn_serial.get() == NULL) {
@@ -101,18 +84,58 @@ bool Initialize(PP_Instance instance,
   int32_t int_argc = static_cast<int32_t>(argc);
   int32_t success;
   NaClSrpcError retval =
-      PppInstanceRpcClient::PPP_Instance_Initialize(channel,
-                                                    instance,
-                                                    int_argc,
-                                                    argn_size,
-                                                    argn_serial.get(),
-                                                    argv_size,
-                                                    argv_serial.get(),
-                                                    &success);
+      PppInstanceRpcClient::PPP_Instance_DidCreate(channel,
+                                                   instance,
+                                                   int_argc,
+                                                   argn_size,
+                                                   argn_serial.get(),
+                                                   argv_size,
+                                                   argv_serial.get(),
+                                                   &success);
   if (retval != NACL_SRPC_RESULT_OK) {
     return false;
   }
   return success != 0;
+}
+
+void DidDestroy(PP_Instance instance) {
+  DebugPrintf("BrowserInstance::DidDestroy(%"NACL_PRId64")\n");
+  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
+  (void) PppInstanceRpcClient::PPP_Instance_DidDestroy(channel, instance);
+}
+
+void DidChangeView(PP_Instance instance,
+                   const PP_Rect* position,
+                   const PP_Rect* clip) {
+  DebugPrintf("BrowserInstance::ViewChanged(%"NACL_PRId64")\n");
+  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
+  int32_t position_array[4];
+  const uint32_t kPositionArraySize = NACL_ARRAY_SIZE(position_array);
+  position_array[0] = position->point.x;
+  position_array[1] = position->point.y;
+  position_array[2] = position->size.width;
+  position_array[3] = position->size.height;
+  int32_t clip_array[4];
+  const uint32_t kClipArraySize = NACL_ARRAY_SIZE(clip_array);
+  clip_array[0] = clip->point.x;
+  clip_array[1] = clip->point.y;
+  clip_array[2] = clip->size.width;
+  clip_array[3] = clip->size.height;
+  (void) PppInstanceRpcClient::PPP_Instance_DidChangeView(channel,
+                                                          instance,
+                                                          kPositionArraySize,
+                                                          position_array,
+                                                          kClipArraySize,
+                                                          clip_array);
+}
+
+void DidChangeFocus(PP_Instance instance, bool has_focus) {
+  DebugPrintf("BrowserInstance::DidChangeFocus(%"NACL_PRId64")\n");
+  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
+  // DidChangeFocus() always succeeds, no need to check the SRPC return value.
+  (void) PppInstanceRpcClient::PPP_Instance_DidChangeFocus(channel,
+                                                           instance,
+                                                           has_focus);
 }
 
 bool HandleDocumentLoad(PP_Instance instance, PP_Resource url_loader) {
@@ -140,15 +163,6 @@ bool HandleInputEvent(PP_Instance instance, const PP_InputEvent* event) {
   return success != 0;
 }
 
-void FocusChanged(PP_Instance instance, bool has_focus) {
-  DebugPrintf("BrowserInstance::FocusChanged(%"NACL_PRId64")\n");
-  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
-  // FocusChanged() always succeeds, no need to check the SRPC return value.
-  (void) PppInstanceRpcClient::PPP_Instance_FocusChanged(channel,
-                                                         instance,
-                                                         has_focus);
-}
-
 PP_Var GetInstanceObject(PP_Instance instance) {
   DebugPrintf("BrowserInstance::GetInstanceObject(%"NACL_PRId64")\n");
   NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
@@ -161,34 +175,9 @@ PP_Var GetInstanceObject(PP_Instance instance) {
           &capability_bytes,
           reinterpret_cast<char*>(&capability));
   if (retval != NACL_SRPC_RESULT_OK) {
-    return PP_MakeVoid();
+    return PP_MakeUndefined();
   }
   return ObjectProxy::New(capability, channel);
-}
-
-void ViewChanged(PP_Instance instance,
-                 const PP_Rect* position,
-                 const PP_Rect* clip) {
-  DebugPrintf("BrowserInstance::ViewChanged(%"NACL_PRId64")\n");
-  NaClSrpcChannel* channel = LookupBrowserPppForInstance(instance)->channel();
-  int32_t position_array[4];
-  const uint32_t kPositionArraySize = NACL_ARRAY_SIZE(position_array);
-  position_array[0] = position->point.x;
-  position_array[1] = position->point.y;
-  position_array[2] = position->size.width;
-  position_array[3] = position->size.height;
-  int32_t clip_array[4];
-  const uint32_t kClipArraySize = NACL_ARRAY_SIZE(clip_array);
-  clip_array[0] = clip->point.x;
-  clip_array[1] = clip->point.y;
-  clip_array[2] = clip->size.width;
-  clip_array[3] = clip->size.height;
-  (void) PppInstanceRpcClient::PPP_Instance_ViewChanged(channel,
-                                                        instance,
-                                                        kPositionArraySize,
-                                                        position_array,
-                                                        kClipArraySize,
-                                                        clip_array);
 }
 
 PP_Var GetSelectedText(PP_Instance instance, bool html) {
@@ -197,21 +186,20 @@ PP_Var GetSelectedText(PP_Instance instance, bool html) {
   // TODO(sehr): implement object proxying.
   UNREFERENCED_PARAMETER(instance);
   UNREFERENCED_PARAMETER(html);
-  return PP_MakeVoid();
+  return PP_MakeUndefined();
 }
 
 }  // namespace
 
 const PPP_Instance* BrowserInstance::GetInterface() {
   static const PPP_Instance intf = {
-    New,
-    Delete,
-    Initialize,
-    HandleDocumentLoad,
+    DidCreate,
+    DidDestroy,
+    DidChangeView,
+    DidChangeFocus,
     HandleInputEvent,
-    FocusChanged,
+    HandleDocumentLoad,
     GetInstanceObject,
-    ViewChanged,
     GetSelectedText
   };
   return &intf;

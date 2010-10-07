@@ -18,7 +18,7 @@ const void* GetInterfaceProxy(const char* interface_name) {
   // before using it.  We will need an RPC for this.
   if (strcmp(interface_name, PPB_CORE_INTERFACE) == 0) {
     return PluginCore::GetInterface();
-  } else if (strcmp(interface_name, PPB_VAR_INTERFACE) == 0) {
+  } else if (strcmp(interface_name, PPB_VAR_DEPRECATED_INTERFACE) == 0) {
     return PluginVar::GetInterface();
   } else {
     return NULL;

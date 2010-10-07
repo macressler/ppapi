@@ -9,9 +9,9 @@
 
 #include "native_client/src/include/nacl_macros.h"
 #include "native_client/src/include/portability.h"
-#include "ppapi/c/ppp_class.h"
+#include "ppapi/c/dev/ppb_var_deprecated.h"
+#include "ppapi/c/dev/ppp_class_deprecated.h"
 #include "ppapi/c/pp_var.h"
-#include "ppapi/c/ppb_var.h"
 
 namespace ppapi_proxy {
 
@@ -21,7 +21,7 @@ namespace ppapi_proxy {
 class PluginVar {
  public:
   // Returns an interface pointer suitable to the PPAPI client.
-  static const PPB_Var* GetInterface();
+  static const PPB_Var_Deprecated* GetInterface();
 
   // Print, etc.
   static void Print(PP_Var var);

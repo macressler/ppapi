@@ -98,6 +98,14 @@ PP_Time GetTime() {
   }
 }
 
+PP_TimeTicks GetTimeTicks() {
+  DebugPrintf("PluginCore::GetTimeTicks\n");
+  // TODO(brettw) implement this function properly (being the same as GetTime
+  // is the same as we have in the browser now).
+  return GetTime();
+}
+
+
 static void CallOnMainThread(int32_t delay_in_milliseconds,
                              PP_CompletionCallback callback,
                              int32_t result) {
@@ -126,6 +134,7 @@ const void* PluginCore::GetInterface() {
     MemAlloc,
     MemFree,
     GetTime,
+    GetTimeTicks,
     CallOnMainThread,
     IsMainThread
   };

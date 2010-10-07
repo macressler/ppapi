@@ -8,12 +8,11 @@
 #include <string.h>
 
 #include "native_client/src/include/portability.h"
-#include "native_client/src/shared/ppapi_proxy/plugin_globals.h"
-#include "native_client/src/shared/ppapi_proxy/utility.h"
 #include "native_client/src/shared/srpc/nacl_srpc.h"
 #include "ppapi/c/dev/ppb_audio_config_dev.h"
 #include "ppapi/proxy/generated/ppb_rpc_client.h"
 #include "ppapi/proxy/plugin_globals.h"
+#include "ppapi/proxy/utility.h"
 
 namespace ppapi_proxy {
 
