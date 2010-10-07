@@ -16,6 +16,7 @@
 #include "ppapi/c/pp_input_event.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/cpp/completion_callback.h"
+#include "ppapi/cpp/dev/scriptable_object_deprecated.h"
 #include "ppapi/cpp/dev/url_loader_dev.h"
 #include "ppapi/cpp/dev/url_request_info_dev.h"
 #include "ppapi/cpp/graphics_2d.h"
@@ -23,7 +24,6 @@
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/rect.h"
-#include "ppapi/cpp/scriptable_object.h"
 #include "ppapi/cpp/var.h"
 
 static const int kStepsPerCircle = 800;
@@ -42,7 +42,7 @@ void FillRect(pp::ImageData* image, int left, int top, int width, int height,
   }
 }
 
-class MyScriptableObject : public pp::ScriptableObject {
+class MyScriptableObject : public pp::deprecated::ScriptableObject {
  public:
   virtual bool HasMethod(const pp::Var& method, pp::Var* exception) {
     return method.AsString() == "toString";
