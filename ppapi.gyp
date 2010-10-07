@@ -280,7 +280,7 @@
         }],
         ['OS=="mac"', {
           'xcode_settings': {
-            'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
+            #'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
            },
            'defines': ['NACL_OSX'],
         }]
@@ -359,7 +359,7 @@
         }],
         ['OS=="mac"', {
           'xcode_settings': {
-            'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
+            #'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
            },
            'defines': ['NACL_OSX'],
         }]
