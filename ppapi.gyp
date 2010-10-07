@@ -183,7 +183,7 @@
 
         # Deprecated interfaces.
         'cpp/dev/scriptable_object_deprecated.h',
-        'cpp/dev/scriptable_object_deprecated.cc'        
+        'cpp/dev/scriptable_object_deprecated.cc',
       ],
       'conditions': [
         ['OS=="win"', {
