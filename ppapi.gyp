@@ -269,20 +269,20 @@
         'proxy/objectstub_rpc_impl.cc',
         'proxy/utility.h',
       ],
-      'defines': [
-        'NACL_LINUX',
-      ],
       'conditions': [
         ['OS=="win"', {
           'msvs_guid': 'F46058DC-C3AF-4E9D-9B34-CED2BC3E74F4',
+          'defines': ['NACL_WINDOWS'],
         }],
         ['OS=="linux"', {
           #'cflags': ['-Wextra', '-pedantic'],
+          'defines': ['NACL_LINUX'],
         }],
         ['OS=="mac"', {
           'xcode_settings': {
             'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
            },
+           'defines': ['NACL_OSX'],
         }]
       ],
     },
@@ -295,7 +295,6 @@
       'include_dirs': [
         '..',
         '../..',  # For nacl includes to work.
-        #'../../../../native_client/trunk/src/',  # Hack for other NaCl
       ],
       'sources': [
         'proxy/generated/ppb_rpc_client.cc',
@@ -351,14 +350,18 @@
       'conditions': [
         ['OS=="win"', {
           'msvs_guid': 'BDF0FF3B-DCC8-440B-B534-F8A7E80F6EC0',
+          'defines': ['NACL_WINDOWS'],
+          'msvs_disabled_warnings': [4800],
         }],
         ['OS=="linux"', {
           #'cflags': ['-Wextra', '-pedantic'],
+          'defines': ['NACL_LINUX'],
         }],
         ['OS=="mac"', {
           'xcode_settings': {
             'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
            },
+           'defines': ['NACL_OSX'],
         }]
       ],
     },
