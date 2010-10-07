@@ -350,7 +350,7 @@
       ],
       'conditions': [
         ['OS=="win"', {
-          'msvs_guid': 'F46058DC-C3AF-4E9D-9B34-CED2BC3E74F4',
+          'msvs_guid': 'BDF0FF3B-DCC8-440B-B534-F8A7E80F6EC0',
         }],
         ['OS=="linux"', {
           #'cflags': ['-Wextra', '-pedantic'],
