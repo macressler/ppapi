@@ -233,6 +233,136 @@
       ],
     },
     {
+      'target_name': 'ppapi_browser_proxy',
+      'type': 'static_library',
+      'dependencies': [
+        'ppapi_c',
+      ],
+      'include_dirs': [
+        '..',
+        '../..',  # For nacl includes to work.
+      ],
+      'sources': [
+        'proxy/browser_core.cc',
+        'proxy/browser_globals.cc',
+        'proxy/browser_globals.h',
+        'proxy/browser_host.h',
+        'proxy/browser_instance.cc',
+        'proxy/browser_instance.h',
+        'proxy/browser_ppp.cc',
+        'proxy/browser_ppp.h',
+        'proxy/browser_upcall.cc',
+        'proxy/browser_upcall.h',
+        'proxy/generated/ppb_rpc_server.cc',
+        'proxy/generated/ppb_rpc_server.h',
+        'proxy/generated/ppp_rpc_client.cc',
+        'proxy/generated/ppp_rpc_client.h',
+        'proxy/generated/upcall_server.cc',
+        'proxy/generated/upcall_server.h',
+        'proxy/object.cc',
+        'proxy/object.h',
+        'proxy/object_capability.h',
+        'proxy/object_proxy.cc',
+        'proxy/object_proxy.h',
+        'proxy/object_serialize.cc',
+        'proxy/object_serialize.h',
+        'proxy/objectstub_rpc_impl.cc',
+        'proxy/utility.h',
+      ],
+      'defines': [
+        'NACL_LINUX',
+      ],
+      'conditions': [
+        ['OS=="win"', {
+          'msvs_guid': 'F46058DC-C3AF-4E9D-9B34-CED2BC3E74F4',
+        }],
+        ['OS=="linux"', {
+          #'cflags': ['-Wextra', '-pedantic'],
+        }],
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
+           },
+        }]
+      ],
+    },
+    {
+      'target_name': 'ppapi_plugin_proxy',
+      'type': 'static_library',
+      'dependencies': [
+        'ppapi_c',
+      ],
+      'include_dirs': [
+        '..',
+        '../..',  # For nacl includes to work.
+        #'../../../../native_client/trunk/src/',  # Hack for other NaCl
+      ],
+      'sources': [
+        'proxy/generated/ppb_rpc_client.cc',
+        'proxy/generated/ppb_rpc_client.h',
+        'proxy/generated/ppp_rpc_server.cc',
+        'proxy/generated/ppp_rpc_server.h',
+        'proxy/generated/upcall_client.cc',
+        'proxy/generated/upcall_client.h',
+        'proxy/object.cc',
+        'proxy/object.h',
+        'proxy/object_capability.h',
+        'proxy/object_proxy.cc',
+        'proxy/object_proxy.h',
+        'proxy/object_serialize.cc',
+        'proxy/object_serialize.h',
+        'proxy/objectstub_rpc_impl.cc',
+        'proxy/plugin_audio.cc',
+        'proxy/plugin_audio.h',
+        'proxy/plugin_audio_config.cc',
+        'proxy/plugin_audio_config.h',
+        'proxy/plugin_buffer.cc',
+        'proxy/plugin_buffer.h',
+        'proxy/plugin_core.cc',
+        'proxy/plugin_core.h',
+        'proxy/plugin_getinterface.cc',
+        'proxy/plugin_getinterface.h',
+        'proxy/plugin_globals.cc',
+        'proxy/plugin_globals.h',
+        'proxy/plugin_graphics_2d.cc',
+        'proxy/plugin_graphics_2d.h',
+        'proxy/plugin_graphics_3d.cc',
+        'proxy/plugin_graphics_3d.h',
+        'proxy/plugin_image_data.cc',
+        'proxy/plugin_image_data.h',
+        'proxy/plugin_instance.cc',
+        'proxy/plugin_instance.h',
+        #'proxy/plugin_main.cc',
+        'proxy/plugin_ppp_impl.cc',
+        'proxy/plugin_ppp_instance_impl.cc',
+        'proxy/plugin_url_loader.cc',
+        'proxy/plugin_url_loader.h',
+        'proxy/plugin_url_request_info.cc',
+        'proxy/plugin_url_request_info.h',
+        'proxy/plugin_url_response_info.cc',
+        'proxy/plugin_url_response_info.h',
+        'proxy/plugin_var.cc',
+        'proxy/plugin_var.h',
+        'proxy/utility.h',
+      ],
+      'defines': [
+        'NACL_LINUX',
+      ],
+      'conditions': [
+        ['OS=="win"', {
+          'msvs_guid': 'F46058DC-C3AF-4E9D-9B34-CED2BC3E74F4',
+        }],
+        ['OS=="linux"', {
+          #'cflags': ['-Wextra', '-pedantic'],
+        }],
+        ['OS=="mac"', {
+          'xcode_settings': {
+            'WARNING_CFLAGS': ['-Wextra', '-pedantic'],
+           },
+        }]
+      ],
+    },
+    {
       'target_name': 'ppapi_example',
       'dependencies': [
         'ppapi_cpp'
