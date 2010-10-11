@@ -189,8 +189,8 @@ NaClSrpcError ObjectStubRpcServer::GetAllPropertyNames(
   if (capability_length != sizeof(ObjectCapability)) {
     return NACL_SRPC_RESULT_APP_ERROR;
   }
-  PP_Var var =
-      LookupCapability(reinterpret_cast<ObjectCapability*>(capability_bytes));
+  //PP_Var var =
+  //    LookupCapability(reinterpret_cast<ObjectCapability*>(capability_bytes));
   // Get the previous value of the exception PP_Var.
   PP_Var exception;
   if (!DeserializeTo(channel, ex_in_bytes, ex_in_length, 1, &exception)) {
@@ -417,8 +417,8 @@ NaClSrpcError ObjectStubRpcServer::Deallocate(NaClSrpcChannel* channel,
   if (capability_length != sizeof(ObjectCapability)) {
     return NACL_SRPC_RESULT_APP_ERROR;
   }
-  PP_Var var =
-      LookupCapability(reinterpret_cast<ObjectCapability*>(capability_bytes));
+  // PP_Var var =
+  //   LookupCapability(reinterpret_cast<ObjectCapability*>(capability_bytes));
   // Invoke the method.
   return NACL_SRPC_RESULT_OK;
 }
