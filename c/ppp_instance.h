@@ -124,14 +124,6 @@ struct PPP_Instance {
    * will be responsible for Release()ing that reference.
    */
   struct PP_Var (*GetInstanceObject)(PP_Instance instance);
-
-  /**
-   * Returns the selection, either as plain text or as html depending on "html".
-   * If nothing is selected, or if the given format is unavailable, return a
-   * void string.
-   */
-  struct PP_Var (*GetSelectedText)(PP_Instance instance,
-                                   bool html);
 };
 
 /**

@@ -127,17 +127,6 @@ PP_Var Instance_GetInstanceObject(PP_Instance pp_instance) {
   return instance->GetInstanceObject().Detach();
 }
 
-PP_Var Instance_GetSelectedText(PP_Instance pp_instance,
-                                bool html) {
-  Module* module_singleton = Module::Get();
-  if (!module_singleton)
-    return Var().Detach();
-  Instance* instance = module_singleton->InstanceForPPInstance(pp_instance);
-  if (!instance)
-    return Var().Detach();
-  return instance->GetSelectedText(html).Detach();
-}
-
 static PPP_Instance instance_interface = {
   &Instance_DidCreate,
   &Instance_DidDestroy,
@@ -145,8 +134,7 @@ static PPP_Instance instance_interface = {
   &Instance_DidChangeFocus,
   &Instance_HandleInputEvent,
   &Instance_HandleDocumentLoad,
-  &Instance_GetInstanceObject,
-  &Instance_GetSelectedText,
+  &Instance_GetInstanceObject
 };
 
 // PPP_Widget implementation ---------------------------------------------------
