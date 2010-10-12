@@ -162,12 +162,6 @@ class PppInstanceRpcClient {
       int64_t instance,
       nacl_abi_size_t* capability_bytes, char* capability
   );
-  static NaClSrpcError PPP_Instance_GetSelectedText(
-      NaClSrpcChannel* channel,
-      int64_t instance,
-      int32_t html,
-      nacl_abi_size_t* ret_bytes, char* ret
-  );
 
  private:
   PppInstanceRpcClient();

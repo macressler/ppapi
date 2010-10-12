@@ -363,22 +363,3 @@ NaClSrpcError PppInstanceRpcClient::PPP_Instance_GetInstanceObject(
   );
   return retval;
 }
-
-NaClSrpcError PppInstanceRpcClient::PPP_Instance_GetSelectedText(
-    NaClSrpcChannel* channel,
-    int64_t instance,
-    int32_t html,
-    nacl_abi_size_t* ret_bytes, char* ret
-)  {
-  NaClSrpcError retval;
-  retval = NaClSrpcInvokeBySignature(
-      channel,
-      "PPP_Instance_GetSelectedText:li:C",
-      instance,
-      html,
-      ret_bytes, ret
-  );
-  return retval;
-}
-
-

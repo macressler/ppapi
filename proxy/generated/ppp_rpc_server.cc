@@ -321,21 +321,6 @@ static NaClSrpcError PPP_Instance_GetInstanceObjectDispatcher(
   return retval;
 }
 
-static NaClSrpcError PPP_Instance_GetSelectedTextDispatcher(
-    NaClSrpcChannel* channel,
-    NaClSrpcArg** inputs,
-    NaClSrpcArg** outputs
-) {
-  NaClSrpcError retval;
-  retval = PppInstanceRpcServer::PPP_Instance_GetSelectedText(
-      channel,
-      inputs[0]->u.lval,
-      inputs[1]->u.ival,
-      &(outputs[0]->u.caval.count), outputs[0]->u.caval.carr
-  );
-  return retval;
-}
-
 }  // namespace
 
 NACL_SRPC_METHOD_ARRAY(PppRpcs::srpc_methods) = {
@@ -357,8 +342,6 @@ NACL_SRPC_METHOD_ARRAY(PppRpcs::srpc_methods) = {
   { "PPP_Instance_DidChangeFocus:lb:", PPP_Instance_DidChangeFocusDispatcher },
   { "PPP_Instance_HandleDocumentLoad:ll:i", PPP_Instance_HandleDocumentLoadDispatcher },
   { "PPP_Instance_HandleInputEvent:lC:i", PPP_Instance_HandleInputEventDispatcher },
-  { "PPP_Instance_GetInstanceObject:l:C", PPP_Instance_GetInstanceObjectDispatcher },
-  { "PPP_Instance_GetSelectedText:li:C", PPP_Instance_GetSelectedTextDispatcher },
   { NULL, NULL }
 };  // NACL_SRPC_METHOD_ARRAY
 
