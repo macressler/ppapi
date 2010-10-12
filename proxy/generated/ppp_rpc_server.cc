@@ -342,6 +342,7 @@ NACL_SRPC_METHOD_ARRAY(PppRpcs::srpc_methods) = {
   { "PPP_Instance_DidChangeFocus:lb:", PPP_Instance_DidChangeFocusDispatcher },
   { "PPP_Instance_HandleDocumentLoad:ll:i", PPP_Instance_HandleDocumentLoadDispatcher },
   { "PPP_Instance_HandleInputEvent:lC:i", PPP_Instance_HandleInputEventDispatcher },
+  { "PPP_Instance_GetInstanceObject:l:C", PPP_Instance_GetInstanceObjectDispatcher },
   { NULL, NULL }
 };  // NACL_SRPC_METHOD_ARRAY
 
