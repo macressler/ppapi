@@ -11,7 +11,7 @@ namespace {
 
 template <typename T> class DeviceFuncs {
  public:
-  explicit DeviceFuncs(const char* ifname) : ifname_(ifname) {}
+  explicit DeviceFuncs(const char* ifname) : ifname_(ifname), funcs_(NULL) {}
 
   operator T const*() {
     if (!funcs_) {
