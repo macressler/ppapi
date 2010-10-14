@@ -57,6 +57,8 @@ class Var {
 
   Var& operator=(const Var& other);
 
+  bool operator==(const Var& other) const;
+
   bool is_undefined() const { return var_.type == PP_VARTYPE_UNDEFINED; }
   bool is_null() const { return var_.type == PP_VARTYPE_NULL; }
   bool is_bool() const { return var_.type == PP_VARTYPE_BOOL; }

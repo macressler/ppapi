@@ -136,6 +136,31 @@ Var& Var::operator=(const Var& other) {
   return *this;
 }
 
+bool Var::operator==(const Var& other) const {
+  if (var_.type != other.var_.type)
+    return false;
+  switch (var_.type) {
+    case PP_VARTYPE_UNDEFINED:
+    case PP_VARTYPE_NULL:
+      return true;
+    case PP_VARTYPE_BOOL:
+      return AsBool() == other.AsBool();
+    case PP_VARTYPE_INT32:
+      return AsInt() == other.AsInt();
+    case PP_VARTYPE_DOUBLE:
+      return AsDouble() == other.AsDouble();
+    case PP_VARTYPE_STRING:
+      if (var_.value.as_id == other.var_.value.as_id)
+        return true;
+      return AsString() == other.AsString();
+    // TODO(neb): Document that this is === and not ==, unlike strings.
+    case PP_VARTYPE_OBJECT:
+      return var_.value.as_id == other.var_.value.as_id;
+    default:
+      return false;
+  }
+}
+
 bool Var::AsBool() const {
   if (!is_bool()) {
     PP_NOTREACHED();
