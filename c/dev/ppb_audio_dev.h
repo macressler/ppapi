@@ -10,7 +10,7 @@
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 
-#define PPB_AUDIO_DEV_INTERFACE "PPB_Audio(Dev);0.1"
+#define PPB_AUDIO_DEV_INTERFACE "PPB_Audio(Dev);0.2"
 
 // Callback function type for SetCallback.
 typedef void (*PPB_Audio_Callback)(void* sample_buffer,
@@ -47,6 +47,11 @@ struct PPB_Audio_Dev {
   // callback is null, the function returns 0.
   PP_Resource (*Create)(PP_Instance instance, PP_Resource config,
                         PPB_Audio_Callback audio_callback, void* user_data);
+
+  /**
+   * Returns true if the given resource is an Audio resource.
+   */
+  bool (*IsAudio)(PP_Resource resource);
 
   // Get the current configuration.
   PP_Resource (*GetCurrentConfig)(PP_Resource audio);

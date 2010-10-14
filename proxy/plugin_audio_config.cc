@@ -19,12 +19,20 @@ namespace ppapi_proxy {
 namespace {
 PP_Resource CreateStereo16Bit(PP_Module module,
                               PP_AudioSampleRate_Dev sample_rate,
-                              uint32_t sample_frame_count,
-                              uint32_t* obtained_sample_frame_count) {
+                              uint32_t sample_frame_count) {
   UNREFERENCED_PARAMETER(module);
   UNREFERENCED_PARAMETER(sample_rate);
-  UNREFERENCED_PARAMETER(sample_frame_count);
   return kInvalidResourceId;
+}
+
+uint32_t RecommendSampleFrameCount(uint32_t requested_sample_frame_count) {
+  UNREFERENCED_PARAMETER(requested_sample_frame_count);
+  return 0;
+}
+
+bool IsAudioConfig(PP_Resource resource) {
+  UNREFERENCED_PARAMETER(resource);
+  return false;
 }
 
 PP_AudioSampleRate_Dev GetSampleRate(PP_Resource config) {
@@ -41,6 +49,8 @@ uint32_t GetSampleFrameCount(PP_Resource config) {
 const PPB_AudioConfig_Dev* PluginAudioConfig::GetInterface() {
   static const PPB_AudioConfig_Dev intf = {
     CreateStereo16Bit,
+    RecommendSampleFrameCount,
+    IsAudioConfig,
     GetSampleRate,
     GetSampleFrameCount,
   };
