@@ -18,7 +18,7 @@ namespace ppapi_proxy {
 // Implements a scriptable object in PPAPI.
 // This class is used in both the browser and plugin.
 // These methods are in one to one correspondence with the methods exported by
-// the interface in ppapi/c/ppp_class.h.
+// the interface in ppapi/c/dev/ppp_class_deprecated.h.
 class ObjectProxy : public Object {
  public:
   ObjectProxy(const ObjectCapability& capability, NaClSrpcChannel* channel)

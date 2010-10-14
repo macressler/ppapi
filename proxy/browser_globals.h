@@ -53,7 +53,7 @@ const void* GetBrowserInterface(const char* interface_name);
 // Set by SetBrowserGetInterface.
 const PPB_Core* CoreInterface();
 
-// We need an interface to get PPB_Var that is spelled the same way for
+// We need an interface to get ppb_var_deprecated that is spelled the same way for
 // both plugins and the browser side of the proxy.
 // Set by SetBrowserGetInterface.
 const PPB_Var_Deprecated* VarInterface();

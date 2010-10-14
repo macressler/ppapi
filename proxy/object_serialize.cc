@@ -226,7 +226,7 @@ bool DeserializeString(char* p,
   }
   uint32_t rounded_length = RoundedStringBytes(string_length);
   if (0 == string_length) {
-    // Zero-length string.  Rely on what the PPB_Var does.
+    // Zero-length string.  Rely on what the PPB_Var_Deprecated does.
     *var = VarInterface()->VarFromUtf8(LookupModuleIdForSrpcChannel(channel),
                                        ss->string_bytes,
                                        0);

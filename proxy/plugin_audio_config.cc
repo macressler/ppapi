@@ -37,7 +37,7 @@ bool IsAudioConfig(PP_Resource resource) {
 
 PP_AudioSampleRate_Dev GetSampleRate(PP_Resource config) {
   UNREFERENCED_PARAMETER(config);
-  return PP_AUDIOSAMPLERATE_44100;
+  return PP_AUDIOSAMPLERATE_NONE;
 }
 
 uint32_t GetSampleFrameCount(PP_Resource config) {

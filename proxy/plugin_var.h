@@ -15,7 +15,7 @@
 
 namespace ppapi_proxy {
 
-// Implements the plugin side of the PPB_Var interface.
+// Implements the plugin side of the PPB_Var_Deprecated interface.
 // This implementation also determines how PP_Vars are represented internally
 // in the proxied implementation.
 class PluginVar {

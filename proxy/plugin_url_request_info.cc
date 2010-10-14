@@ -39,6 +39,7 @@ bool SetProperty(PP_Resource request,
 bool AppendDataToBody(PP_Resource request, const char* data, uint32_t len) {
   UNREFERENCED_PARAMETER(request);
   UNREFERENCED_PARAMETER(data);
+  UNREFERENCED_PARAMETER(len);
   return false;
 }
 
