@@ -18,10 +18,11 @@ AudioConfig_Dev::AudioConfig_Dev()
 
 AudioConfig_Dev::AudioConfig_Dev(PP_AudioSampleRate_Dev sample_rate,
                                  uint32_t sample_frame_count)
-    : sample_rate_(sample_rate) {
+    : sample_rate_(sample_rate),
+      sample_frame_count_(sample_frame_count) {
   if (audio_cfg_f) {
     PassRefFromConstructor(audio_cfg_f->CreateStereo16Bit(
-        Module::Get()->pp_module(), sample_rate, 
+        Module::Get()->pp_module(), sample_rate,
         sample_frame_count));
   }
 }
