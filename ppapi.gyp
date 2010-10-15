@@ -51,6 +51,7 @@
         'c/ppb_graphics_2d.h',
         'c/ppb_image_data.h',
         'c/ppb_instance.h',
+        'c/ppb_var.h',
         'c/ppp.h',
         'c/ppp_instance.h',
 
