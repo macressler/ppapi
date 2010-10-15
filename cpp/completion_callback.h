@@ -7,6 +7,7 @@
 
 #include "ppapi/c/pp_completion_callback.h"
 #include "ppapi/cpp/logging.h"
+#include "ppapi/cpp/non_thread_safe_ref_count.h"
 
 namespace pp {
 
@@ -48,6 +49,15 @@ class CompletionCallback {
 // preventing any bound member functions from being called.  The CancelAll
 // method allows pending callbacks to be cancelled without destroying the
 // factory.
+//
+// NOTE: by default, CompletionCallbackFactory<T> isn't thread safe, but you can
+// make it more thread-friendly by passing a thread-safe refcounting class as
+// the second template element. However, it only guarantees safety for
+// *creating* a callback from another thread, the callback itself needs to
+// execute on the same thread as the thread that creates/destroys the factory.
+// With this restriction, it is safe to create the CompletionCallbackFactory on
+// the main thread, create callbacks from any thread and pass them to
+// CallOnMainThread.
 // 
 // EXAMPLE USAGE:
 //
@@ -106,7 +116,7 @@ class CompletionCallback {
 //     int64_t offset_;
 //   };
 //
-template <typename T>
+template <typename T, typename RefCount = NonThreadSafeRefCount>
 class CompletionCallbackFactory {
  public:
   explicit CompletionCallbackFactory(T* object = NULL)
@@ -173,19 +183,18 @@ class CompletionCallbackFactory {
  private:
   class BackPointer {
    public:
-    BackPointer() : ref_(0), factory_(NULL) {
-    }
-    BackPointer(CompletionCallbackFactory<T>* factory)
-        : ref_(0),
-          factory_(factory) {
+    typedef CompletionCallbackFactory<T, RefCount> FactoryType;
+
+    BackPointer(FactoryType* factory)
+        : factory_(factory) {
     }
 
     void AddRef() {
-      ref_++;
+      ref_.AddRef();
     }
 
     void Release() {
-      if (--ref_ == 0)
+      if (ref_.Release() == 0)
         delete this;
     }
 
@@ -198,8 +207,8 @@ class CompletionCallbackFactory {
     }
 
    private:
-    int32_t ref_;
-    CompletionCallbackFactory<T>* factory_;
+    RefCount ref_;
+    FactoryType* factory_;
   };
 
   template <typename Dispatcher>
