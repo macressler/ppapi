@@ -55,11 +55,6 @@ void TestingInstance::DidChangeView(const pp::Rect& position,
   }
 }
 
-void TestingInstance::ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
-                                         uint32_t value) {
-  current_case_->ScrollbarValueChanged(scrollbar, value);
-}
-
 void TestingInstance::LogTest(const std::string& test_name,
                            const std::string& error_message) {
   std::string html;

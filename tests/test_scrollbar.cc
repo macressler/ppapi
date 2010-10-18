@@ -13,18 +13,13 @@ REGISTER_TEST_CASE(Scrollbar);
 
 TestScrollbar::TestScrollbar(TestingInstance* instance)
     : TestCase(instance),
+      WidgetClient_Dev(instance),
       scrollbar_(*instance, true),
       scrollbar_value_changed_(false) {
 }
 
 void TestScrollbar::RunTest() {
   instance_->LogTest("HandleEvent", TestHandleEvent());
-}
-
-void TestScrollbar::ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
-                                          uint32_t value) {
-  if (scrollbar == scrollbar_)
-    scrollbar_value_changed_ = true;
 }
 
 std::string TestScrollbar::TestHandleEvent() {
@@ -42,4 +37,14 @@ std::string TestScrollbar::TestHandleEvent() {
 
   return scrollbar_value_changed_ ?
       "" : "Didn't get callback for scrollbar value change";
+}
+
+void TestScrollbar::InvalidateWidget(pp::Widget_Dev widget,
+                                     const pp::Rect& dirty_rect) {
+}
+
+void TestScrollbar::ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
+                                          uint32_t value) {
+  if (scrollbar == scrollbar_)
+    scrollbar_value_changed_ = true;
 }

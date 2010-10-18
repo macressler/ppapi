@@ -67,17 +67,6 @@ Var Instance::GetSelectedText(bool /* html */) {
   return Var();
 }
 
-void Instance::InvalidateWidget(Widget_Dev /* widget */,
-                                const Rect& /* dirty_rect */) {
-}
-
-void Instance::ScrollbarValueChanged(Scrollbar_Dev /* scrollbar */,
-                                     uint32_t /* value */) {
-}
-
-void Instance::Graphics3DContextLost() {
-}
-
 Var Instance::GetWindowObject() {
   if (!ppb_instance_f)
     return Var();

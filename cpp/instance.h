@@ -77,20 +77,6 @@ class Instance {
   virtual Var GetSelectedText(bool html);
   // @}
 
-  /** Widget interface. */
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  virtual void InvalidateWidget(Widget_Dev widget, const Rect& dirty_rect);
-
-  /** Scrollbar interface. */
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  virtual void ScrollbarValueChanged(Scrollbar_Dev scrollbar, uint32_t value);
-
-
-  /** Graphics3D interface. */
-  // TODO(brettw) http://crbug.com/53718 don't expose this here.
-  virtual void Graphics3DContextLost();
-
-
   // @{
   /** @name PPB_Instance methods for querying the browser: */
 

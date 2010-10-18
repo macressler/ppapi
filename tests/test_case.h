@@ -38,9 +38,6 @@ class TestCase {
   // Internally, this uses CreateTestObject which each test overrides.
   pp::Var GetTestObject();
 
-  // Override to get scrollbar notifications.
-  virtual void ScrollbarValueChanged(pp::Scrollbar_Dev, uint32_t) {}
-
  protected:
   // Overridden by each test to supply a ScriptableObject corresponding to the
   // test. There can only be one object created for all test in a given class

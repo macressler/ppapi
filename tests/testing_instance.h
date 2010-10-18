@@ -12,10 +12,6 @@
 
 class TestCase;
 
-namespace pp {
-class Scrollbar_Dev;
-}
-
 class TestingInstance : public pp::Instance {
  public:
   TestingInstance(PP_Instance instance);
@@ -24,8 +20,6 @@ class TestingInstance : public pp::Instance {
   virtual bool Init(uint32_t argc, const char* argn[], const char* argv[]);
   virtual void DidChangeView(const pp::Rect& position, const pp::Rect& clip);
   virtual pp::Var GetInstanceObject();
-  virtual void ScrollbarValueChanged(pp::Scrollbar_Dev scrollbar,
-                                     uint32_t value);
 
   // Outputs the information from one test run, using the format
   //   <test_name> [PASS|FAIL <error_message>]
