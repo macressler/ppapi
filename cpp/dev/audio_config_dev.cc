@@ -27,5 +27,13 @@ AudioConfig_Dev::AudioConfig_Dev(PP_AudioSampleRate_Dev sample_rate,
   }
 }
 
+// static
+uint32_t AudioConfig_Dev::RecommendSampleFrameCount(
+    uint32_t requested_sample_frame_count) {
+  if (!audio_cfg_f)
+    return 0;
+  return audio_cfg_f->RecommendSampleFrameCount(requested_sample_frame_count);
+}
+
 }  // namespace pp
 
