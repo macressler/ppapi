@@ -65,12 +65,6 @@ struct PPB_Testing_Dev {
   // Returns the number of live objects (resources + strings + objects)
   // associated with this plugin module. Used for detecting leaks.
   uint32_t (*GetLiveObjectCount)(PP_Module module);
-
-  // Returns a reference to a file to which the plugin should not have access.
-  PP_Resource (*GetInaccessibleFileRef)(PP_Module module);
-
-  // Returns a reference to a file that does not exist.
-  PP_Resource (*GetNonexistentFileRef)(PP_Module module);
 };
 
 #endif  // PPAPI_C_DEV_PPB_TESTING_DEV_H_

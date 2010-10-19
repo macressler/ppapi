@@ -13,21 +13,11 @@
 #define PPB_FILEREF_DEV_INTERFACE "PPB_FileRef(Dev);0.1"
 
 // A FileRef is a "weak pointer" to a file in a file system.  It contains a
-// PP_FileSystemType identifier and a file path string.  FileRef methods are
-// cheap and do not operate on the file system.  To operate on the file system
-// use PPB_FileSystem, PPB_FileIO, etc.
+// PP_FileSystemType identifier and a file path string.
 struct PPB_FileRef_Dev {
-  // Creates a weak pointer to a file in the application's local persistent
-  // filesystem.  File paths are POSIX style.  Returns 0 if the path is
-  // malformed.
-  PP_Resource (*CreatePersistentFileRef)(PP_Instance instance,
-                                         const char* path);
-
-  // Creates a weak pointer to a file in the application's local temporary
-  // filesystem.  File paths are POSIX style.  Returns 0 if the path is
-  // malformed.
-  PP_Resource (*CreateTemporaryFileRef)(PP_Instance instance,
-                                        const char* path);
+  // Creates a weak pointer to a file in the given filesystem. File paths are
+  // POSIX style.  Returns 0 if the path is malformed.
+  PP_Resource (*Create)(PP_Resource file_system, const char* path);
 
   // Returns true if the given resource is a FileRef. Returns false if the
   // resource is invalid or some type other than a FileRef.
@@ -47,6 +37,43 @@ struct PPB_FileRef_Dev {
   // of the filesystem, then the root is returned.  This method fails if the
   // file system type is PP_FileSystemType_External.
   PP_Resource (*GetParent)(PP_Resource file_ref);
+
+  // Makes a new directory in the filesystem as well as any parent directories
+  // if the make_ancestors parameter is true.  It is not valid to make a
+  // directory in the external filesystem.  Fails if the directory already
+  // exists or if ancestor directories do not exist and make_ancestors was not
+  // passed as true.
+  int32_t (*MakeDirectory)(PP_Resource directory_ref,
+                           bool make_ancestors,
+                           struct PP_CompletionCallback callback);
+
+  // Queries info about the file.  You must have read access to this file if it
+  // exists in the external filesystem.
+  int32_t (*Query)(PP_Resource file_ref,
+                   struct PP_FileInfo_Dev* info,
+                   struct PP_CompletionCallback callback);
+
+  // Updates timestamps for a file.  You must have write access to the file if
+  // it exists in the external filesystem.
+  int32_t (*Touch)(PP_Resource file_ref,
+                   PP_Time last_access_time,
+                   PP_Time last_modified_time,
+                   struct PP_CompletionCallback callback);
+
+  // Delete a file or directory.  If file_ref refers to a directory, then the
+  // directory must be empty.  It is an error to delete a file or directory
+  // that is in use.  It is not valid to delete a file in the external
+  // filesystem.
+  int32_t (*Delete)(PP_Resource file_ref,
+                    struct PP_CompletionCallback callback);
+
+  // Rename a file or directory.  file_ref and new_file_ref must both refer to
+  // files in the same filesystem.  It is an error to rename a file or
+  // directory that is in use.  It is not valid to rename a file in the
+  // external filesystem.
+  int32_t (*Rename)(PP_Resource file_ref,
+                    PP_Resource new_file_ref,
+                    struct PP_CompletionCallback callback);
 
   // TODO(darin): Add these conversion routines.
 #if 0

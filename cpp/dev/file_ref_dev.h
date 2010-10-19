@@ -6,10 +6,14 @@
 #define PPAPI_CPP_DEV_FILE_REF_DEV_H_
 
 #include "ppapi/c/dev/ppb_file_ref_dev.h"
+#include "ppapi/c/pp_stdint.h"
 #include "ppapi/cpp/resource.h"
 #include "ppapi/cpp/var.h"
 
 namespace pp {
+
+class CompletionCallback;
+class FileSystem_Dev;
 
 class FileRef_Dev : public Resource {
  public:
@@ -25,13 +29,8 @@ class FileRef_Dev : public Resource {
   struct PassRef {};
   FileRef_Dev(PassRef, PP_Resource resource);
 
-  // Creates a FileRef pointing to a path in the persistent filesystem.
-  struct InPersistentFS {};
-  FileRef_Dev(InPersistentFS, const char* path);
-
-  // Creates a FileRef pointing to a path in the temporary filesystem.
-  struct InTemporaryFS {};
-  FileRef_Dev(InTemporaryFS, const char* path);
+  // Creates a FileRef pointing to a path in the given filesystem.
+  FileRef_Dev(const FileSystem_Dev& file_system, const char* path);
 
   FileRef_Dev(const FileRef_Dev& other);
 
@@ -51,6 +50,20 @@ class FileRef_Dev : public Resource {
   // Returns the parent directory of this file.  See PPB_FileRef::GetParent for
   // more details.
   FileRef_Dev GetParent() const;
+
+  int32_t MakeDirectory(const CompletionCallback& cc);
+
+  int32_t MakeDirectoryIncludingAncestors(const CompletionCallback& cc);
+
+  int32_t Query(PP_FileInfo_Dev* result_buf, const CompletionCallback& cc);
+
+  int32_t Touch(PP_Time last_access_time,
+                PP_Time last_modified_time,
+                const CompletionCallback& cc);
+
+  int32_t Delete(const CompletionCallback& cc);
+
+  int32_t Rename(const FileRef_Dev& new_file_ref, const CompletionCallback& cc);
 };
 
 }  // namespace pp
