@@ -37,7 +37,6 @@ class TestURLLoader : public TestCase {
   std::string TestBinaryDataPOST();
   std::string TestCustomRequestHeader();
   std::string TestIgnoresBogusContentLength();
-  std::string TestOpenBadFileRef();
   std::string TestStreamToFile();
   std::string TestSameOriginRestriction();
 };

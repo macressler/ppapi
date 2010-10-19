@@ -14,6 +14,7 @@
 #include "ppapi/cpp/completion_callback.h"
 #include "ppapi/cpp/dev/file_io_dev.h"
 #include "ppapi/cpp/dev/file_ref_dev.h"
+#include "ppapi/cpp/dev/file_system_dev.h"
 #include "ppapi/cpp/dev/url_loader_dev.h"
 #include "ppapi/cpp/dev/url_request_info_dev.h"
 #include "ppapi/cpp/dev/url_response_info_dev.h"
@@ -92,14 +93,8 @@ void TestURLLoader::RunTest() {
   RUN_TEST(BinaryDataPOST);
   RUN_TEST(CustomRequestHeader);
   RUN_TEST(IgnoresBogusContentLength);
-  RUN_TEST(OpenBadFileRef);
   RUN_TEST(SameOriginRestriction);
-
-  // TODO(dumi): Enable this test once we have support for clearing the
-  // temporary files created by the stream-to-file option.
-#if 0
   RUN_TEST(StreamToFile);
-#endif
 }
 
 std::string TestURLLoader::ReadEntireFile(pp::FileIO_Dev* file_io,
@@ -235,35 +230,6 @@ std::string TestURLLoader::TestIgnoresBogusContentLength() {
   std::string postdata("postdata");
   request.AppendDataToBody(postdata.data(), postdata.length());
   return LoadAndCompareBody(request, postdata);
-}
-
-std::string TestURLLoader::TestOpenBadFileRef() {
-  PP_Module module = pp::Module::Get()->pp_module();
-  TestCompletionCallback callback;
-
-  // Try opening a file that doesn't exist.
-  pp::FileRef_Dev nonexistent_file_ref(
-      g_testing_interface->GetNonexistentFileRef(module));
-  pp::FileIO_Dev nonexistent_file_reader;
-  int32_t rv = nonexistent_file_reader.Open(
-      nonexistent_file_ref, PP_FILEOPENFLAG_READ, callback);
-  if (rv == PP_ERROR_WOULDBLOCK)
-    rv = callback.WaitForResult();
-  if (rv != PP_ERROR_NOACCESS)
-    return "PP_ERROR_NOACCESS was expected for a nonexistent file";
-
-  // Try opening a file to which we don't have access.
-  pp::FileRef_Dev inaccessible_file_ref(
-      g_testing_interface->GetInaccessibleFileRef(module));
-  pp::FileIO_Dev inaccessible_file_reader;
-  rv = inaccessible_file_reader.Open(
-      inaccessible_file_ref, PP_FILEOPENFLAG_READ, callback);
-  if (rv == PP_ERROR_WOULDBLOCK)
-    rv = callback.WaitForResult();
-  if (rv != PP_ERROR_NOACCESS)
-    return "PP_ERROR_NOACCESS was expected for an inaccessible file.";
-
-  return "";
 }
 
 std::string TestURLLoader::TestStreamToFile() {

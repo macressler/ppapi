@@ -22,6 +22,10 @@ class TestFileRef : public TestCase {
   std::string TestGetName();
   std::string TestGetPath();
   std::string TestGetParent();
+  std::string TestMakeDirectory();
+  std::string TestQueryAndTouchFile();
+  std::string TestDeleteFileAndDirectory();
+  std::string TestRenameFileAndDirectory();
 };
 
 #endif  // PAPPI_TESTS_TEST_FILE_REF_H_

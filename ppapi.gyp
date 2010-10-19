@@ -449,6 +449,8 @@
         'tests/test_buffer.h',
         'tests/test_char_set.cc',
         'tests/test_char_set.h',
+        'tests/test_file_io.cc',
+        'tests/test_file_io.h',
         'tests/test_file_ref.cc',
         'tests/test_file_ref.h',
         'tests/test_graphics_2d.cc',
