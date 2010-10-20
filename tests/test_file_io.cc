@@ -246,7 +246,7 @@ std::string TestFileIO::TestReadWriteSetLength() {
 
   // Extend the file.
   rv = file_io.SetLength(16, callback);
-  if (rv = PP_ERROR_WOULDBLOCK)
+  if (rv == PP_ERROR_WOULDBLOCK)
     rv = callback.WaitForResult();
   if (rv != PP_OK)
     return ReportError("FileIO::SetLength", rv);
