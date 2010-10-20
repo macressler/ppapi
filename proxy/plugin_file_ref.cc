@@ -10,9 +10,8 @@
 namespace ppapi_proxy {
 
 namespace {
-PP_Resource CreatePersistentFileRef(PP_Instance instance,
-                                    const char* path) {
-  UNREFERENCED_PARAMETER(instance);
+PP_Resource Create(PP_Resource file_system, const char* path) {
+  UNREFERENCED_PARAMETER(file_system);
   UNREFERENCED_PARAMETER(path);
   return kInvalidResourceId;
 }
@@ -53,8 +52,7 @@ PP_Resource GetParent(PP_Resource file_ref) {
 
 const PPB_FileRef_Dev* PluginFileRef::GetInterface() {
   static const PPB_FileRef_Dev intf = {
-    CreatePersistentFileRef,
-    CreateTemporaryFileRef,
+    Create,
     IsFileRef,
     GetFileSystemType,
     GetName,
