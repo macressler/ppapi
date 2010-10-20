@@ -16,14 +16,6 @@ PP_Resource Create(PP_Resource file_system, const char* path) {
   return kInvalidResourceId;
 }
 
-
-PP_Resource CreateTemporaryFileRef(PP_Instance instance,
-                                   const char* path) {
-  UNREFERENCED_PARAMETER(instance);
-  UNREFERENCED_PARAMETER(path);
-  return kInvalidResourceId;
-}
-
 bool IsFileRef(PP_Resource resource) {
   UNREFERENCED_PARAMETER(resource);
   return false;
