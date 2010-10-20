@@ -26,7 +26,7 @@ FileSystem_Dev::FileSystem_Dev(Instance* instance,
   PassRefFromConstructor(file_sys_f->Create(instance->pp_instance(), type));
 }
 
-int32_t FileSystem_Dev::Open(long long expected_size,
+int32_t FileSystem_Dev::Open(int64_t expected_size,
                              const CompletionCallback& cc) {
   if (!file_sys_f)
     return PP_ERROR_NOINTERFACE;

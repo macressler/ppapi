@@ -24,7 +24,7 @@ class FileSystem_Dev : public Resource {
  public:
   FileSystem_Dev(Instance* instance, PP_FileSystemType_Dev type);
 
-  int32_t Open(long long expected_size, const CompletionCallback& cc);
+  int32_t Open(int64_t expected_size, const CompletionCallback& cc);
 };
 
 }  // namespace pp

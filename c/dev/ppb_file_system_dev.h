@@ -22,7 +22,7 @@ struct PPB_FileSystem_Dev {
   // Opens the file system. A file system must be opened before running any
   // other operation on it.
   int32_t (*Open)(PP_Resource file_system,
-                  long long expected_size,
+                  int64_t expected_size,
                   struct PP_CompletionCallback callback);
 };
 
