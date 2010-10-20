@@ -425,7 +425,7 @@ std::string TestFileRef::TestDeleteFileAndDirectory() {
 
   pp::FileRef_Dev nested_dir_ref(file_system, "/dir_delete_1/dir_delete_2");
   rv = nested_dir_ref.MakeDirectoryIncludingAncestors(callback);
-  if (rv = PP_ERROR_WOULDBLOCK)
+  if (rv == PP_ERROR_WOULDBLOCK)
     rv = callback.WaitForResult();
   if (rv != PP_OK)
     return ReportError("FileSystem::MakeDirectoryIncludingAncestors", rv);
@@ -486,7 +486,7 @@ std::string TestFileRef::TestRenameFileAndDirectory() {
 
   pp::FileRef_Dev nested_dir_ref(file_system, "/dir_rename_1/dir_rename_2");
   rv = nested_dir_ref.MakeDirectoryIncludingAncestors(callback);
-  if (rv = PP_ERROR_WOULDBLOCK)
+  if (rv == PP_ERROR_WOULDBLOCK)
     rv = callback.WaitForResult();
   if (rv != PP_OK)
     return ReportError("FileSystem::MakeDirectoryIncludingAncestors", rv);
