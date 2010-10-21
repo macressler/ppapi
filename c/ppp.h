@@ -24,8 +24,11 @@
  * @{
  */
 
-// We don't want name mangling for these external functions.
+// We don't want name mangling for these external functions.  We only need
+// 'extern "C"' if we're compiling with a C++ compiler.
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 /**
  * Entrypoint for the module.
@@ -46,7 +49,9 @@ PP_EXPORT void PPP_ShutdownModule();
  */
 PP_EXPORT const void* PPP_GetInterface(const char* interface_name);
 
+#ifdef __cplusplus
 }  // extern "C"
+#endif
 
 /**
  * @}

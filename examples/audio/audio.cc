@@ -15,8 +15,8 @@ const double frequency_l = 200;
 const double frequency_r = 1000;
 
 // This sample frequency is guaranteed to work.
-const double sample_frequency = 44100;
-const double sample_count = 4096;
+const PP_AudioSampleRate_Dev sample_frequency = PP_AUDIOSAMPLERATE_44100;
+const uint32_t sample_count = 4096;
 
 class MyInstance : public pp::Instance {
  public:
@@ -33,7 +33,9 @@ class MyInstance : public pp::Instance {
   }
 
  private:
-  static void SineWaveCallback(void* samples, void* thiz) {
+  static void SineWaveCallback(void* samples,
+                               size_t buffer_size_in_bytes,
+                               void* thiz) {
     const double th_l = 2 * 3.141592653589 * frequency_l / sample_frequency;
     const double th_r = 2 * 3.141592653589 * frequency_r / sample_frequency;
 
@@ -41,10 +43,12 @@ class MyInstance : public pp::Instance {
     size_t t = reinterpret_cast<MyInstance*>(thiz)->audio_time_;
 
     uint16_t* buf = reinterpret_cast<uint16_t*>(samples);
-    for (size_t sample = 0; sample < sample_count; ++sample) {
-      *buf++ = static_cast<uint16_t>(sin(th_l * t)
+    for (size_t buffer_index = 0u;
+         buffer_index < buffer_size_in_bytes;
+         buffer_index += 2) {
+      *buf++ = static_cast<uint16_t>(std::sin(th_l * t)
           * std::numeric_limits<uint16_t>::max());
-      *buf++ = static_cast<uint16_t>(sin(th_r * t++)
+      *buf++ = static_cast<uint16_t>(std::sin(th_r * t++)
           * std::numeric_limits<uint16_t>::max());
     }
     reinterpret_cast<MyInstance*>(thiz)->audio_time_ = t;
@@ -74,4 +78,3 @@ Module* CreateModule() {
 }
 
 }  // namespace pp
-

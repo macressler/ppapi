@@ -69,13 +69,13 @@ inline struct PP_Var PP_MakeBool(bool value) {
   return result;
 }
 
-inline PP_Var PP_MakeInt32(int32_t value) {
+inline struct PP_Var PP_MakeInt32(int32_t value) {
   PP_Var result = { PP_VARTYPE_INT32, {0} };
   result.value.as_int = value;
   return result;
 }
 
-inline PP_Var PP_MakeDouble(double value) {
+inline struct PP_Var PP_MakeDouble(double value) {
   PP_Var result = { PP_VARTYPE_DOUBLE, {0} };
   result.value.as_double = value;
   return result;

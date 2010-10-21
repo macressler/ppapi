@@ -36,7 +36,7 @@ struct PP_CompletionCallback {
   void* user_data;
 };
 
-inline PP_CompletionCallback PP_MakeCompletionCallback(
+inline struct PP_CompletionCallback PP_MakeCompletionCallback(
     PP_CompletionCallback_Func func,
     void* user_data) {
   struct PP_CompletionCallback cc = { func, user_data };
@@ -54,7 +54,7 @@ inline void PP_RunCompletionCallback(struct PP_CompletionCallback* cc,
  *  completes.  This is only usable from background threads.
  */
 inline struct PP_CompletionCallback PP_BlockUntilComplete() {
-  return PP_MakeCompletionCallback(NULL, 0);
+  return PP_MakeCompletionCallback(NULL, NULL);
 }
 
 /**

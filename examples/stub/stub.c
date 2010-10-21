@@ -6,6 +6,8 @@
 // using C++, you will want to look at stub.cc which uses the more convenient
 // C++ wrappers.
 
+#include <stddef.h>
+
 #include "ppapi/c/pp_errors.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/ppb.h"

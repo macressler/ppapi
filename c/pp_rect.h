@@ -18,8 +18,8 @@
 #include "ppapi/c/pp_stdint.h"
 
 struct PP_Rect {
-  PP_Point point;
-  PP_Size size;
+  struct PP_Point point;
+  struct PP_Size size;
 };
 
 inline struct PP_Rect PP_MakeRectFromXYWH(int32_t x, int32_t y,
