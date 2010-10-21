@@ -113,9 +113,11 @@ struct PPB_Graphics2D {
    * store. This function replaces the graphics context's backing store with the
    * given image, avoiding the copy.
    *
-   * The new image must be the exact same size as this graphics context and
-   * must be in the browser's native bitmap format (use
-   * PPB_ImageData.GetNativeImageDataFormat to retrieve this).
+   * The new image must be the exact same size as this graphics context. If the
+   * new image uses a different image format than the browser's native bitmap
+   * format (use PPB_ImageData.GetNativeImageDataFormat to retrieve this), then
+   * a conversion will be done inside the browser which may slow the performance
+   * a little bit.
    *
    * THE NEW IMAGE WILL NOT BE PAINTED UNTIL YOU CALL FLUSH.
    *

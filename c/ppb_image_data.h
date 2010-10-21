@@ -11,7 +11,8 @@
 #include "ppapi/c/pp_stdint.h"
 
 typedef enum {
-  PP_IMAGEDATAFORMAT_BGRA_PREMUL
+  PP_IMAGEDATAFORMAT_BGRA_PREMUL,
+  PP_IMAGEDATAFORMAT_RGBA_PREMUL
 } PP_ImageDataFormat;
 
 struct PP_ImageDataDesc {
