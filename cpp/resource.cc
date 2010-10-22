@@ -11,7 +11,7 @@
 
 namespace pp {
 
-Resource::Resource() : pp_resource_(NULL) {
+Resource::Resource() : pp_resource_(0) {
 }
 
 Resource::Resource(const Resource& other) : pp_resource_(other.pp_resource_) {
@@ -36,7 +36,7 @@ void Resource::swap(Resource& other) {
 
 PP_Resource Resource::detach() {
   PP_Resource ret = pp_resource_;
-  pp_resource_ = NULL;
+  pp_resource_ = 0;
   return ret;
 }
 

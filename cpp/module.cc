@@ -134,7 +134,7 @@ static PPP_Instance instance_interface = {
 
 // Module ----------------------------------------------------------------------
 
-Module::Module() : pp_module_(NULL), get_browser_interface_(NULL), core_(NULL) {
+Module::Module() : pp_module_(0), get_browser_interface_(NULL), core_(NULL) {
 }
 
 Module::~Module() {
