@@ -48,6 +48,7 @@
         'c/pp_var.h',
         'c/ppb.h',
         'c/ppb_core.h',
+        'c/ppb_class.h',
         'c/ppb_graphics_2d.h',
         'c/ppb_image_data.h',
         'c/ppb_instance.h',
