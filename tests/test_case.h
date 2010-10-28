@@ -106,5 +106,9 @@ class TestCaseFactory {
     return MakeFailureMessage(__FILE__, __LINE__, #cmd); \
   }
 #define ASSERT_FALSE(cmd) ASSERT_TRUE(!(cmd))
+#define ASSERT_EQ(a, b) ASSERT_TRUE((a) == (b))
+#define ASSERT_NE(a, b) ASSERT_TRUE((a) != (b))
+
+#define PASS() return std::string()
 
 #endif  // PPAPI_TEST_TEST_CASE_H_

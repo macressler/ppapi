@@ -10,9 +10,9 @@
 #include "ppapi/tests/test_case.h"
 
 struct PPB_Testing_Dev;
-struct PPB_Var_Deprecated;
+struct PPB_Var;
 
-class TestVar : public TestCase {
+class TestVar: public TestCase {
  public:
   explicit TestVar(TestingInstance* instance) : TestCase(instance) {}
 
@@ -21,17 +21,11 @@ class TestVar : public TestCase {
   virtual void RunTest();
 
  private:
-  std::string TestBasicString();
-  std::string TestInvalidAndEmpty();
-  std::string TestInvalidUtf8();
-  std::string TestNullInputInUtf8Conversion();
-  std::string TestValidUtf8();
-  std::string TestUtf8WithEmbeddedNulls();
-  std::string TestVarToUtf8ForWrongType();
-  std::string TestHasPropertyAndMethod();
+  std::string TestConvertType();
+  std::string TestDefineProperty();
 
   // Used by the tests that access the C API directly.
-  const PPB_Var_Deprecated* var_interface_;
+  const PPB_Var* var_interface_;
   const PPB_Testing_Dev* testing_interface_;
 };
 

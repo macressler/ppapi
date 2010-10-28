@@ -576,6 +576,8 @@
         # Deprecated test cases.
         'tests/test_instance_deprecated.cc',
         'tests/test_instance_deprecated.h',
+        'tests/test_var_deprecated.cc',
+        'tests/test_var_deprecated.h',
       ],
       'dependencies': [
         'ppapi_cpp'
