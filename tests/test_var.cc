@@ -13,13 +13,13 @@
 #include "ppapi/cpp/var.h"
 #include "ppapi/tests/testing_instance.h"
 
-#include "../v8/include/v8.h"
-
 REGISTER_TEST_CASE(Var);
 
 namespace {
-pp::Var adoptVar(PP_Var var) { return pp::Var(pp::Var::PassRef(), var); }
+pp::Var adoptVar(PP_Var var) {
+  return pp::Var(pp::Var::PassRef(), var);
 }
+}  // namespace
 
 bool TestVar::Init() {
   var_interface_ = reinterpret_cast<PPB_Var const*>(

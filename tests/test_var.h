@@ -12,7 +12,7 @@
 struct PPB_Testing_Dev;
 struct PPB_Var;
 
-class TestVar: public TestCase {
+class TestVar : public TestCase {
  public:
   explicit TestVar(TestingInstance* instance) : TestCase(instance) {}
 
