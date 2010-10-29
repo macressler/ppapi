@@ -5,7 +5,6 @@
 #ifndef PPAPI_C_PPP_CLASS_DEPRECATED_H_
 #define PPAPI_C_PPP_CLASS_DEPRECATED_H_
 
-#include "ppapi/c/dev/deprecated_bool.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_var.h"
 
@@ -132,3 +131,4 @@ struct PPP_Class_Deprecated {
  * End addtogroup PPP
  */
 #endif  // PPAPI_C_PPP_CLASS_DEPRECATED_H_
+

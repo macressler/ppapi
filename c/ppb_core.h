@@ -5,7 +5,6 @@
 #ifndef PPAPI_C_PPB_CORE_H_
 #define PPAPI_C_PPB_CORE_H_
 
-#include "ppapi/c/pp_bool.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
 #include "ppapi/c/pp_time.h"
@@ -13,7 +12,7 @@
 
 struct PP_CompletionCallback;
 
-#define PPB_CORE_INTERFACE "PPB_Core;0.2"
+#define PPB_CORE_INTERFACE "PPB_Core;0.1"
 
 /**
  * @file
@@ -32,7 +31,7 @@ struct PPB_Core {
   void (*ReleaseResource)(PP_Resource resource);
 
   /**
-   * Allocate memory.
+   * Allocate memory. 
    *
    * @return NULL If the allocation fails.
    */
@@ -83,7 +82,7 @@ struct PPB_Core {
    * This is useful for implementing sanity checks, and deciding if dispatching
    * via CallOnMainThread() is required.
    */
-  PP_Bool (*IsMainThread)();
+  bool (*IsMainThread)();
 };
 
 /**

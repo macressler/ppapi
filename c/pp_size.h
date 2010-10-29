@@ -13,7 +13,6 @@
  * @{
  */
 
-#include "ppapi/c/pp_macros.h"
 #include "ppapi/c/pp_stdint.h"
 
 struct PP_Size {
@@ -21,7 +20,7 @@ struct PP_Size {
   int32_t height;
 };
 
-PP_INLINE struct PP_Size PP_MakeSize(int32_t w, int32_t h) {
+inline struct PP_Size PP_MakeSize(int32_t w, int32_t h) {
   struct PP_Size ret;
   ret.width = w;
   ret.height = h;

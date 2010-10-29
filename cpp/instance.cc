@@ -6,7 +6,6 @@
 
 #include "ppapi/c/dev/ppp_printing_dev.h"
 #include "ppapi/c/ppb_instance.h"
-#include "ppapi/cpp/common.h"
 #include "ppapi/cpp/dev/scrollbar_dev.h"
 #include "ppapi/cpp/dev/widget_dev.h"
 #include "ppapi/cpp/graphics_2d.h"
@@ -84,14 +83,13 @@ Var Instance::GetOwnerElementObject() {
 bool Instance::BindGraphics(const Graphics2D& graphics) {
   if (!ppb_instance_f)
     return false;
-  return PPBoolToBool(ppb_instance_f->BindGraphics(pp_instance(),
-                                                   graphics.pp_resource()));
+  return ppb_instance_f->BindGraphics(pp_instance(), graphics.pp_resource());
 }
 
 bool Instance::IsFullFrame() {
   if (!ppb_instance_f)
     return false;
-  return PPBoolToBool(ppb_instance_f->IsFullFrame(pp_instance()));
+  return ppb_instance_f->IsFullFrame(pp_instance());
 }
 
 Var Instance::ExecuteScript(const Var& script, Var* exception) {

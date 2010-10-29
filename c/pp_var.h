@@ -13,8 +13,6 @@
  * @{
  */
 
-#include "ppapi/c/pp_bool.h"
-#include "ppapi/c/pp_macros.h"
 #include "ppapi/c/pp_stdint.h"
 
 typedef enum {
@@ -42,7 +40,7 @@ typedef enum {
 struct PP_Var {
   PP_VarType type;
   union {
-    PP_Bool as_bool;
+    bool as_bool;
     int32_t as_int;
     double as_double;
 
@@ -55,30 +53,30 @@ struct PP_Var {
   } value;
 };
 
-PP_INLINE struct PP_Var PP_MakeUndefined() {
-  struct PP_Var result = { PP_VARTYPE_UNDEFINED, {PP_FALSE} };
+inline struct PP_Var PP_MakeUndefined() {
+  struct PP_Var result = { PP_VARTYPE_UNDEFINED, {0} };
   return result;
 }
 
-PP_INLINE struct PP_Var PP_MakeNull() {
-  struct PP_Var result = { PP_VARTYPE_NULL, {PP_FALSE} };
+inline struct PP_Var PP_MakeNull() {
+  struct PP_Var result = { PP_VARTYPE_NULL, {0} };
   return result;
 }
 
-PP_INLINE struct PP_Var PP_MakeBool(PP_Bool value) {
-  struct PP_Var result = { PP_VARTYPE_BOOL, {PP_FALSE} };
+inline struct PP_Var PP_MakeBool(bool value) {
+  struct PP_Var result = { PP_VARTYPE_BOOL, {0} };
   result.value.as_bool = value;
   return result;
 }
 
-PP_INLINE struct PP_Var PP_MakeInt32(int32_t value) {
-  struct PP_Var result = { PP_VARTYPE_INT32, {PP_FALSE} };
+inline struct PP_Var PP_MakeInt32(int32_t value) {
+  PP_Var result = { PP_VARTYPE_INT32, {0} };
   result.value.as_int = value;
   return result;
 }
 
-PP_INLINE struct PP_Var PP_MakeDouble(double value) {
-  struct PP_Var result = { PP_VARTYPE_DOUBLE, {PP_FALSE} };
+inline struct PP_Var PP_MakeDouble(double value) {
+  PP_Var result = { PP_VARTYPE_DOUBLE, {0} };
   result.value.as_double = value;
   return result;
 }

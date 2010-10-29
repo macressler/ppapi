@@ -5,7 +5,6 @@
 #ifndef PPAPI_C_DEV_PPB_URL_RESPONSE_INFO_DEV_H_
 #define PPAPI_C_DEV_PPB_URL_RESPONSE_INFO_DEV_H_
 
-#include "ppapi/c/pp_bool.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_var.h"
 
@@ -18,17 +17,16 @@ typedef enum {
   PP_URLRESPONSEPROPERTY_HEADERS          // string, \n-delim
 } PP_URLResponseProperty_Dev;
 
-#define PPB_URLRESPONSEINFO_DEV_INTERFACE "PPB_URLResponseInfo(Dev);0.2"
+#define PPB_URLRESPONSEINFO_DEV_INTERFACE "PPB_URLResponseInfo(Dev);0.1"
 
 struct PPB_URLResponseInfo_Dev {
-  // Returns PP_TRUE if the given resource is an URLResponseInfo. Returns
-  // PP_FALSE if the resource is invalid or some type other than an
-  // URLResponseInfo.
-  PP_Bool (*IsURLResponseInfo)(PP_Resource resource);
+  // Returns true if the given resource is an URLResponseInfo. Returns false if
+  // the resource is invalid or some type other than an URLResponseInfo.
+  bool (*IsURLResponseInfo)(PP_Resource resource);
 
   // Gets a response property.  Return PP_VarType_Void if an input parameter is
   // invalid.
-  struct PP_Var (*GetProperty)(PP_Resource response,
+  PP_Var (*GetProperty)(PP_Resource response,
                         PP_URLResponseProperty_Dev property);
 
   // Returns a FileRef pointing to the file containing the response body.  This

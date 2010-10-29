@@ -5,13 +5,12 @@
 #ifndef PPAPI_C_DEV_PPB_FILE_REF_DEV_H_
 #define PPAPI_C_DEV_PPB_FILE_REF_DEV_H_
 
-#include "ppapi/c/pp_bool.h"
 #include "ppapi/c/dev/pp_file_info_dev.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_var.h"
 
-#define PPB_FILEREF_DEV_INTERFACE "PPB_FileRef(Dev);0.3"
+#define PPB_FILEREF_DEV_INTERFACE "PPB_FileRef(Dev);0.2"
 
 // A FileRef is a "weak pointer" to a file in a file system.  It contains a
 // PP_FileSystemType identifier and a file path string.
@@ -20,9 +19,9 @@ struct PPB_FileRef_Dev {
   // POSIX style.  Returns 0 if the path is malformed.
   PP_Resource (*Create)(PP_Resource file_system, const char* path);
 
-  // Returns PP_TRUE if the given resource is a FileRef. Returns PP_FALSE if the
+  // Returns true if the given resource is a FileRef. Returns false if the
   // resource is invalid or some type other than a FileRef.
-  PP_Bool (*IsFileRef)(PP_Resource resource);
+  bool (*IsFileRef)(PP_Resource resource);
 
   // Returns the file system identifier of this file.
   PP_FileSystemType_Dev (*GetFileSystemType)(PP_Resource file_ref);
@@ -40,12 +39,12 @@ struct PPB_FileRef_Dev {
   PP_Resource (*GetParent)(PP_Resource file_ref);
 
   // Makes a new directory in the filesystem as well as any parent directories
-  // if the make_ancestors parameter is PP_TRUE.  It is not valid to make a
+  // if the make_ancestors parameter is true.  It is not valid to make a
   // directory in the external filesystem.  Fails if the directory already
   // exists or if ancestor directories do not exist and make_ancestors was not
-  // passed as PP_TRUE.
+  // passed as true.
   int32_t (*MakeDirectory)(PP_Resource directory_ref,
-                           PP_Bool make_ancestors,
+                           bool make_ancestors,
                            struct PP_CompletionCallback callback);
 
   // Queries info about the file.  You must have read access to this file if it

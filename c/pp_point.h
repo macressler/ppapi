@@ -13,7 +13,6 @@
  * @{
  */
 
-#include "ppapi/c/pp_macros.h"
 #include "ppapi/c/pp_stdint.h"
 
 struct PP_Point {
@@ -21,7 +20,7 @@ struct PP_Point {
   int32_t y;
 };
 
-PP_INLINE struct PP_Point PP_MakePoint(int32_t x, int32_t y) {
+inline struct PP_Point PP_MakePoint(int32_t x, int32_t y) {
   struct PP_Point ret;
   ret.x = x;
   ret.y = y;

@@ -15,7 +15,6 @@
 
 #include <stdlib.h>
 
-#include "ppapi/c/pp_macros.h"
 #include "ppapi/c/pp_stdint.h"
 
 typedef void (*PP_CompletionCallback_Func)(void* user_data, int32_t result);
@@ -37,15 +36,15 @@ struct PP_CompletionCallback {
   void* user_data;
 };
 
-PP_INLINE struct PP_CompletionCallback PP_MakeCompletionCallback(
+inline struct PP_CompletionCallback PP_MakeCompletionCallback(
     PP_CompletionCallback_Func func,
     void* user_data) {
   struct PP_CompletionCallback cc = { func, user_data };
   return cc;
 }
 
-PP_INLINE void PP_RunCompletionCallback(struct PP_CompletionCallback* cc,
-                                        int32_t res) {
+inline void PP_RunCompletionCallback(struct PP_CompletionCallback* cc,
+                                     int32_t res) {
   cc->func(cc->user_data, res);
 }
 
@@ -54,7 +53,7 @@ PP_INLINE void PP_RunCompletionCallback(struct PP_CompletionCallback* cc,
  * behavior.  If specified, the calling thread will block until a method
  *  completes.  This is only usable from background threads.
  */
-PP_INLINE struct PP_CompletionCallback PP_BlockUntilComplete() {
+inline struct PP_CompletionCallback PP_BlockUntilComplete() {
   return PP_MakeCompletionCallback(NULL, NULL);
 }
 

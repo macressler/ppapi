@@ -34,12 +34,10 @@
         ],
       },
       'sources': [
-        'c/pp_bool.h',
         'c/pp_completion_callback.h',
         'c/pp_errors.h',
         'c/pp_input_event.h',
         'c/pp_instance.h',
-        'c/pp_macros.h',
         'c/pp_module.h',
         'c/pp_point.h',
         'c/pp_rect.h',
@@ -99,7 +97,6 @@
         'c/dev/ppp_zoom_dev.h',
 
         # Deprecated interfaces.
-        'c/dev/deprecated_bool.h',
         'c/dev/ppb_var_deprecated.h',
         'c/dev/ppp_class_deprecated.h',
       ],
@@ -114,7 +111,6 @@
         '..',
       ],
       'sources': [
-        'cpp/common.h',
         'cpp/completion_callback.h',
         'cpp/core.cc',
         'cpp/core.h',
@@ -504,15 +500,16 @@
         'examples/file_chooser/file_chooser.cc',
       ],
     },
-    {
-      'target_name': 'ppapi_example_graphics_2d',
-      'dependencies': [
-        'ppapi_example_skeleton',
-      ],
-      'sources': [
-        'examples/2d/graphics_2d_example.c',
-      ],
-    },
+#TODO(ppapi authors): Fix the C headers so that they are C compatible.
+#    {
+#      'target_name': 'ppapi_example_graphics_2d',
+#      'dependencies': [
+#        'ppapi_example_skeleton',
+#      ],
+#      'sources': [
+#        'examples/2d/graphics_2d_example.c',
+#      ],
+#    },
     {
       'target_name': 'ppapi_example_paint_manager',
       'dependencies': [
@@ -553,7 +550,6 @@
         # Test cases.
         'tests/test_buffer.cc',
         'tests/test_buffer.h',
-        'tests/test_c_includes.c',
         'tests/test_char_set.cc',
         'tests/test_char_set.h',
         'tests/test_file_io.cc',

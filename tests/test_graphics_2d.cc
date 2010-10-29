@@ -68,11 +68,9 @@ void TestGraphics2D::QuitMessageLoop() {
 bool TestGraphics2D::ReadImageData(const pp::Graphics2D& dc,
                                    pp::ImageData* image,
                                    const pp::Point& top_left) const {
-  PP_Bool return_value =
-      testing_interface_->ReadImageData(dc.pp_resource(),
-                                        image->pp_resource(),
-                                        &top_left.pp_point());
-  return (PP_TRUE == return_value);
+  return testing_interface_->ReadImageData(dc.pp_resource(),
+                                           image->pp_resource(),
+                                           &top_left.pp_point());
 }
 
 bool TestGraphics2D::IsDCUniformColor(const pp::Graphics2D& dc,
@@ -183,7 +181,7 @@ std::string TestGraphics2D::TestInvalidResource() {
 
   // Describe.
   PP_Size size;
-  PP_Bool opaque;
+  bool opaque;
   graphics_2d_interface_->Describe(image.pp_resource(), &size, &opaque);
   graphics_2d_interface_->Describe(null_context.pp_resource(),
                                    &size, &opaque);
@@ -250,12 +248,12 @@ std::string TestGraphics2D::TestInvalidSize() {
   size.width = 16;
   size.height = -16;
   ASSERT_FALSE(!!graphics_2d_interface_->Create(
-      pp::Module::Get()->pp_module(), &size, PP_FALSE));
+      pp::Module::Get()->pp_module(), &size, false));
 
   size.width = -16;
   size.height = 16;
   ASSERT_FALSE(!!graphics_2d_interface_->Create(
-      pp::Module::Get()->pp_module(), &size, PP_FALSE));
+      pp::Module::Get()->pp_module(), &size, false));
 
   return "";
 }
@@ -298,11 +296,11 @@ std::string TestGraphics2D::TestDescribe() {
   PP_Size size;
   size.width = -1;
   size.height = -1;
-  PP_Bool is_always_opaque = PP_TRUE;
+  bool is_always_opaque = true;
   if (!graphics_2d_interface_->Describe(dc.pp_resource(), &size,
                                         &is_always_opaque))
     return "Describe failed";
-  if (size.width != w || size.height != h || is_always_opaque != PP_FALSE)
+  if (size.width != w || size.height != h || is_always_opaque != false)
     return "Mismatch of data.";
 
   return "";

@@ -5,7 +5,6 @@
 #ifndef PPAPI_C_PPP_INSTANCE_H_
 #define PPAPI_C_PPP_INSTANCE_H_
 
-#include "ppapi/c/pp_bool.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/pp_resource.h"
@@ -13,7 +12,7 @@
 struct PP_InputEvent;
 struct PP_Var;
 
-#define PPP_INSTANCE_INTERFACE "PPP_Instance;0.2"
+#define PPP_INSTANCE_INTERFACE "PPP_Instance;0.1"
 
 /**
  * @file
@@ -36,10 +35,10 @@ struct PPP_Instance {
    * If the plugin reports failure from this function, the plugin will be
    * deleted and OnDestroy will be called.
    */
-  PP_Bool (*DidCreate)(PP_Instance instance,
-                       uint32_t argc,
-                       const char* argn[],
-                       const char* argv[]);
+  bool (*DidCreate)(PP_Instance instance,
+                    uint32_t argc,
+                    const char* argn[],
+                    const char* argv[]);
 
   /**
    * Called when the plugin instance is destroyed. This will always be called,
@@ -69,32 +68,32 @@ struct PPP_Instance {
    * instance. A plugin's default condition is that it will not have focus.
    *
    * Note: clicks on your plugins will give focus only if you handle the
-   * click event. You signal if you handled it by returning PP_TRUE from
+   * click event. You signal if you handled it by returning true from
    * HandleInputEvent. Otherwise the browser will bubble the event and give
    * focus to the element on the page that actually did end up consuming it.
-   * If you're not getting focus, check to make sure you're returning PP_TRUE
-   * from the mouse click in HandleInputEvent.
+   * If you're not getting focus, check to make sure you're returning true from
+   * the mouse click in HandleInputEvent.
    */
-  void (*DidChangeFocus)(PP_Instance instance, PP_Bool has_focus);
+  void (*DidChangeFocus)(PP_Instance instance, bool has_focus);
 
   /**
-   * General handler for input events. Returns PP_TRUE if the event was handled
-   * or PP_FALSE if it was not.
+   * General handler for input events. Returns true if the event was handled or
+   * false if it was not.
    *
    * If the event was handled, it will not be forwarded to the web page or
    * browser. If it was not handled, it will bubble according to the normal
    * rules. So it is important that a plugin respond accurately with whether
    * event propogation should continue.
-   *
+   * 
    * Event propogation also controls focus. If you handle an event like a mouse
-   * event, typically your plugin will be given focus. Returning PP_FALSE means
+   * event, typically your plugin will be given focus. Returning false means
    * that the click will be given to a lower part of the page and the plugin
    * will not receive focus. This allows a plugin to be partially transparent,
    * where clicks on the transparent areas will behave like clicks to the
    * underlying page.
    */
-  PP_Bool (*HandleInputEvent)(PP_Instance instance,
-                              const struct PP_InputEvent* event);
+  bool (*HandleInputEvent)(PP_Instance instance,
+                           const struct PP_InputEvent* event);
 
   /**
    * Called after Initialize for a full-frame plugin that was instantiated
@@ -108,11 +107,11 @@ struct PPP_Instance {
    * of the plugin, if you're going to keep a reference to it, you need to
    * addref it yourself.
    *
-   * This method returns PP_FALSE if the plugin cannot handle the data. In
+   * This method returns false if the plugin cannot handle the data. In
    * response to this method, the plugin should call ReadResponseBody to read
    * the incoming data.
    */
-  PP_Bool (*HandleDocumentLoad)(PP_Instance instance, PP_Resource url_loader);
+  bool (*HandleDocumentLoad)(PP_Instance instance, PP_Resource url_loader);
 
   /**
    * Returns a Var representing the instance object to the web page. Normally

@@ -8,7 +8,6 @@
 
 #include <algorithm>
 
-#include "ppapi/cpp/common.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/module_impl.h"
@@ -52,7 +51,7 @@ ImageData::ImageData(PP_ImageDataFormat format,
 
   PassRefAndInitData(image_data_f->Create(Module::Get()->pp_module(),
                                           format, &size.pp_size(),
-                                          BoolToPPBool(init_to_zero)));
+                                          init_to_zero));
 }
 
 ImageData::~ImageData() {

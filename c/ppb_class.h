@@ -8,10 +8,9 @@
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
 #include "ppapi/c/pp_stdint.h"
-#include "ppapi/c/pp_var.h"
 #include "ppapi/c/ppb_var.h"
 
-#define PPB_CLASS_INTERFACE "PPB_Class;0.2"
+#define PPB_CLASS_INTERFACE "PPB_Class;0.1"
 
 /**
  * @file
@@ -30,11 +29,9 @@
  * different native_ptr information, make sure you can handle the case of
  * JS calling one object's function with another object set as this.
  */
-typedef struct PP_Var (*PP_ClassFunction)(void* native_ptr,
-                                          struct PP_Var this_object, /*NOLINT*/
-                                          struct PP_Var* args,
-                                          uint32_t argc,
-                                          struct PP_Var* exception);
+typedef PP_Var (*PP_ClassFunction)(void* native_ptr, PP_Var this_object,
+                                   PP_Var* args, uint32_t argc,
+                                   PP_Var* exception);
 
 typedef void (*PP_ClassDestructor)(void* native_ptr);
 
@@ -104,7 +101,7 @@ struct PPB_Class {
   PP_Resource (*Create)(PP_Module module,
                         PP_ClassDestructor destruct,
                         PP_ClassFunction invoke,
-                        struct PP_ClassProperty* properties);
+                        PP_ClassProperty* properties);
 
   /**
    * Creates an instance of the given class, and attaches given native pointer
@@ -112,9 +109,8 @@ struct PPB_Class {
    *
    * If the class_object is invalid, throws an exception.
    */
-  struct PP_Var (*Instantiate)(PP_Resource class_object,
-                               void* native_ptr,
-                               struct PP_Var* exception);
+  PP_Var (*Instantiate)(PP_Resource class_object,
+                        void* native_ptr, PP_Var* exception);
 };
 
 /**
@@ -122,3 +118,4 @@ struct PPB_Class {
  * End addtogroup PPP
  */
 #endif  // PPAPI_C_PPP_CLASS_H_
+

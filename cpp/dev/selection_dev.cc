@@ -4,7 +4,6 @@
 
 #include "ppapi/cpp/dev/selection_dev.h"
 
-#include "ppapi/cpp/common.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/var.h"
@@ -15,13 +14,12 @@ namespace {
 
 static const char kPPPSelectionInterface[] = PPP_SELECTION_DEV_INTERFACE;
 
-PP_Var GetSelectedText(PP_Instance instance, PP_Bool html) {
+PP_Var GetSelectedText(PP_Instance instance, bool html) {
   void* object =
       pp::Instance::GetPerInstanceObject(instance, kPPPSelectionInterface);
   if (!object)
     return Var().Detach();
-  return static_cast<Selection_Dev*>(object)->
-      GetSelectedText(PPBoolToBool(html)).Detach();
+  return static_cast<Selection_Dev*>(object)->GetSelectedText(html).Detach();
 }
 
 const PPP_Selection_Dev ppp_selection = {

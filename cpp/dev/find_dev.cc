@@ -5,7 +5,6 @@
 #include "ppapi/cpp/dev/find_dev.h"
 
 #include "ppapi/c/dev/ppb_find_dev.h"
-#include "ppapi/cpp/common.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/module_impl.h"
@@ -16,25 +15,21 @@ namespace {
 
 static const char kPPPFindInterface[] = PPP_FIND_DEV_INTERFACE;
 
-PP_Bool StartFind(PP_Instance instance,
-                  const char* text,
-                  PP_Bool case_sensitive) {
+bool StartFind(PP_Instance instance,
+               const char* text,
+               bool case_sensitive) {
   void* object =
       pp::Instance::GetPerInstanceObject(instance, kPPPFindInterface);
   if (!object)
-    return PP_FALSE;
-  bool return_value =
-      static_cast<Find_Dev*>(object)->StartFind(text,
-                                                PPBoolToBool(case_sensitive));
-  return BoolToPPBool(return_value);
+    return false;
+  return static_cast<Find_Dev*>(object)->StartFind(text, case_sensitive);
 }
 
-void SelectFindResult(PP_Instance instance, PP_Bool forward) {
+void SelectFindResult(PP_Instance instance, bool forward) {
   void* object =
       pp::Instance::GetPerInstanceObject(instance, kPPPFindInterface);
-  if (object) {
-    static_cast<Find_Dev*>(object)->SelectFindResult(PPBoolToBool(forward));
-  }
+  if (object)
+    static_cast<Find_Dev*>(object)->SelectFindResult(forward);
 }
 
 void StopFind(PP_Instance instance) {
@@ -66,8 +61,7 @@ Find_Dev::~Find_Dev() {
 void Find_Dev::NumberOfFindResultsChanged(int32_t total, bool final_result) {
   if (ppb_find_f) {
     ppb_find_f->NumberOfFindResultsChanged(associated_instance_->pp_instance(),
-                                           total,
-                                           BoolToPPBool(final_result));
+                                           total, final_result);
   }
 }
 

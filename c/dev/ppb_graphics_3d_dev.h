@@ -5,7 +5,6 @@
 #ifndef PPAPI_C_DEV_PPB_GRAPHICS_3D_DEV_H_
 #define PPAPI_C_DEV_PPB_GRAPHICS_3D_DEV_H_
 
-#include "ppapi/c/pp_bool.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_module.h"
 #include "ppapi/c/pp_resource.h"
@@ -25,7 +24,7 @@
 // // Shutdown.
 // core->ReleaseResource(context);
 
-#define PPB_GRAPHICS_3D_DEV_INTERFACE "PPB_Graphics3D(Dev);0.2"
+#define PPB_GRAPHICS_3D_DEV_INTERFACE "PPB_Graphics3D(Dev);0.1"
 
 // These are the same error codes as used by EGL.
 enum {
@@ -45,21 +44,21 @@ enum {
 };
 
 struct PPB_Graphics3D_Dev {
-  PP_Bool (*IsGraphics3D)(PP_Resource resource);
+  bool (*IsGraphics3D)(PP_Resource resource);
 
   // EGL-like configuration ----------------------------------------------------
-  PP_Bool (*GetConfigs)(int32_t* configs,
-                        int32_t config_size,
-                        int32_t* num_config);
+  bool (*GetConfigs)(int32_t* configs,
+                     int32_t config_size,
+                     int32_t* num_config);
 
-  PP_Bool (*ChooseConfig)(const int32_t* attrib_list,
-                          int32_t* configs,
-                          int32_t config_size,
-                          int32_t* num_config);
+  bool (*ChooseConfig)(const int32_t* attrib_list,
+                       int32_t* configs,
+                       int32_t config_size,
+                       int32_t* num_config);
 
   // TODO(apatrick): What to do if the browser window is moved to
   // another display? Do the configs potentially change?
-  PP_Bool (*GetConfigAttrib)(int32_t config, int32_t attribute, int32_t* value);
+  bool (*GetConfigAttrib)(int32_t config, int32_t attribute, int32_t* value);
 
   const char* (*QueryString)(int32_t name);
   // ---------------------------------------------------------------------------
@@ -78,9 +77,8 @@ struct PPB_Graphics3D_Dev {
   // Any thread.
   void* (*GetProcAddress)(const char* name);
 
-  // Make a particular context current of the calling thread.  Returns PP_TRUE
-  // on success, PP_FALSE on failure.
-  PP_Bool (*MakeCurent)(PP_Resource context);
+  // Make a particular context current of the calling thread.
+  bool (*MakeCurent)(PP_Resource context);
 
   // Returns the calling thread's current context or NULL if no context is
   // current.
@@ -93,7 +91,7 @@ struct PPB_Graphics3D_Dev {
   // better for correct alpha blending effect. Most existing OpenGL code assumes
   // linear. I could convert from linear to premultiplied during the copy from
   // back-buffer to offscreen "front-buffer".
-  PP_Bool (*SwapBuffers)(PP_Resource context);
+  bool (*SwapBuffers)(PP_Resource context);
 
   // Returns the current error for this thread. This is not associated with a
   // particular context. It is distinct from the GL error returned by
@@ -102,3 +100,4 @@ struct PPB_Graphics3D_Dev {
 };
 
 #endif  // PPAPI_C_DEV_PPB_GRAPHICS_3D_DEV_H_
+

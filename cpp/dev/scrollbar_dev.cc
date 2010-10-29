@@ -6,7 +6,6 @@
 
 #include "ppapi/cpp/dev/scrollbar_dev.h"
 
-#include "ppapi/cpp/common.h"
 #include "ppapi/cpp/instance.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/module_impl.h"
@@ -26,8 +25,7 @@ Scrollbar_Dev::Scrollbar_Dev(PP_Resource resource) : Widget_Dev(resource) {
 Scrollbar_Dev::Scrollbar_Dev(const Instance& instance, bool vertical) {
   if (!scrollbar_f)
     return;
-  PassRefFromConstructor(scrollbar_f->Create(instance.pp_instance(),
-                                             BoolToPPBool(vertical)));
+  PassRefFromConstructor(scrollbar_f->Create(instance.pp_instance(), vertical));
 }
 
 Scrollbar_Dev::Scrollbar_Dev(const Scrollbar_Dev& other)

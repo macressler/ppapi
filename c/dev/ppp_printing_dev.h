@@ -5,7 +5,6 @@
 #ifndef PPAPI_C_DEV_PPP_PRINTING_DEV_H_
 #define PPAPI_C_DEV_PPP_PRINTING_DEV_H_
 
-#include "ppapi/c/pp_bool.h"
 #include "ppapi/c/pp_instance.h"
 #include "ppapi/c/pp_rect.h"
 #include "ppapi/c/pp_resource.h"
@@ -29,7 +28,7 @@ struct PP_PrintSettings_Dev {
   struct PP_Rect printable_area;
   int32_t dpi;
   PP_PrintOrientation_Dev orientation;
-  PP_Bool grayscale;
+  bool grayscale;
   PP_PrintOutputFormat_Dev format;
 };
 
@@ -41,7 +40,7 @@ struct PP_PrintPageNumberRange_Dev {
 };
 
 // Interface for the plugin to implement printing.
-#define PPP_PRINTING_DEV_INTERFACE "PPP_Printing(Dev);0.2"
+#define PPP_PRINTING_DEV_INTERFACE "PPP_Printing(Dev);0.1"
 
 struct PPP_Printing_Dev {
   // Returns array of supported print output formats. The array is allocated
@@ -72,3 +71,4 @@ struct PPP_Printing_Dev {
 };
 
 #endif  // PPAPI_C_DEV_PPP_PRINTING_DEV_H_
+
