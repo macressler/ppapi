@@ -6,6 +6,7 @@
 
 #include <algorithm>
 
+#include "ppapi/cpp/common.h"
 #include "ppapi/cpp/image_data.h"
 #include "ppapi/cpp/module.h"
 #include "ppapi/cpp/point.h"
@@ -76,8 +77,8 @@ void FontDescription_Dev::swap(FontDescription_Dev& other) {
 
 TextRun_Dev::TextRun_Dev() {
   pp_text_run_.text = text_.pp_var();
-  pp_text_run_.rtl = false;
-  pp_text_run_.override_direction = false;
+  pp_text_run_.rtl = PP_FALSE;
+  pp_text_run_.override_direction = PP_FALSE;
 }
 
 TextRun_Dev::TextRun_Dev(const std::string& text,
@@ -85,8 +86,8 @@ TextRun_Dev::TextRun_Dev(const std::string& text,
                          bool override_direction)
     : text_(text) {
   pp_text_run_.text = text_.pp_var();
-  pp_text_run_.rtl = rtl;
-  pp_text_run_.override_direction = override_direction;
+  pp_text_run_.rtl = BoolToPPBool(rtl);
+  pp_text_run_.override_direction = BoolToPPBool(override_direction);
 }
 
 TextRun_Dev::TextRun_Dev(const TextRun_Dev& other) : text_(other.text_) {
@@ -165,9 +166,13 @@ bool Font_Dev::DrawTextAt(ImageData* dest,
                           bool image_data_is_opaque) const {
   if (!font_f)
     return false;
-  return font_f->DrawTextAt(pp_resource(), dest->pp_resource(),
-                            &text.pp_text_run(), &position.pp_point(),
-                            color, &clip.pp_rect(), image_data_is_opaque);
+  return PPBoolToBool(font_f->DrawTextAt(pp_resource(),
+                                         dest->pp_resource(),
+                                         &text.pp_text_run(),
+                                         &position.pp_point(),
+                                         color,
+                                         &clip.pp_rect(),
+                                         BoolToPPBool(image_data_is_opaque)));
 }
 
 int32_t Font_Dev::MeasureText(const TextRun_Dev& text) const {
